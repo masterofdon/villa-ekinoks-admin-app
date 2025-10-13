@@ -52,15 +52,15 @@ export default function VillaManagementPage() {
 
   React.useEffect(() => {
     if (villa && isEdit) {
-      setValue('name', villa.name);
-      setValue('description', villa.description);
-      setValue('location', villa.location);
-      setValue('pricePerNight', villa.pricePerNight);
-      setValue('maxGuests', villa.maxGuests);
-      setValue('bedrooms', villa.bedrooms);
-      setValue('bathrooms', villa.bathrooms);
-      setValue('amenities', villa.amenities);
-      setValue('images', villa.images);
+      setValue('name', villa.publicinfo.name);
+      setValue('description', villa.publicinfo.description);
+      setValue('location', villa.publicinfo.location);
+      setValue('pricePerNight', villa.pricing.pricingranges[0]?.pricepernight.amount || 0);
+      setValue('maxGuests', villa.publicinfo.maxGuests);
+      setValue('bedrooms', villa.publicinfo.bedrooms);
+      setValue('bathrooms', villa.publicinfo.bathrooms);
+      setValue('amenities', villa.publicinfo.amenities);
+      setValue('images', villa.publicinfo.images);
     }
   }, [villa, isEdit, setValue]);
 

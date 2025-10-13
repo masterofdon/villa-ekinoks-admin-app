@@ -1,11 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
   images: {
-    domains: ['localhost', 'your-api-domain.com'],
+    domains: ['localhost', 'api.villaekinoks.com', 'villaekinoks.com', 'admin.villaekinoks.com'],
   },
+  // Optimize for production
+  compress: true,
+  poweredByHeader: false,
+  // Enable static optimization
+  trailingSlash: false,
 }
 
 module.exports = nextConfig

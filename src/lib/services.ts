@@ -24,40 +24,51 @@ export const authApi = {
   verifyLogin: async (verification: Verify_LoginVerification_XAction): Promise<TokenizedUser> => {
     const response = await api.post<GenericApiResponse<TokenizedUser>>('/verification-pair-controller/login-verifications', verification);
     
-    // Store tokens and user data in localStorage
+    // Store tokens and user data in localStorage (only on client side)
     const tokenizedUser = response.data.object;
-    localStorage.setItem('accesstoken', tokenizedUser.accesstoken);
-    localStorage.setItem('refreshtoken', tokenizedUser.refreshtoken);
-    localStorage.setItem('user', JSON.stringify(tokenizedUser.user));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('accesstoken', tokenizedUser.accesstoken);
+      localStorage.setItem('refreshtoken', tokenizedUser.refreshtoken);
+      localStorage.setItem('user', JSON.stringify(tokenizedUser.user));
+    }
     
     return tokenizedUser;
   },
 
   logout: async (): Promise<void> => {
-    // Clear tokens and user data from localStorage
-    localStorage.removeItem('accesstoken');
-    localStorage.removeItem('refreshtoken');
-    localStorage.removeItem('user');
+    // Clear tokens and user data from localStorage (only on client side)
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('accesstoken');
+      localStorage.removeItem('refreshtoken');
+      localStorage.removeItem('user');
+    }
     // You can add a logout API call here if needed
   },
 
   // Check if user is authenticated
   isAuthenticated: (): boolean => {
+    if (typeof window === 'undefined') {
+      // Server-side rendering, assume not authenticated
+      return false;
+    }
     return !!localStorage.getItem('accesstoken');
   },
 
   // Get current access token
   getAccessToken: (): string | null => {
+    if (typeof window === 'undefined') return null;
     return localStorage.getItem('accesstoken');
   },
 
   // Get current refresh token
   getRefreshToken: (): string | null => {
+    if (typeof window === 'undefined') return null;
     return localStorage.getItem('refreshtoken');
   },
 
   // Get current user data
   getCurrentUser: (): AppUser | null => {
+    if (typeof window === 'undefined') return null;
     const userStr = localStorage.getItem('user');
     if (!userStr) return null;
     

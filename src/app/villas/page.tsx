@@ -77,10 +77,10 @@ export default function VillasPage() {
               {villasData.data.map((villa) => (
                 <Card key={villa.id} className="overflow-hidden">
                   <div className="relative">
-                    {villa.images && villa.images.length > 0 ? (
+                    {villa.publicinfo.images && villa.publicinfo.images.length > 0 ? (
                       <img
-                        src={villa.images[0]}
-                        alt={villa.name}
+                        src={villa.publicinfo.images[0]}
+                        alt={villa.publicinfo.name}
                         className="w-full h-48 object-cover"
                       />
                     ) : (
@@ -90,40 +90,40 @@ export default function VillasPage() {
                     )}
                     <div className="absolute top-2 right-2">
                       <span className={`px-2 py-1 text-xs rounded-full ${
-                        villa.isActive 
+                        villa.privateinfo.isActive 
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {villa.isActive ? 'Active' : 'Inactive'}
+                        {villa.privateinfo.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </div>
                   </div>
                   
                   <CardContent className="p-4">
-                    <h3 className="text-lg font-semibold mb-2">{villa.name}</h3>
+                    <h3 className="text-lg font-semibold mb-2">{villa.publicinfo.name}</h3>
                     
                     <div className="flex items-center text-gray-600 mb-2">
                       <MapPin className="w-4 h-4 mr-1" />
-                      <span className="text-sm">{villa.location}</span>
+                      <span className="text-sm">{villa.publicinfo.location}</span>
                     </div>
                     
                     <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
                       <div className="flex items-center">
                         <Users className="w-4 h-4 mr-1" />
-                        <span>{villa.maxGuests} guests</span>
+                        <span>{villa.publicinfo.maxGuests} guests</span>
                       </div>
                       <div className="flex items-center">
                         <Bed className="w-4 h-4 mr-1" />
-                        <span>{villa.bedrooms} beds</span>
+                        <span>{villa.publicinfo.bedrooms} beds</span>
                       </div>
                       <div className="flex items-center">
                         <Bath className="w-4 h-4 mr-1" />
-                        <span>{villa.bathrooms} baths</span>
+                        <span>{villa.publicinfo.bathrooms} baths</span>
                       </div>
                     </div>
                     
                     <div className="text-lg font-bold text-primary mb-4">
-                      {formatCurrency(villa.pricePerNight)}/night
+                      {formatCurrency(villa.pricing.pricingranges[0]?.pricepernight.amount || 0)}/night
                     </div>
                     
                     <div className="flex space-x-2">
@@ -142,7 +142,7 @@ export default function VillasPage() {
                         className="flex items-center"
                       >
                         <Eye className="w-4 h-4 mr-1" />
-                        {villa.isActive ? 'Deactivate' : 'Activate'}
+                        {villa.privateinfo.isActive ? 'Deactivate' : 'Activate'}
                       </Button>
                       
                       <Button

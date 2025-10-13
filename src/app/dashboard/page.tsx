@@ -67,7 +67,7 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-600">
               Welcome back{user ? `, ${user.personalinfo.firstname} ${user.personalinfo.lastname}` : ''}! 
-              Here's an overview of your villa management system.
+              Here&apos;s an overview of your villa management system.
             </p>
           </div>
 
