@@ -5,12 +5,14 @@ import type {
   Verify_LoginVerification_XAction,
   TokenizedUser,
   AppUser,
+  VillaAdminUser,
   GenericApiResponse,
   Villa,
   CreateVillaRequest,
   UpdateVillaRequest,
   DashboardStats,
   PaginatedResponse,
+  VillaPricingWithVillaBooking,
 } from '@/types';
 
 export const authApi = {
@@ -80,6 +82,26 @@ export const authApi = {
       return null;
     }
   },
+
+  // Get current villa admin user (includes villa data)
+  getCurrentVillaAdminUser: (): VillaAdminUser | null => {
+    if (typeof window === 'undefined') return null;
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return null;
+    
+    try {
+      const user = JSON.parse(userStr) as VillaAdminUser;
+      // Check if user has villa data
+      if (!user.villa || !user.villa.id) {
+        return null;
+      }
+      return user;
+    } catch (error) {
+      console.error('Failed to parse villa admin user data from localStorage:', error);
+      localStorage.removeItem('user'); // Remove corrupted data
+      return null;
+    }
+  },
 };
 
 export const dashboardApi = {
@@ -119,5 +141,23 @@ export const villasApi = {
   toggleVillaStatus: async (id: string): Promise<Villa> => {
     const response = await api.patch<GenericApiResponse<Villa>>(`/villas/${id}/toggle-status`);
     return response.data.object;
+  },
+};
+
+export const villaPricingApi = {
+  getDetailedPricing: async (villaId: string): Promise<VillaPricingWithVillaBooking> => {
+    const response = await api.get<GenericApiResponse<VillaPricingWithVillaBooking>>(`/villa-pricing/detailed`, {
+      params: { villaid: villaId },
+    });
+    return response.data.object;
+  },
+
+  // Helper function to get pricing for current user's villa
+  getCurrentVillaPricing: async (): Promise<VillaPricingWithVillaBooking> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    return villaPricingApi.getDetailedPricing(villaAdminUser.villa.id);
   },
 };

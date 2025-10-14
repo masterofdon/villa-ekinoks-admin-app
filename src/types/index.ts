@@ -60,13 +60,19 @@ export type VillaPublicInfo = {
 };
 
 export type VillaPrivateInfo = {
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  address: Address;
+};
+
+export type Address = {
+  street: string;
+  city: string;
+  state: string;
+  postcode: string;
+  country: string;
 };
 
 export type Price = {
-  amount: number;
+  amount: string;
   currency: string;
 };
 
@@ -135,3 +141,16 @@ export interface PaginatedResponse<T> {
     totalPages: number;
   };
 }
+
+// Calendar Management Types
+export type SimpleVillaBooking = {
+  id: string;
+  startdate: string;
+  enddate: string;
+  inquiror: AppUser;
+};
+
+export type VillaPricingWithVillaBooking = {
+  pricing: VillaPricingSchema;
+  bookings: SimpleVillaBooking[];
+};

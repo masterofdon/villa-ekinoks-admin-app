@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authApi, dashboardApi, villasApi } from '@/lib/services';
+import { authApi, dashboardApi, villasApi, villaPricingApi } from '@/lib/services';
 import type { 
   AppUserLogin_WC_MLS_XAction, 
   Verify_LoginVerification_XAction,
@@ -139,5 +139,22 @@ export const useToggleVillaStatus = () => {
       queryClient.invalidateQueries({ queryKey: ['villa', villaId] });
       queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
     },
+  });
+};
+
+// Villa Pricing hooks
+export const useVillaPricing = (villaId: string) => {
+  return useQuery({
+    queryKey: ['villa-pricing', villaId],
+    queryFn: () => villaPricingApi.getDetailedPricing(villaId),
+    enabled: !!villaId,
+  });
+};
+
+export const useCurrentVillaPricing = () => {
+  return useQuery({
+    queryKey: ['current-villa-pricing'],
+    queryFn: villaPricingApi.getCurrentVillaPricing,
+    retry: false, // Don't retry if user doesn't have villa data
   });
 };
