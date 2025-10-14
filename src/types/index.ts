@@ -132,14 +132,33 @@ export interface Booking {
   createdAt: string;
 }
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+export type Page<T> = {
+  content: T[];
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  sort: Sort;
+  first: boolean;
+  number: number;
+  numberOfElements: number;
+  size: number;
+  empty: boolean;
+  pageable: Pageable;
+}
+
+export type Pageable = {
+  sort: Sort;
+  pageNumber: number;
+  pageSize: number;
+  offset: number;
+  paged: boolean;
+  unpaged: boolean;
+}
+
+export type Sort = {
+  sorted: boolean;
+  unsorted: boolean;
+  empty: boolean;
 }
 
 // Calendar Management Types
@@ -153,4 +172,85 @@ export type SimpleVillaBooking = {
 export type VillaPricingWithVillaBooking = {
   pricing: VillaPricingSchema;
   bookings: SimpleVillaBooking[];
+};
+
+// Villa Stats Types
+export type VillaStat = {
+  id: string;
+  lastupdate: number; // timestamp
+  statcode: string;
+  value: string;
+  prefix: string;
+  suffix: string;
+  color: string;
+};
+
+export type Get_VillaStats_WC_MLS_XAction_Response = {
+  stats: VillaStat[];
+};
+
+// Villa Stat Constants (matching Java backend)
+export const VillaStatConstants = {
+  BOOKINGS_TOTAL_STATCODE: 'bookings.total',
+  BOOKING_NIGHTS_TOTAL_STATCODE: 'bookings.nights.total',
+  REVENUE_TOTAL_STATCODE: 'bookings.revenue.total',
+  VILLA_OCCUPANCY_RATE_STATCODE: 'villa.occupancy.rate',
+} as const;
+
+// Villa Booking Types
+export type VillaBookingTimestamps = {
+  creationdate: number;
+  lastupdate: number;
+};
+
+export type VillaBookingStatus = "PENDING" | "CONFIRMED" | "CANCELLED" | "REJECTED";
+
+export type PaymentStatus = "PENDING" | "COMPLETED" | "FAILED" | "REFUNDED";
+
+export type Payment = {
+  id: string;
+  status: PaymentStatus;
+  externalid: string;
+  amount: string;
+  currency: string;
+  creationdate: string;
+};
+
+export type VillaGuestUser = AppUser & {
+  identitynumber: string;
+};
+
+export type ServicableItem = {
+  id: string;
+  name: string;
+  description: string;
+  price: Price;
+};
+
+export type VillaBookingAdditionalService = {
+  item: ServicableItem;
+  payment?: Payment;
+  quantity: number;
+};
+
+export type VillaBookingSummaryView = {
+  id: string;
+  timestamps: VillaBookingTimestamps;
+  startdate: string; // YYYYMMDD format
+  enddate: string; // YYYYMMDD format
+  status: VillaBookingStatus;
+  inquiror: VillaGuestUser;
+  services?: VillaBookingAdditionalService[];
+  bookingpayment?: Payment;
+  numberofguests: number;
+};
+
+// Villa Bookings Filter Types
+export type VillaBookingsFilter = {
+  villaid: string; // required
+  startdate?: string; // optional YYYYMMDD format
+  enddate?: string; // optional YYYYMMDD format
+  query?: string; // optional free text search
+  page: number;
+  size: number;
 };

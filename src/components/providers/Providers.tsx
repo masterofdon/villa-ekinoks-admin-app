@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ConfigProvider, theme } from 'antd';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,7 +19,18 @@ interface ProvidersProps {
 export default function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <ConfigProvider
+        theme={{
+          token: {
+            // Customize your theme tokens here
+            colorPrimary: '#1890ff',
+            borderRadius: 8,
+          },
+          algorithm: theme.defaultAlgorithm,
+        }}
+      >
+        {children}
+      </ConfigProvider>
     </QueryClientProvider>
   );
 }

@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authApi, dashboardApi, villasApi, villaPricingApi } from '@/lib/services';
+import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi } from '@/lib/services';
 import type { 
   AppUserLogin_WC_MLS_XAction, 
   Verify_LoginVerification_XAction,
   CreateVillaRequest, 
-  UpdateVillaRequest 
+  UpdateVillaRequest,
+  VillaBookingsFilter
 } from '@/types';
 
 // Auth hooks
@@ -156,5 +157,38 @@ export const useCurrentVillaPricing = () => {
     queryKey: ['current-villa-pricing'],
     queryFn: villaPricingApi.getCurrentVillaPricing,
     retry: false, // Don't retry if user doesn't have villa data
+  });
+};
+
+// Villa Stats hooks
+export const useVillaStats = () => {
+  return useQuery({
+    queryKey: ['villa-stats'],
+    queryFn: villaStatsApi.getVillaStats,
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes stale time
+    enabled: (() => {
+      // Only enable if user is authenticated and has villa data
+      if (!authApi.isAuthenticated()) return false;
+      const villaAdminUser = authApi.getCurrentVillaAdminUser();
+      return !!(villaAdminUser && villaAdminUser.villa && villaAdminUser.villa.id);
+    })(),
+    retry: false, // Don't retry if user doesn't have villa data
+  });
+};
+
+// Villa Bookings hooks
+export const useVillaBookings = (filter: Omit<VillaBookingsFilter, 'villaid'>) => {
+  return useQuery({
+    queryKey: ['villa-bookings', filter],
+    queryFn: () => villaBookingsApi.getCurrentVillaBookings(filter),
+    enabled: (() => {
+      // Only enable if user is authenticated and has villa data
+      if (!authApi.isAuthenticated()) return false;
+      const villaAdminUser = authApi.getCurrentVillaAdminUser();
+      return !!(villaAdminUser && villaAdminUser.villa && villaAdminUser.villa.id);
+    })(),
+    retry: false, // Don't retry if user doesn't have villa data
+    staleTime: 1 * 60 * 1000, // 1 minute stale time
   });
 };

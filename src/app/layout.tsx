@@ -1,5 +1,6 @@
 import React from 'react';
 import './globals.css';
+import { AntdRegistry } from '@ant-design/nextjs-registry';
 import Providers from '@/components/providers/Providers';
 
 export const metadata = {
@@ -15,9 +16,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body>
-        <Providers>
-          {children}
-        </Providers>
+        <AntdRegistry>
+          <Providers>
+            {children}
+          </Providers>
+        </AntdRegistry>
       </body>
     </html>
   );

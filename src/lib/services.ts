@@ -11,8 +11,11 @@ import type {
   CreateVillaRequest,
   UpdateVillaRequest,
   DashboardStats,
-  PaginatedResponse,
+  Page,
   VillaPricingWithVillaBooking,
+  Get_VillaStats_WC_MLS_XAction_Response,
+  VillaBookingSummaryView,
+  VillaBookingsFilter,
 } from '@/types';
 
 export const authApi = {
@@ -112,8 +115,8 @@ export const dashboardApi = {
 };
 
 export const villasApi = {
-  getVillas: async (page = 1, limit = 10): Promise<PaginatedResponse<Villa>> => {
-    const response = await api.get<GenericApiResponse<PaginatedResponse<Villa>>>('/villas', {
+  getVillas: async (page = 1, limit = 10): Promise<Page<Villa>> => {
+    const response = await api.get<GenericApiResponse<Page<Villa>>>('/villas', {
       params: { page, limit },
     });
     return response.data.object;
@@ -159,5 +162,57 @@ export const villaPricingApi = {
       throw new Error('No villa found for current user');
     }
     return villaPricingApi.getDetailedPricing(villaAdminUser.villa.id);
+  },
+};
+
+export const villaStatsApi = {
+  getVillaStats: async (): Promise<Get_VillaStats_WC_MLS_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    const response = await api.get<GenericApiResponse<Get_VillaStats_WC_MLS_XAction_Response>>('/villa-stats', {
+      params: { villaid: villaAdminUser.villa.id },
+    });
+    return response.data.object;
+  },
+};
+
+export const villaBookingsApi = {
+  getVillaBookings: async (filter: VillaBookingsFilter): Promise<Page<VillaBookingSummaryView>> => {
+    const params: Record<string, string | number> = {
+      villaid: filter.villaid,
+      page: filter.page,
+      size: filter.size,
+    };
+
+    if (filter.startdate) {
+      params.startdate = filter.startdate;
+    }
+    if (filter.enddate) {
+      params.enddate = filter.enddate;
+    }
+    if (filter.query) {
+      params.query = filter.query;
+    }
+
+    const response = await api.get<GenericApiResponse<Page<VillaBookingSummaryView>>>('/villa-bookings', {
+      params,
+    });
+    return response.data.object;
+  },
+
+  // Helper function to get bookings for current user's villa
+  getCurrentVillaBookings: async (filter: Omit<VillaBookingsFilter, 'villaid'>): Promise<Page<VillaBookingSummaryView>> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    return villaBookingsApi.getVillaBookings({
+      ...filter,
+      villaid: villaAdminUser.villa.id,
+    });
   },
 };

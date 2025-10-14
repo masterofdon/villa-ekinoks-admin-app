@@ -85,3 +85,60 @@ export const getBookingPosition = (checkDate: Date, startDateStr: string, endDat
   
   return { isStart, isEnd, isMiddle };
 };
+
+/**
+ * Format YYYYMMDD date string to human-readable format
+ * @param dateStr - Date string in YYYYMMDD format
+ * @param options - Intl.DateTimeFormat options
+ * @returns Formatted date string
+ */
+export const formatDisplayDate = (
+  dateStr: string, 
+  options: Intl.DateTimeFormatOptions = { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  }
+): string => {
+  const date = parseYYYYMMDD(dateStr);
+  return new Intl.DateTimeFormat('en-US', options).format(date);
+};
+
+/**
+ * Format timestamp to human-readable date and time
+ * @param timestamp - Unix timestamp in milliseconds
+ * @param options - Intl.DateTimeFormat options
+ * @returns Formatted date time string
+ */
+export const formatDateTime = (
+  timestamp: number,
+  options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }
+): string => {
+  return new Intl.DateTimeFormat('en-US', options).format(new Date(timestamp));
+};
+
+/**
+ * Convert HTML date input value to YYYYMMDD format
+ * @param htmlDateValue - Date value from HTML input (YYYY-MM-DD)
+ * @returns Date string in YYYYMMDD format
+ */
+export const htmlDateToYYYYMMDD = (htmlDateValue: string): string => {
+  if (!htmlDateValue) return '';
+  return htmlDateValue.replace(/-/g, '');
+};
+
+/**
+ * Convert YYYYMMDD format to HTML date input value
+ * @param yyyymmdd - Date string in YYYYMMDD format
+ * @returns Date string in YYYY-MM-DD format for HTML input
+ */
+export const yyyymmddToHtmlDate = (yyyymmdd: string): string => {
+  if (!yyyymmdd || yyyymmdd.length !== 8) return '';
+  return `${yyyymmdd.substring(0, 4)}-${yyyymmdd.substring(4, 6)}-${yyyymmdd.substring(6, 8)}`;
+};

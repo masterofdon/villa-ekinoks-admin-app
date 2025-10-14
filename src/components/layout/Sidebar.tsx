@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, LogOut, Settings, Calendar } from 'lucide-react';
+import { LayoutDashboard, LogOut, Settings, Calendar, Palette, BookOpen } from 'lucide-react';
 import { useLogout } from '@/hooks/api';
 import { UserProfile, UserAvatar } from '@/components/user/UserProfile';
 
@@ -27,6 +27,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Calendar', href: '/calendar', icon: Calendar },
+    { name: 'Bookings', href: '/bookings', icon: BookOpen },
+    { name: 'Antd Demo', href: '/antd-demo', icon: Palette },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
