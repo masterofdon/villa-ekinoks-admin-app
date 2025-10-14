@@ -27,11 +27,15 @@ export const Label: React.FC<LabelProps> = ({ className = '', ...props }) => {
 interface CardProps {
   children: React.ReactNode;
   className?: string;
+  onClick?: () => void;
 }
 
-export const Card: React.FC<CardProps> = ({ children, className = '' }) => {
+export const Card: React.FC<CardProps> = ({ children, className = '', onClick }) => {
   return (
-    <div className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`}>
+    <div 
+      className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`}
+      onClick={onClick}
+    >
       {children}
     </div>
   );

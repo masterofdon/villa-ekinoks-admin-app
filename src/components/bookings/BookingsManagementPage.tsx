@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useVillaBookings } from '@/hooks/api';
-import { VillaBookingsFilter, VillaBookingSummaryView } from '@/types';
+import { VillaBookingsFilter, VillaBookingSummaryView, VillaBookingStatus } from '@/types';
 import { formatDisplayDate, formatDateTime, htmlDateToYYYYMMDD, yyyymmddToHtmlDate } from '@/lib/date-utils';
 import { getBookingStatusColor, formatCurrency, calculateBookingNights } from '@/lib/booking-utils';
 import { Card, CardHeader, CardTitle, CardContent, Input, Label } from '@/components/ui';
 import { Search, Calendar, Users, CreditCard, Clock, Filter, Moon } from 'lucide-react';
+import { BookingDetailsPage } from './BookingDetailsPage';
 
 const BookingStatusBadge: React.FC<{ status: VillaBookingSummaryView['status'] }> = ({ status }) => {
   const colorClass = getBookingStatusColor(status);
@@ -18,14 +20,20 @@ const BookingStatusBadge: React.FC<{ status: VillaBookingSummaryView['status'] }
   );
 };
 
-const BookingCard: React.FC<{ booking: VillaBookingSummaryView }> = ({ booking }) => {
+const BookingCard: React.FC<{ 
+  booking: VillaBookingSummaryView;
+  onClick?: (booking: VillaBookingSummaryView) => void;
+}> = ({ booking, onClick }) => {
   const totalAmount = booking.bookingpayment ? parseFloat(booking.bookingpayment.amount) : 0;
   const servicesAmount = booking.services?.reduce((sum, service) =>
     sum + (service.payment ? parseFloat(service.payment.amount) * service.quantity : 0), 0) || 0;
   const bookingNights = calculateBookingNights(booking.startdate, booking.enddate);
 
   return (
-    <Card className="mb-4 hover:shadow-md transition-shadow">
+    <Card 
+      className="mb-4 hover:shadow-md transition-shadow cursor-pointer" 
+      onClick={() => onClick?.(booking)}
+    >
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
@@ -297,11 +305,16 @@ const Pagination: React.FC<{
   );
 };
 
-export const BookingsManagementPage: React.FC = () => {
+export const BookingsManagementPage: React.FC<{
+  mode?: 'modal' | 'navigation';
+}> = ({ mode = 'navigation' }) => {
+  const router = useRouter();
   const [filter, setFilter] = useState<Omit<VillaBookingsFilter, 'villaid'>>({
     page: 0,
     size: 10000,
   });
+
+  const [selectedBooking, setSelectedBooking] = useState<VillaBookingSummaryView | null>(null);
 
   const { data: bookingsData, isLoading, error } = useVillaBookings(filter);
 
@@ -312,6 +325,52 @@ export const BookingsManagementPage: React.FC = () => {
   const handlePageSizeChange = (size: number) => {
     setFilter(prev => ({ ...prev, size, page: 1 }));
   };
+
+  const handleBookingClick = (booking: VillaBookingSummaryView) => {
+    if (mode === 'navigation') {
+      router.push(`/bookings/${booking.id}`);
+    } else {
+      setSelectedBooking(booking);
+    }
+  };
+
+  const handleBackToList = () => {
+    setSelectedBooking(null);
+  };
+
+  const handleStatusChange = async (bookingId: string, newStatus: VillaBookingStatus) => {
+    // TODO: Implement API call to update booking status
+    console.log('Updating booking status:', bookingId, newStatus);
+    
+    // Update the selected booking if it's the one being changed
+    if (selectedBooking && selectedBooking.id === bookingId) {
+      setSelectedBooking({
+        ...selectedBooking,
+        status: newStatus,
+        timestamps: {
+          ...selectedBooking.timestamps,
+          lastupdate: Date.now()
+        }
+      });
+    }
+  };
+
+  const handleEditBooking = (bookingId: string) => {
+    // TODO: Implement edit booking functionality
+    console.log('Edit booking:', bookingId);
+  };
+
+  // If a booking is selected and we're in modal mode, show the details page
+  if (selectedBooking && mode === 'modal') {
+    return (
+      <BookingDetailsPage
+        booking={selectedBooking}
+        onBack={handleBackToList}
+        onStatusChange={handleStatusChange}
+        onEdit={handleEditBooking}
+      />
+    );
+  }
 
   if (error) {
     return (
@@ -359,7 +418,11 @@ export const BookingsManagementPage: React.FC = () => {
           </div>
           <div className="space-y-4">
             {bookingsData.content.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} />
+              <BookingCard 
+                key={booking.id} 
+                booking={booking} 
+                onClick={handleBookingClick}
+              />
             ))}
           </div>
         </>

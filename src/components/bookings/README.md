@@ -1,7 +1,37 @@
 # Bookings Management Feature
 
 ## Overview
-The Bookings Management page allows villa administrators to view and filter all bookings for their villa.
+The Bookings Management system allows villa administrators to view, filter, and manage all bookings for their villa. It includes both a list view and detailed booking pages.
+
+## Components
+
+### BookingsManagementPage
+The main component for displaying and managing villa bookings. Supports both modal and navigation modes for viewing booking details.
+
+**Props:**
+- `mode?: 'modal' | 'navigation'` - Determines how booking details are displayed when a booking card is clicked
+  - `'navigation'` (default): Navigates to a dedicated booking details page (`/bookings/[id]`)
+  - `'modal'`: Shows booking details in an overlay within the same page
+
+### BookingDetailsPage
+A comprehensive view of a single booking with detailed information about the guest and payment.
+
+**Props:**
+- `booking: VillaBookingSummaryView` - The booking data to display
+- `onBack: () => void` - Callback when the back button is clicked
+- `onStatusChange?: (bookingId: string, newStatus: VillaBookingStatus) => void` - Optional callback for status changes
+- `onEdit?: (bookingId: string) => void` - Optional callback for editing bookings
+
+**Sections:**
+1. **Left Section (Main Content):**
+   - Booking Overview: Check-in/out dates, nights, guests
+   - Guest Information: Primary guest and additional guests with their details
+   - Payment Details: Accommodation payment, additional services, payment summary
+
+2. **Right Section (Operations):**
+   - Booking Status actions (Confirm, Reject, Cancel)
+   - Management actions (Edit, Download, View Contract)
+   - Booking information display
 
 ## Features
 

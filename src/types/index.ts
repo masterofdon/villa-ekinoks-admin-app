@@ -243,6 +243,7 @@ export type VillaBookingSummaryView = {
   services?: VillaBookingAdditionalService[];
   bookingpayment?: Payment;
   numberofguests: number;
+  guests?: VillaBookingGuest[]
 };
 
 // Villa Bookings Filter Types
@@ -253,4 +254,70 @@ export type VillaBookingsFilter = {
   query?: string; // optional free text search
   page: number;
   size: number;
+};
+
+export type VillaBookingGuest = {
+  id: string;
+  personalinfo: VillaBookingGuestPersonalInfo;
+}
+
+export type VillaBookingGuestPersonalInfo = {
+  firstname: string;
+  middlename: string;
+  lastname: string;
+  email: string;
+  phonenumber: string;
+  passportno: string;
+  passportcountry: string;
+  age: number;
+  passportfront: AppFile;
+  passportback: AppFile;
+};
+
+export type AppFile = {
+  id: string;
+  filename: string;
+  url: string;
+  mimetype: string;
+  size: number; // in bytes
+}
+
+// Booking Details Types
+export type BookingInquirorDetails = {
+  personalInfo: VillaBookingGuestPersonalInfo;
+  contactDetails: {
+    email: string;
+    phone: string;
+    alternatePhone?: string;
+  };
+  identityVerification: {
+    identityNumber: string;
+    passportDetails: {
+      passportNumber: string;
+      country: string;
+      frontImage: AppFile;
+      backImage: AppFile;
+    };
+  };
+};
+
+export type BookingPaymentDetails = {
+  bookingPayment: Payment;
+  additionalServices: VillaBookingAdditionalService[];
+  totalAmount: number;
+  currency: string;
+  paymentBreakdown: {
+    accommodationTotal: number;
+    servicesTotal: number;
+    taxesAndFees: number;
+    discounts: number;
+  };
+};
+
+export type BookingFullDetails = VillaBookingSummaryView & {
+  inquirorDetails: BookingInquirorDetails;
+  paymentDetails: BookingPaymentDetails;
+  villa: Villa;
+  specialRequests?: string;
+  internalNotes?: string;
 };
