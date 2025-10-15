@@ -35,6 +35,14 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
   const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth());
   const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
 
+  // Calculate second month
+  const getSecondMonth = () => {
+    if (currentMonth === 11) {
+      return { month: 0, year: currentYear + 1 };
+    }
+    return { month: currentMonth + 1, year: currentYear };
+  };
+
   // Selection state
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
@@ -309,6 +317,7 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
   };
 
   // Global mouse up event listener to handle drag ending outside calendar
+  // This ensures drag selection works across both calendar months
   useEffect(() => {
     const handleGlobalMouseUp = () => {
       if (isDragging) {
@@ -400,9 +409,14 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
               Previous
             </Button>
 
-            <h2 className="text-2xl font-semibold text-gray-800">
-              {getMonthName(currentMonth)} {currentYear}
-            </h2>
+            <div className="text-center">
+              <h2 className="text-2xl font-semibold text-gray-800">
+                {getMonthName(currentMonth)} {currentYear}
+              </h2>
+              <h3 className="text-lg font-medium text-gray-600">
+                {getMonthName(getSecondMonth().month)} {getSecondMonth().year}
+              </h3>
+            </div>
 
             <Button
               onClick={goToNextMonth}
@@ -427,20 +441,45 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
             </Button>
           </div>
 
-          {/* Calendar Component */}
-          <CalendarMonthViewComponent
-            period={getPeriodString(currentMonth, currentYear)}
-            pricing={pricing}
-            selectedStartDate={selectedStartDate}
-            selectedEndDate={selectedEndDate}
-            onDateSelect={handleDateSelect}
-            onStartDateAdjust={handleStartDateAdjust}
-            onEndDateAdjust={handleEndDateAdjust}
-            onMouseDown={handleMouseDown}
-            onMouseEnter={handleMouseEnter}
-            onMouseUp={handleMouseUp}
-            isDragging={isDragging}
-          />
+          {/* First Month Calendar Component */}
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-gray-700 mb-4">
+              {getMonthName(currentMonth)} {currentYear}
+            </h3>
+            <CalendarMonthViewComponent
+              period={getPeriodString(currentMonth, currentYear)}
+              pricing={pricing}
+              selectedStartDate={selectedStartDate}
+              selectedEndDate={selectedEndDate}
+              onDateSelect={handleDateSelect}
+              onStartDateAdjust={handleStartDateAdjust}
+              onEndDateAdjust={handleEndDateAdjust}
+              onMouseDown={handleMouseDown}
+              onMouseEnter={handleMouseEnter}
+              onMouseUp={handleMouseUp}
+              isDragging={isDragging}
+            />
+          </div>
+
+          {/* Second Month Calendar Component */}
+          <div>
+            <h3 className="text-xl font-semibold text-gray-700 mb-4">
+              {getMonthName(getSecondMonth().month)} {getSecondMonth().year}
+            </h3>
+            <CalendarMonthViewComponent
+              period={getPeriodString(getSecondMonth().month, getSecondMonth().year)}
+              pricing={pricing}
+              selectedStartDate={selectedStartDate}
+              selectedEndDate={selectedEndDate}
+              onDateSelect={handleDateSelect}
+              onStartDateAdjust={handleStartDateAdjust}
+              onEndDateAdjust={handleEndDateAdjust}
+              onMouseDown={handleMouseDown}
+              onMouseEnter={handleMouseEnter}
+              onMouseUp={handleMouseUp}
+              isDragging={isDragging}
+            />
+          </div>
         </div>
 
         {/* Right side - Operations Section (20%) */}
@@ -496,7 +535,7 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
                         onChange={(e) => setSelectedAction(e.target.value as UpdatePricingRangeAction)}
                         className="mr-2"
                       />
-                      Add Pricing Range
+                      Open
                     </label>
                     <label className="flex items-center text-xs">
                       <input
@@ -507,7 +546,7 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
                         onChange={(e) => setSelectedAction(e.target.value as UpdatePricingRangeAction)}
                         className="mr-2"
                       />
-                      Delete Pricing Range
+                      Close
                     </label>
                   </div>
                 </div>
@@ -616,6 +655,7 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
                   <p>• Drag to select a range</p>
                   <p>• Click handlers to adjust dates</p>
                   <p>• Blue handles appear on edges</p>
+                  <p>• Ranges can span across months</p>
                   <p>• Selected range enables pricing ops</p>
                   <p>• Use Clear Selection to reset</p>
                 </div>

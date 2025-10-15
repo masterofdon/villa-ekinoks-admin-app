@@ -146,7 +146,7 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
     const isBooked = !!booking; // Availability status
     const showBanner = !!bannerBooking; // Banner display status
     const price = getPriceForDate(date);
-    const isClosed = !isBooked && !showBanner && !price; // Closed if no booking, no banner, and no price
+    const isClosed = !isBooked && !price; // Closed if no booking and no price (regardless of banner/checkout status)
     const isSelected = isDateSelected(date); // Check if date is in selected range
     const isSelectStart = isSelectionStart(date); // Check if date is start of selection
     const isSelectEnd = isSelectionEnd(date); // Check if date is end of selection
@@ -198,21 +198,25 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
                   relative h-full w-full p-1 flex flex-col justify-between
                   ${dayData.isSelected
                     ? '' // Selection will be handled by inline style
-                    : dayData.isBooked
-                      ? 'bg-blue-50 hover:bg-blue-100'
-                      : dayData.showBanner
-                        ? 'bg-gray-50 hover:bg-gray-100' // Checkout day - same as available (gray)
-                        : dayData.isClosed
-                          ? 'bg-red-50 hover:bg-red-100' // Closed day - red background
+                    : dayData.isClosed
+                      ? 'bg-red-50 hover:bg-red-100' // Closed day - red background (prioritized over other states)
+                      : dayData.isBooked
+                        ? 'bg-blue-50 hover:bg-blue-100'
+                        : dayData.showBanner
+                          ? 'bg-gray-50 hover:bg-gray-100' // Checkout day - same as available (gray)
                           : 'bg-gray-50 hover:bg-gray-100' // Available day - gray background
                   }
                   cursor-pointer transition-colors
                 `}
                 style={dayData.isSelected ? { backgroundColor: '#f0ad8d33' } : {}}
                 title={
-                  dayData.booking
-                    ? `${dayData.isBooked ? 'Booked' : 'Checkout'} by ${dayData.booking.inquiror.personalinfo.firstname} ${dayData.booking.inquiror.personalinfo.lastname}`
-                    : undefined
+                  dayData.booking && dayData.isClosed
+                    ? `${dayData.isBooked ? 'Booked' : 'Checkout'} by ${dayData.booking.inquiror.personalinfo.firstname} ${dayData.booking.inquiror.personalinfo.lastname} - Day is closed`
+                    : dayData.isClosed
+                      ? 'Day is closed'
+                      : dayData.booking
+                        ? `${dayData.isBooked ? 'Booked' : 'Checkout'} by ${dayData.booking.inquiror.personalinfo.firstname} ${dayData.booking.inquiror.personalinfo.lastname}`
+                        : undefined
                 }
                 onClick={() => !isDragging && onDateSelect?.(dayData.date)}
                 onMouseDown={() => onMouseDown?.(dayData.date)}
@@ -220,9 +224,9 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
                 onMouseUp={() => onMouseUp?.()}
               >
                 {/* Day number */}
-                <div className={`text-sm font-medium ${dayData.isBooked ? 'text-blue-900' :
-                  dayData.showBanner ? 'text-gray-900' :
-                    dayData.isClosed ? 'text-red-900' :
+                <div className={`text-sm font-medium ${dayData.isClosed ? 'text-red-900' :
+                  dayData.isBooked ? 'text-blue-900' :
+                    dayData.showBanner ? 'text-gray-900' :
                       'text-gray-900'
                   }`}>
                   {dayData.day}
@@ -273,20 +277,6 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
                   </div>
                 )}
 
-                {/* Closed banner */}
-                {dayData.isClosed && (
-                  <div className="absolute top-6 left-0 right-0">
-                    <div
-                      className="text-white text-xs py-0.5 text-center font-medium h-5"
-                      style={{ backgroundColor: '#eb5a44' }}
-                    >
-                      <div className="truncate px-1">
-                        Closed
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {/* Selection Handlers */}
                 {dayData.isSelectStart && (
                   <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1">
@@ -324,13 +314,13 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
 
                 {/* Price display */}
                 <div className="mt-auto">
-                  {dayData.isBooked ? (
-                    <div className="text-xs text-blue-600 font-medium text-center">
-                      Booked
-                    </div>
-                  ) : dayData.isClosed ? (
+                  {dayData.isClosed ? (
                     <div className="text-xs text-red-600 font-medium text-center">
                       Closed
+                    </div>
+                  ) : dayData.isBooked ? (
+                    <div className="text-xs text-blue-600 font-medium text-center">
+                      Booked
                     </div>
                   ) : dayData.price ? (
                     <div className="flex justify-end">
