@@ -321,3 +321,49 @@ export type BookingFullDetails = VillaBookingSummaryView & {
   specialRequests?: string;
   internalNotes?: string;
 };
+
+export type Get_DiscountCode_WC_MLS_XAction_Response = {
+  codes: DiscountCode[];
+};
+
+export type DiscountCode = {
+  id: string;
+  code: string;
+  createdby: VillaAdminUser;
+  discounttype: DiscountType;
+  value: string;
+  status: DiscountCodeStatus;
+  timestamps: DiscountCodeTimestamps;
+  usagetype: DiscountCodeUsageType;
+};
+
+export type DiscountCodeTimestamps = {
+  creationdate: number;
+  expirationdate?: number | null; // optional expiration
+}
+
+export type DiscountType = "PERCENTAGE" | "FIXED_AMOUNT";
+
+export type DiscountCodeStatus = "ACTIVE" | "INACTIVE" | "EXPIRED";
+
+export type DiscountCodeUsageType = "SINGLE_USE" | "MULTI_USE";
+
+export type Create_DiscountCode_WC_MLS_XAction = {
+  villaid: string;
+  type: DiscountType;
+  value: string;
+  usagetype: DiscountCodeUsageType;
+  expirationdate?: number | null; // timestamp, optional
+}
+
+export type Create_DiscountCode_WC_MLS_XAction_Response = {
+  id: string;
+};
+
+export type Update_DiscountCodeStatus_WC_MLS_XAction = {
+  status: DiscountCodeStatus;
+}
+
+export type Update_DiscountCodeStatus_WC_MLS_XAction_Response = {
+  id: string;
+}

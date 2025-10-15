@@ -16,6 +16,11 @@ import type {
   Get_VillaStats_WC_MLS_XAction_Response,
   VillaBookingSummaryView,
   VillaBookingsFilter,
+  Get_DiscountCode_WC_MLS_XAction_Response,
+  Create_DiscountCode_WC_MLS_XAction,
+  Create_DiscountCode_WC_MLS_XAction_Response,
+  Update_DiscountCodeStatus_WC_MLS_XAction,
+  Update_DiscountCodeStatus_WC_MLS_XAction_Response,
 } from '@/types';
 
 export const authApi = {
@@ -214,5 +219,58 @@ export const villaBookingsApi = {
       ...filter,
       villaid: villaAdminUser.villa.id,
     });
+  },
+};
+
+export const discountCodesApi = {
+  // Get discount codes for a villa
+  getDiscountCodes: async (villaid: string): Promise<Get_DiscountCode_WC_MLS_XAction_Response> => {
+    const response = await api.get<GenericApiResponse<Get_DiscountCode_WC_MLS_XAction_Response>>('/discount-codes', {
+      params: { villaid },
+    });
+    return response.data.object;
+  },
+
+  // Helper function to get discount codes for current user's villa
+  getCurrentVillaDiscountCodes: async (): Promise<Get_DiscountCode_WC_MLS_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    return discountCodesApi.getDiscountCodes(villaAdminUser.villa.id);
+  },
+
+  // Create a new discount code
+  createDiscountCode: async (discountCodeData: Create_DiscountCode_WC_MLS_XAction): Promise<Create_DiscountCode_WC_MLS_XAction_Response> => {
+    const response = await api.post<GenericApiResponse<Create_DiscountCode_WC_MLS_XAction_Response>>('/discount-codes', discountCodeData);
+    return response.data.object;
+  },
+
+  // Helper function to create discount code for current user's villa
+  createCurrentVillaDiscountCode: async (
+    discountCodeData: Omit<Create_DiscountCode_WC_MLS_XAction, 'villaid'>
+  ): Promise<Create_DiscountCode_WC_MLS_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    return discountCodesApi.createDiscountCode({
+      ...discountCodeData,
+      villaid: villaAdminUser.villa.id,
+    });
+  },
+
+  // Update discount code status
+  updateDiscountCodeStatus: async (
+    discountCodeId: string, 
+    statusData: Update_DiscountCodeStatus_WC_MLS_XAction
+  ): Promise<Update_DiscountCodeStatus_WC_MLS_XAction_Response> => {
+    const response = await api.put<GenericApiResponse<Update_DiscountCodeStatus_WC_MLS_XAction_Response>>(
+      `/discount-codes/${discountCodeId}/status`, 
+      statusData
+    );
+    return response.data.object;
   },
 };

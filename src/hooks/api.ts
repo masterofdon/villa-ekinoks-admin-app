@@ -1,11 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi } from '@/lib/services';
+import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi } from '@/lib/services';
 import type { 
   AppUserLogin_WC_MLS_XAction, 
   Verify_LoginVerification_XAction,
   CreateVillaRequest, 
   UpdateVillaRequest,
-  VillaBookingsFilter
+  VillaBookingsFilter,
+  Create_DiscountCode_WC_MLS_XAction,
+  Update_DiscountCodeStatus_WC_MLS_XAction,
 } from '@/types';
 
 // Auth hooks
@@ -190,5 +192,49 @@ export const useVillaBookings = (filter: Omit<VillaBookingsFilter, 'villaid'>) =
     })(),
     retry: false, // Don't retry if user doesn't have villa data
     staleTime: 1 * 60 * 1000, // 1 minute stale time
+  });
+};
+
+// Discount Codes hooks
+export const useDiscountCodes = () => {
+  return useQuery({
+    queryKey: ['discount-codes'],
+    queryFn: () => discountCodesApi.getCurrentVillaDiscountCodes(),
+    enabled: (() => {
+      // Only enable if user is authenticated and has villa data
+      if (!authApi.isAuthenticated()) return false;
+      const villaAdminUser = authApi.getCurrentVillaAdminUser();
+      return !!(villaAdminUser && villaAdminUser.villa && villaAdminUser.villa.id);
+    })(),
+    retry: false, // Don't retry if user doesn't have villa data
+    staleTime: 2 * 60 * 1000, // 2 minutes stale time
+  });
+};
+
+export const useCreateDiscountCode = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (discountCodeData: Omit<Create_DiscountCode_WC_MLS_XAction, 'villaid'>) => 
+      discountCodesApi.createCurrentVillaDiscountCode(discountCodeData),
+    onSuccess: () => {
+      // Invalidate and refetch discount codes
+      queryClient.invalidateQueries({ queryKey: ['discount-codes'] });
+    },
+  });
+};
+
+export const useUpdateDiscountCodeStatus = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ discountCodeId, statusData }: { 
+      discountCodeId: string; 
+      statusData: Update_DiscountCodeStatus_WC_MLS_XAction 
+    }) => discountCodesApi.updateDiscountCodeStatus(discountCodeId, statusData),
+    onSuccess: () => {
+      // Invalidate and refetch discount codes
+      queryClient.invalidateQueries({ queryKey: ['discount-codes'] });
+    },
   });
 };
