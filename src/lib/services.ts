@@ -21,6 +21,11 @@ import type {
   Create_DiscountCode_WC_MLS_XAction_Response,
   Update_DiscountCodeStatus_WC_MLS_XAction,
   Update_DiscountCodeStatus_WC_MLS_XAction_Response,
+  ServicableItem,
+  Create_ServiceableItem_WC_MLS_XAction,
+  Create_ServicableItem_WC_MLS_XAction_Response,
+  Update_ServicableItemStatus_WC_MLS_XAction,
+  Update_ServicableItemStatus_WC_MLS_XAction_Response,
 } from '@/types';
 
 export const authApi = {
@@ -272,5 +277,64 @@ export const discountCodesApi = {
       statusData
     );
     return response.data.object;
+  },
+};
+
+// Serviceable Items API
+export const servicableItemsApi = {
+  // Get serviceable items for a villa
+  getServicableItems: async (villaid: string, page = 0, size = 10): Promise<Page<ServicableItem>> => {
+    const response = await api.get<GenericApiResponse<Page<ServicableItem>>>('/servicable-items', {
+      params: { villaid, page, size }
+    });
+    return response.data.object;
+  },
+
+  // Get serviceable items for current user's villa
+  getCurrentVillaServicableItems: async (page = 0, size = 10): Promise<Page<ServicableItem>> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    return servicableItemsApi.getServicableItems(villaAdminUser.villa.id, page, size);
+  },
+
+  // Create serviceable item
+  createServicableItem: async (servicableItemData: Create_ServiceableItem_WC_MLS_XAction): Promise<Create_ServicableItem_WC_MLS_XAction_Response> => {
+    const response = await api.post<GenericApiResponse<Create_ServicableItem_WC_MLS_XAction_Response>>('/servicable-items', servicableItemData);
+    return response.data.object;
+  },
+
+  // Helper function to create serviceable item for current user's villa
+  createCurrentVillaServicableItem: async (
+    servicableItemData: Omit<Create_ServiceableItem_WC_MLS_XAction, 'villaid'>
+  ): Promise<Create_ServicableItem_WC_MLS_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    return servicableItemsApi.createServicableItem({
+      ...servicableItemData,
+      villaid: villaAdminUser.villa.id,
+    });
+  },
+
+  // Update serviceable item status
+  updateServicableItemStatus: async (
+    servicableItemId: string, 
+    statusData: Update_ServicableItemStatus_WC_MLS_XAction
+  ): Promise<Update_ServicableItemStatus_WC_MLS_XAction_Response> => {
+    const response = await api.put<GenericApiResponse<Update_ServicableItemStatus_WC_MLS_XAction_Response>>(
+      `/servicable-items/${servicableItemId}/status`, 
+      statusData
+    );
+    return response.data.object;
+  },
+
+  // Delete serviceable item
+  deleteServicableItem: async (servicableItemId: string): Promise<void> => {
+    await api.delete(`/servicable-items/${servicableItemId}`);
   },
 };

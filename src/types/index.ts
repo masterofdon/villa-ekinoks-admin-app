@@ -225,7 +225,14 @@ export type ServicableItem = {
   name: string;
   description: string;
   price: Price;
+  iconlink: string;
+  unit: string;
+  minimum: number;
+  maximum: number;
+  status: ServicableItemStatus
 };
+
+export type ServicableItemStatus = "ACTIVE" | "INACTIVE";
 
 export type VillaBookingAdditionalService = {
   item: ServicableItem;
@@ -365,5 +372,29 @@ export type Update_DiscountCodeStatus_WC_MLS_XAction = {
 }
 
 export type Update_DiscountCodeStatus_WC_MLS_XAction_Response = {
+  id: string;
+}
+
+export type Create_ServiceableItem_WC_MLS_XAction = {
+
+  villaid: string;
+  name: string;
+  description: string;
+  iconlink: string;
+  unit: string;
+  price: Price;
+  minimum: number;
+  maximum: number;
+}
+
+export type Create_ServicableItem_WC_MLS_XAction_Response = {
+  id: string;
+}
+
+export type Update_ServicableItemStatus_WC_MLS_XAction = {
+  status: ServicableItemStatus;
+}
+
+export type Update_ServicableItemStatus_WC_MLS_XAction_Response = {
   id: string;
 }

@@ -6,16 +6,16 @@ import { formatDisplayDate, formatDateTime } from '@/lib/date-utils';
 import { getBookingStatusColor, formatCurrency, calculateBookingNights } from '@/lib/booking-utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { 
-  ArrowLeft, 
-  User, 
-  Mail, 
-  Phone, 
-  CreditCard, 
-  Calendar, 
-  Users, 
-  MapPin, 
-  FileText, 
+import {
+  ArrowLeft,
+  User,
+  Mail,
+  Phone,
+  CreditCard,
+  Calendar,
+  Users,
+  MapPin,
+  FileText,
   Download,
   Edit,
   CheckCircle,
@@ -146,11 +146,11 @@ const InquirorDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = (
 
 const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({ booking }) => {
   const bookingNights = calculateBookingNights(booking.startdate, booking.enddate);
-  const accommodationTotal = booking.bookingpayment ? parseFloat(booking.bookingpayment.amount) : 0;
-  const servicesTotal = booking.services?.reduce((sum, service) => 
-    sum + (service.payment ? parseFloat(service.payment.amount) * service.quantity : 0), 0) || 0;
-  const totalAmount = accommodationTotal + servicesTotal;
 
+  const servicesTotal = booking.services?.reduce((sum, service) =>
+    sum + (service.item.price ? parseFloat(service.item.price.amount) * service.quantity : 0), 0) || 0;
+  const totalAmount = booking.bookingpayment ? parseFloat(booking.bookingpayment.amount) : 0;
+  const accomodationTotal = totalAmount - servicesTotal;
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -173,7 +173,7 @@ const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-gray-600">Amount</span>
                   <span className="font-medium">
-                    {formatCurrency(booking.bookingpayment.amount, booking.bookingpayment.currency)}
+                    {formatCurrency(accomodationTotal.toFixed(2), booking.bookingpayment.currency)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
@@ -225,7 +225,7 @@ const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-600">Accommodation ({bookingNights} nights)</span>
-                <span>{formatCurrency(accommodationTotal.toString(), booking.bookingpayment?.currency || 'EUR')}</span>
+                <span>{formatCurrency(accomodationTotal.toFixed(2), booking.bookingpayment?.currency || 'EUR')}</span>
               </div>
               {servicesTotal > 0 && (
                 <div className="flex justify-between">
@@ -245,7 +245,7 @@ const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({
   );
 };
 
-const BookingOperationsSection: React.FC<{ 
+const BookingOperationsSection: React.FC<{
   booking: VillaBookingSummaryView;
   onStatusChange?: (bookingId: string, newStatus: VillaBookingStatus) => void;
   onEdit?: (bookingId: string) => void;
@@ -254,7 +254,7 @@ const BookingOperationsSection: React.FC<{
 
   const handleStatusChange = async (newStatus: VillaBookingStatus) => {
     if (!onStatusChange) return;
-    
+
     setIsLoading(true);
     try {
       await onStatusChange(booking.id, newStatus);
@@ -288,7 +288,7 @@ const BookingOperationsSection: React.FC<{
                   Confirm Booking
                 </Button>
               )}
-              
+
               {canReject && (
                 <Button
                   onClick={() => handleStatusChange('REJECTED')}
@@ -300,7 +300,7 @@ const BookingOperationsSection: React.FC<{
                   Reject Booking
                 </Button>
               )}
-              
+
               {canCancel && (
                 <Button
                   onClick={() => handleStatusChange('CANCELLED')}
@@ -327,7 +327,7 @@ const BookingOperationsSection: React.FC<{
                 <Edit className="w-4 h-4 mr-2" />
                 Edit Booking
               </Button>
-              
+
               <Button
                 variant="outline"
                 className="w-full"
@@ -335,7 +335,7 @@ const BookingOperationsSection: React.FC<{
                 <Download className="w-4 h-4 mr-2" />
                 Download Confirmation
               </Button>
-              
+
               <Button
                 variant="outline"
                 className="w-full"
@@ -370,11 +370,11 @@ const BookingOperationsSection: React.FC<{
   );
 };
 
-export const BookingDetailsPage: React.FC<BookingDetailsPageProps> = ({ 
-  booking, 
-  onBack, 
-  onStatusChange, 
-  onEdit 
+export const BookingDetailsPage: React.FC<BookingDetailsPageProps> = ({
+  booking,
+  onBack,
+  onStatusChange,
+  onEdit
 }) => {
   const bookingNights = calculateBookingNights(booking.startdate, booking.enddate);
 
@@ -428,7 +428,7 @@ export const BookingDetailsPage: React.FC<BookingDetailsPageProps> = ({
                       <p className="font-medium">{formatDisplayDate(booking.startdate)}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center">
                     <Calendar className="w-5 h-5 mr-3 text-gray-400" />
                     <div>
@@ -436,7 +436,7 @@ export const BookingDetailsPage: React.FC<BookingDetailsPageProps> = ({
                       <p className="font-medium">{formatDisplayDate(booking.enddate)}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center">
                     <Moon className="w-5 h-5 mr-3 text-gray-400" />
                     <div>
@@ -444,7 +444,7 @@ export const BookingDetailsPage: React.FC<BookingDetailsPageProps> = ({
                       <p className="font-medium">{bookingNights}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center">
                     <Users className="w-5 h-5 mr-3 text-gray-400" />
                     <div>
@@ -465,8 +465,8 @@ export const BookingDetailsPage: React.FC<BookingDetailsPageProps> = ({
 
           {/* Right Section - Operations */}
           <div className="lg:col-span-1">
-            <BookingOperationsSection 
-              booking={booking} 
+            <BookingOperationsSection
+              booking={booking}
               onStatusChange={onStatusChange}
               onEdit={onEdit}
             />

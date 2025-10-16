@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi } from '@/lib/services';
+import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi } from '@/lib/services';
 import type { 
   AppUserLogin_WC_MLS_XAction, 
   Verify_LoginVerification_XAction,
@@ -8,6 +8,8 @@ import type {
   VillaBookingsFilter,
   Create_DiscountCode_WC_MLS_XAction,
   Update_DiscountCodeStatus_WC_MLS_XAction,
+  Create_ServiceableItem_WC_MLS_XAction,
+  Update_ServicableItemStatus_WC_MLS_XAction,
 } from '@/types';
 
 // Auth hooks
@@ -235,6 +237,63 @@ export const useUpdateDiscountCodeStatus = () => {
     onSuccess: () => {
       // Invalidate and refetch discount codes
       queryClient.invalidateQueries({ queryKey: ['discount-codes'] });
+    },
+  });
+};
+
+// Serviceable Items hooks
+export const useServicableItems = (page = 0, size = 10) => {
+  return useQuery({
+    queryKey: ['servicable-items', page, size],
+    queryFn: () => servicableItemsApi.getCurrentVillaServicableItems(page, size),
+    enabled: (() => {
+      // Only enable if user is authenticated and has villa data
+      if (!authApi.isAuthenticated()) return false;
+      const villaAdminUser = authApi.getCurrentVillaAdminUser();
+      return !!(villaAdminUser && villaAdminUser.villa && villaAdminUser.villa.id);
+    })(),
+    retry: false, // Don't retry if user doesn't have villa data
+    staleTime: 2 * 60 * 1000, // 2 minutes stale time
+  });
+};
+
+export const useCreateServicableItem = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (servicableItemData: Omit<Create_ServiceableItem_WC_MLS_XAction, 'villaid'>) => 
+      servicableItemsApi.createCurrentVillaServicableItem(servicableItemData),
+    onSuccess: () => {
+      // Invalidate and refetch serviceable items
+      queryClient.invalidateQueries({ queryKey: ['servicable-items'] });
+    },
+  });
+};
+
+export const useUpdateServicableItemStatus = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ servicableItemId, statusData }: { 
+      servicableItemId: string; 
+      statusData: Update_ServicableItemStatus_WC_MLS_XAction 
+    }) => servicableItemsApi.updateServicableItemStatus(servicableItemId, statusData),
+    onSuccess: () => {
+      // Invalidate and refetch serviceable items
+      queryClient.invalidateQueries({ queryKey: ['servicable-items'] });
+    },
+  });
+};
+
+export const useDeleteServicableItem = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (servicableItemId: string) => 
+      servicableItemsApi.deleteServicableItem(servicableItemId),
+    onSuccess: () => {
+      // Invalidate and refetch serviceable items
+      queryClient.invalidateQueries({ queryKey: ['servicable-items'] });
     },
   });
 };
