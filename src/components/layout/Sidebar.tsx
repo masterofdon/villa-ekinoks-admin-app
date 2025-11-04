@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, LogOut, Settings, Calendar, BookOpen, Percent, Package } from 'lucide-react';
+import { LayoutDashboard, LogOut, Settings, Calendar, BookOpen, Percent, Package, Sparkles } from 'lucide-react';
 import { useLogout } from '@/hooks/api';
 import { UserProfile, UserAvatar } from '@/components/user/UserProfile';
 
@@ -28,6 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Calendar', href: '/calendar', icon: Calendar },
     { name: 'Bookings', href: '/bookings', icon: BookOpen },
+    { name: 'Villa Facilities', href: '/villa-facilities', icon: Sparkles },
     { name: 'Serviceable Items', href: '/servicable-items', icon: Package },
     { name: 'Discount Codes', href: '/discount-codes', icon: Percent },
     { name: 'Settings', href: '/settings', icon: Settings },

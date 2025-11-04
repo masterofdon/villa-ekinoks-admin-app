@@ -398,3 +398,38 @@ export type Update_ServicableItemStatus_WC_MLS_XAction = {
 export type Update_ServicableItemStatus_WC_MLS_XAction_Response = {
   id: string;
 }
+
+export type SimpleVillaFacilityItemView = {
+  name: string;
+  icon: string;
+}
+
+export type Get_VillaFacilityItems_WC_MLS_XAction_Response = {
+  [key: string]: SimpleVillaFacilityItemView[];
+};
+
+export type Get_VillaFacilities_WC_MLS_XAction_Response = {
+  [key: string]: VillaFacilityCategoryMapView;
+}
+
+export type VillaFacilityCategoryMapView = {
+  id: string;
+  priority: number;
+  facilities: VillaFacilitySimpleView[];
+}
+
+export type VillaFacilitySimpleView = {
+  id: string;
+  name: string;
+  description: string;
+  priority: number;
+}
+
+export type Create_VillaFacilityItem_WC_MLS_XAction = {
+  villafacilityids: string[];
+}
+
+export type Create_VillaFacilityItem_WC_MLS_XAction_Response = {
+  id: string;
+}
+

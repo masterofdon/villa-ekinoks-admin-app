@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi } from '@/lib/services';
+import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi, villaFacilitiesApi } from '@/lib/services';
 import type { 
   AppUserLogin_WC_MLS_XAction, 
   Verify_LoginVerification_XAction,
@@ -10,6 +10,7 @@ import type {
   Update_DiscountCodeStatus_WC_MLS_XAction,
   Create_ServiceableItem_WC_MLS_XAction,
   Update_ServicableItemStatus_WC_MLS_XAction,
+  Create_VillaFacilityItem_WC_MLS_XAction,
 } from '@/types';
 
 // Auth hooks
@@ -294,6 +295,43 @@ export const useDeleteServicableItem = () => {
     onSuccess: () => {
       // Invalidate and refetch serviceable items
       queryClient.invalidateQueries({ queryKey: ['servicable-items'] });
+    },
+  });
+};
+
+// Villa Facilities hooks
+export const useVillaFacilityItems = () => {
+  return useQuery({
+    queryKey: ['villa-facility-items'],
+    queryFn: () => villaFacilitiesApi.getCurrentVillaFacilityItems(),
+    enabled: (() => {
+      // Only enable if user is authenticated and has villa data
+      if (!authApi.isAuthenticated()) return false;
+      const villaAdminUser = authApi.getCurrentVillaAdminUser();
+      return !!(villaAdminUser && villaAdminUser.villa && villaAdminUser.villa.id);
+    })(),
+    retry: false, // Don't retry if user doesn't have villa data
+    staleTime: 2 * 60 * 1000, // 2 minutes stale time
+  });
+};
+
+export const useAvailableVillaFacilities = () => {
+  return useQuery({
+    queryKey: ['available-villa-facilities'],
+    queryFn: () => villaFacilitiesApi.getAvailableVillaFacilities(),
+    staleTime: 5 * 60 * 1000, // 5 minutes stale time (these don't change often)
+  });
+};
+
+export const useCreateVillaFacilityItem = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (facilityData: Create_VillaFacilityItem_WC_MLS_XAction) => 
+      villaFacilitiesApi.createCurrentVillaFacilityItem(facilityData),
+    onSuccess: () => {
+      // Invalidate and refetch villa facility items
+      queryClient.invalidateQueries({ queryKey: ['villa-facility-items'] });
     },
   });
 };

@@ -26,6 +26,10 @@ import type {
   Create_ServicableItem_WC_MLS_XAction_Response,
   Update_ServicableItemStatus_WC_MLS_XAction,
   Update_ServicableItemStatus_WC_MLS_XAction_Response,
+  Get_VillaFacilityItems_WC_MLS_XAction_Response,
+  Get_VillaFacilities_WC_MLS_XAction_Response,
+  Create_VillaFacilityItem_WC_MLS_XAction,
+  Create_VillaFacilityItem_WC_MLS_XAction_Response,
 } from '@/types';
 
 export const authApi = {
@@ -336,5 +340,54 @@ export const servicableItemsApi = {
   // Delete serviceable item
   deleteServicableItem: async (servicableItemId: string): Promise<void> => {
     await api.delete(`/servicable-items/${servicableItemId}`);
+  },
+};
+
+// Villa Facilities API
+export const villaFacilitiesApi = {
+  // Get villa facilities for a villa (current facilities)
+  getVillaFacilityItems: async (villaid: string): Promise<Get_VillaFacilityItems_WC_MLS_XAction_Response> => {
+    const response = await api.get<GenericApiResponse<Get_VillaFacilityItems_WC_MLS_XAction_Response>>(`/villas/${villaid}/villa-facilities`);
+    return response.data.object;
+  },
+
+  // Get villa facilities for current user's villa
+  getCurrentVillaFacilityItems: async (): Promise<Get_VillaFacilityItems_WC_MLS_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    return villaFacilitiesApi.getVillaFacilityItems(villaAdminUser.villa.id);
+  },
+
+  // Get all available villa facilities from pool
+  getAvailableVillaFacilities: async (): Promise<Get_VillaFacilities_WC_MLS_XAction_Response> => {
+    const response = await api.get<GenericApiResponse<Get_VillaFacilities_WC_MLS_XAction_Response>>('/villa-facilities');
+    return response.data.object;
+  },
+
+  // Create villa facility item (add facility to villa)
+  createVillaFacilityItem: async (
+    villaid: string, 
+    facilityData: Create_VillaFacilityItem_WC_MLS_XAction
+  ): Promise<Create_VillaFacilityItem_WC_MLS_XAction_Response> => {
+    const response = await api.post<GenericApiResponse<Create_VillaFacilityItem_WC_MLS_XAction_Response>>(
+      `/villas/${villaid}/villa-facilities`, 
+      facilityData
+    );
+    return response.data.object;
+  },
+
+  // Create villa facility item for current user's villa
+  createCurrentVillaFacilityItem: async (
+    facilityData: Create_VillaFacilityItem_WC_MLS_XAction
+  ): Promise<Create_VillaFacilityItem_WC_MLS_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    return villaFacilitiesApi.createVillaFacilityItem(villaAdminUser.villa.id, facilityData);
   },
 };
