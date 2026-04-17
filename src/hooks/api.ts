@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi, villaFacilitiesApi } from '@/lib/services';
+import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi, villaFacilitiesApi, villaNearbyServicesApi } from '@/lib/services';
 import type { 
   AppUserLogin_WC_MLS_XAction, 
   Verify_LoginVerification_XAction,
@@ -11,6 +11,7 @@ import type {
   Create_ServiceableItem_WC_MLS_XAction,
   Update_ServicableItemStatus_WC_MLS_XAction,
   Create_VillaFacilityItem_WC_MLS_XAction,
+  Create_VillaNearbyService_WC_MLS_XAction,
 } from '@/types';
 
 // Auth hooks
@@ -332,6 +333,35 @@ export const useCreateVillaFacilityItem = () => {
     onSuccess: () => {
       // Invalidate and refetch villa facility items
       queryClient.invalidateQueries({ queryKey: ['villa-facility-items'] });
+    },
+  });
+};
+
+// Villa Nearby Services hooks
+export const useVillaNearbyServices = () => {
+  return useQuery({
+    queryKey: ['villa-nearby-services'],
+    queryFn: () => villaNearbyServicesApi.getCurrentVillaNearbyServices(),
+    enabled: (() => {
+      // Only enable if user is authenticated and has villa data
+      if (!authApi.isAuthenticated()) return false;
+      const villaAdminUser = authApi.getCurrentVillaAdminUser();
+      return !!(villaAdminUser && villaAdminUser.villa && villaAdminUser.villa.id);
+    })(),
+    retry: false, // Don't retry if user doesn't have villa data
+    staleTime: 2 * 60 * 1000, // 2 minutes stale time
+  });
+};
+
+export const useCreateVillaNearbyService = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (serviceData: Omit<Create_VillaNearbyService_WC_MLS_XAction, 'villaid'>) => 
+      villaNearbyServicesApi.createCurrentVillaNearbyService(serviceData),
+    onSuccess: () => {
+      // Invalidate and refetch villa nearby services
+      queryClient.invalidateQueries({ queryKey: ['villa-nearby-services'] });
     },
   });
 };

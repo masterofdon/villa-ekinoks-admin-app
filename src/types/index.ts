@@ -433,3 +433,38 @@ export type Create_VillaFacilityItem_WC_MLS_XAction_Response = {
   id: string;
 }
 
+export type VillaNearbyService = {
+  id: string;
+  type: VillaNearbyServiceType;
+  name: string;
+  distance: string;
+  location: LatLng;
+}
+
+export type LatLng = {
+  latitude: number;
+  longitude: number;
+}
+
+export type VillaNearbyServiceType =
+  "RESTAURANT" |
+  "HOSPITAL" |
+  "SHOPPING_MALL" |
+  "PARK" |
+  "BEACH" |
+  "AIRPORT" |
+  "TRAIN_STATION" |
+  "BUS_STOP";
+
+export type Create_VillaNearbyService_WC_MLS_XAction = {
+  villaid: string;
+  type: VillaNearbyServiceType;
+  name: string;
+  distance: string;
+  location: LatLng;
+}
+
+export type Create_VillaNearbyService_WC_MLS_XAction_Response = {
+  id: string;
+}
+

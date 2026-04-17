@@ -30,6 +30,9 @@ import type {
   Get_VillaFacilities_WC_MLS_XAction_Response,
   Create_VillaFacilityItem_WC_MLS_XAction,
   Create_VillaFacilityItem_WC_MLS_XAction_Response,
+  VillaNearbyService,
+  Create_VillaNearbyService_WC_MLS_XAction,
+  Create_VillaNearbyService_WC_MLS_XAction_Response,
 } from '@/types';
 
 export const authApi = {
@@ -389,5 +392,52 @@ export const villaFacilitiesApi = {
     }
     
     return villaFacilitiesApi.createVillaFacilityItem(villaAdminUser.villa.id, facilityData);
+  },
+};
+
+// Villa Nearby Services API
+export const villaNearbyServicesApi = {
+  // Get villa nearby services for a villa
+  getVillaNearbyServices: async (villaid: string): Promise<VillaNearbyService[]> => {
+    const response = await api.get<GenericApiResponse<VillaNearbyService[]>>('/villa-nearby-services', {
+      params: { villaid }
+    });
+    return response.data.object;
+  },
+
+  // Get villa nearby services for current user's villa
+  getCurrentVillaNearbyServices: async (): Promise<VillaNearbyService[]> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    return villaNearbyServicesApi.getVillaNearbyServices(villaAdminUser.villa.id);
+  },
+
+  // Create villa nearby service
+  createVillaNearbyService: async (
+    serviceData: Create_VillaNearbyService_WC_MLS_XAction
+  ): Promise<Create_VillaNearbyService_WC_MLS_XAction_Response> => {
+    const response = await api.post<GenericApiResponse<Create_VillaNearbyService_WC_MLS_XAction_Response>>(
+      '/villa-nearby-services', 
+      serviceData
+    );
+    return response.data.object;
+  },
+
+  // Create villa nearby service for current user's villa
+  createCurrentVillaNearbyService: async (
+    serviceData: Omit<Create_VillaNearbyService_WC_MLS_XAction, 'villaid'>
+  ): Promise<Create_VillaNearbyService_WC_MLS_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    return villaNearbyServicesApi.createVillaNearbyService({
+      ...serviceData,
+      villaid: villaAdminUser.villa.id,
+    });
   },
 };
