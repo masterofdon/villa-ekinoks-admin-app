@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Plus, Percent, DollarSign, Clock, Users, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
 import { CreateDiscountCodeModal } from './CreateDiscountCodeModal';
+import { notification } from 'antd';
 
 
 const DiscountTypeIcon: React.FC<{ type: DiscountType }> = ({ type }) => {
@@ -225,7 +226,7 @@ export const DiscountCodesManagementPage: React.FC = () => {
         statusData: { status: newStatus }
       });
     } catch (error) {
-      alert(`Failed to update discount code status: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      notification.error({ message: `Failed to update discount code status: ${error instanceof Error ? error.message : 'Unknown error'}` });
     }
   };
 

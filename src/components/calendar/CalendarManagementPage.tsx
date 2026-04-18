@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { CalendarMonthViewComponent } from '@/components/calendar/CalendarMonthViewComponent';
 import { VillaPricingWithVillaBooking } from '@/types';
 import { useCurrentVillaPricing, useAuthState } from '@/hooks/api';
+import { notification } from 'antd';
 import { api } from '@/lib/api';
 
 // Types for pricing operations
@@ -202,12 +203,12 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
   // Handle pricing range update
   const handleSavePricingRange = async () => {
     if (!selectedStartDate || !selectedEndDate) {
-      alert('Please select a date range first');
+      notification.warning({ message: 'Please select a date range first' });
       return;
     }
 
     if (selectedAction === 'ADD' && (!priceAmount || !priceCurrency)) {
-      alert('Please enter price amount and currency');
+      notification.warning({ message: 'Please enter price amount and currency' });
       return;
     }
 
@@ -217,14 +218,14 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
       
       // Check if it's a valid number
       if (isNaN(priceNumber) || priceNumber <= 0) {
-        alert('Price amount must be a valid positive number');
+        notification.error({ message: 'Price amount must be a valid positive number' });
         return;
       }
       
       // Check if it has more than 2 decimal places
       const decimalPart = priceAmount.includes('.') ? priceAmount.split('.')[1] : '';
       if (decimalPart.length > 2) {
-        alert('Price amount should have at most 2 decimal places (e.g., 150.99)');
+        notification.warning({ message: 'Price amount should have at most 2 decimal places (e.g., 150.99)' });
         return;
       }
       
@@ -233,20 +234,20 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
       if (priceAmount !== formattedPrice && priceAmount !== priceNumber.toString()) {
         // Update the input field to show the correct format
         setPriceAmount(formattedPrice);
-        alert('Price amount has been formatted to 2 decimal places');
+        notification.info({ message: 'Price amount has been formatted to 2 decimal places' });
         return;
       }
     }
 
     if (!user) {
-      alert('User not authenticated');
+      notification.error({ message: 'User not authenticated' });
       return;
     }
 
     // Get villa ID from authenticated user
     const villaId = (user as any).villa?.id;
     if (!villaId) {
-      alert('No villa associated with this user');
+      notification.error({ message: 'No villa associated with this user' });
       return;
     }
 
@@ -268,13 +269,13 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
       // Invalidate pricing query to refetch updated data
       await queryClient.invalidateQueries({ queryKey: ['current-villa-pricing'] });
       
-      alert('Pricing range updated successfully!');
+      notification.success({ message: 'Pricing range updated successfully!' });
       clearSelection();
       setPriceAmount('');
 
     } catch (error) {
       console.error('Error updating pricing range:', error);
-      alert('Failed to update pricing range. Please try again.');
+      notification.error({ message: 'Failed to update pricing range. Please try again.' });
     } finally {
       setIsSaving(false);
     }

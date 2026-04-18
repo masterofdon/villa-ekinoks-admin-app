@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLogin, useVerifyLogin } from '@/hooks/api';
+import { notification } from 'antd';
 import { Button } from '@/components/ui/Button';
 import { Input, Label, Card, CardHeader, CardContent, CardTitle } from '@/components/ui';
 
@@ -31,7 +32,7 @@ export default function SimpleLoginPage() {
     console.log('Login form submitted with:', formData);
     
     if (!formData.login || !formData.password) {
-      alert('Please fill in all fields');
+      notification.warning({ message: 'Please fill in all fields' });
       return;
     }
     
@@ -51,7 +52,7 @@ export default function SimpleLoginPage() {
     e.preventDefault();
     
     if (!formData.code) {
-      alert('Please enter verification code');
+      notification.warning({ message: 'Please enter verification code' });
       return;
     }
     
