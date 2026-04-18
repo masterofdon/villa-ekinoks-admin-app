@@ -36,27 +36,10 @@ export async function getEufyClient(): Promise<EufySecurity> {
     const client = await EufySecurity.initialize(config);
     await client.connect();
 
-    // Wait until both stations and devices are loaded
-    await new Promise<void>((resolve) => {
-      let stationsLoaded = false;
-      let devicesLoaded = false;
-
-      const checkDone = () => {
-        if (stationsLoaded && devicesLoaded) resolve();
-      };
-
-      client.on('stations loaded', () => {
-        stationsLoaded = true;
-        checkDone();
-      });
-      client.on('devices loaded', () => {
-        devicesLoaded = true;
-        checkDone();
-      });
-
-      // Resolve after timeout in case events were already fired
-      setTimeout(resolve, 8000);
-    });
+    // Give the cloud sync time to populate stations and devices.
+    // The library emits per-item events ("station added", "device added") but
+    // has no "all loaded" event, so we wait a fixed window after connect().
+    await new Promise<void>((resolve) => setTimeout(resolve, 8000));
 
     globalThis.__eufyClient = client;
     globalThis.__eufyClientInitializing = undefined;
