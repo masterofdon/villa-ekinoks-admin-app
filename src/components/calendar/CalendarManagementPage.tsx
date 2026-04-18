@@ -483,7 +483,7 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
         </div>
 
         {/* Right side - Operations Section (20%) */}
-        <div className="w-1/5">
+        <div className="w-1/5 sticky top-8 self-start">
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Operations</h3>
 
@@ -607,7 +607,7 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
             </div>
 
             {/* Legend */}
-            <div className="mt-6 pt-4 border-t border-gray-200">
+            {/* <div className="mt-6 pt-4 border-t border-gray-200">
               <h4 className="text-sm font-medium text-gray-700 mb-2">Legend</h4>
               <div className="space-y-3 text-xs">
                 <div className="flex items-center gap-2">
@@ -646,32 +646,7 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
                   <span>Selected Period</span>
                 </div>
               </div>
-
-              {/* Selection Info */}
-              <div className="mt-4 pt-3 border-t border-gray-100">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Selection</h4>
-                <div className="space-y-1 text-xs text-gray-600">
-                  <p>• Click to start/end selection</p>
-                  <p>• Drag to select a range</p>
-                  <p>• Click handlers to adjust dates</p>
-                  <p>• Blue handles appear on edges</p>
-                  <p>• Ranges can span across months</p>
-                  <p>• Selected range enables pricing ops</p>
-                  <p>• Use Clear Selection to reset</p>
-                </div>
-              </div>
-
-              {/* Booking Info */}
-              <div className="mt-4 pt-3 border-t border-gray-100">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Booking Info</h4>
-                <div className="space-y-1 text-xs text-gray-600">
-                  <p>• Check-in: Noon onwards</p>
-                  <p>• Check-out: Before noon</p>
-                  <p>• Checkout days: Available for booking</p>
-                  <p>• Hover for guest details</p>
-                </div>
-              </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
