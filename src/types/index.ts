@@ -468,3 +468,45 @@ export type Create_VillaNearbyService_WC_MLS_XAction_Response = {
   id: string;
 }
 
+export type PropertyGallery = {
+  id: string;
+  name: string;
+  description: string;
+  images: PropertyImage[];
+};
+
+export type PropertyImage = {
+  id: string;
+  name: string;
+  description: string;
+  file: AppFile;
+};
+
+export type Create_PropertyGallery_WC_MLS_XAction = {
+  name: string;
+  description: string;
+  order: number;
+};
+
+export type Create_PropertyGallery_WC_MLS_XAction_Response = {
+  id: string;
+};
+
+export type Get_VillaPropertyGalleries_WC_MLS_XAction_Response = {
+  galleries: PropertyGallery[];
+};
+
+export type Upload_PropertyGallery_Images_Response = {
+  galleryId: string;
+  uploadedCount: number;
+  imageUrls: string[];
+  message: string;
+}
+
+export type Update_PropertyGalleryOrders_WC_MLS_XAction = {
+  idordermap: { [id: string]: number };
+};
+
+export type Update_PropertyGalleryOrders_WC_MLS_XAction_Response = {
+  id: string;
+}

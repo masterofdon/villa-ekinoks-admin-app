@@ -1,5 +1,7 @@
 import React from 'react';
 
+export { AuthImage } from './AuthImage';
+
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 export const Input: React.FC<InputProps> = ({ className = '', ...props }) => {

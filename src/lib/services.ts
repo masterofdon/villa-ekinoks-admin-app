@@ -33,6 +33,12 @@ import type {
   VillaNearbyService,
   Create_VillaNearbyService_WC_MLS_XAction,
   Create_VillaNearbyService_WC_MLS_XAction_Response,
+  Get_VillaPropertyGalleries_WC_MLS_XAction_Response,
+  Create_PropertyGallery_WC_MLS_XAction,
+  Create_PropertyGallery_WC_MLS_XAction_Response,
+  Upload_PropertyGallery_Images_Response,
+  Update_PropertyGalleryOrders_WC_MLS_XAction,
+  Update_PropertyGalleryOrders_WC_MLS_XAction_Response,
 } from '@/types';
 
 export const authApi = {
@@ -439,5 +445,75 @@ export const villaNearbyServicesApi = {
       ...serviceData,
       villaid: villaAdminUser.villa.id,
     });
+  },
+};
+
+// Property Galleries API
+export const propertyGalleriesApi = {
+  getPropertyGalleries: async (villaId: string): Promise<Get_VillaPropertyGalleries_WC_MLS_XAction_Response> => {
+    const response = await api.get<GenericApiResponse<Get_VillaPropertyGalleries_WC_MLS_XAction_Response>>(
+      `/villas/${villaId}/property-galleries`
+    );
+    return response.data.object;
+  },
+
+  getCurrentVillaPropertyGalleries: async (): Promise<Get_VillaPropertyGalleries_WC_MLS_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    return propertyGalleriesApi.getPropertyGalleries(villaAdminUser.villa.id);
+  },
+
+  createPropertyGallery: async (
+    villaId: string,
+    galleryData: Create_PropertyGallery_WC_MLS_XAction
+  ): Promise<Create_PropertyGallery_WC_MLS_XAction_Response> => {
+    const response = await api.post<GenericApiResponse<Create_PropertyGallery_WC_MLS_XAction_Response>>(
+      `/villas/${villaId}/property-galleries`,
+      galleryData
+    );
+    return response.data.object;
+  },
+
+  createCurrentVillaPropertyGallery: async (
+    galleryData: Create_PropertyGallery_WC_MLS_XAction
+  ): Promise<Create_PropertyGallery_WC_MLS_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    return propertyGalleriesApi.createPropertyGallery(villaAdminUser.villa.id, galleryData);
+  },
+
+  uploadGalleryImages: async (
+    galleryId: string,
+    files: File[],
+    descriptions: string[]
+  ): Promise<Upload_PropertyGallery_Images_Response> => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+    descriptions.forEach((desc) => formData.append('descriptions', desc));
+
+    const response = await api.post<Upload_PropertyGallery_Images_Response>(
+      `/property-galleries/${galleryId}/images`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+    return response.data;
+  },
+
+  deleteGalleryImage: async (galleryId: string, imageId: string): Promise<void> => {
+    await api.delete(`/property-galleries/${galleryId}/images/${imageId}`);
+  },
+
+  reorderPropertyGalleries: async (
+    body: Update_PropertyGalleryOrders_WC_MLS_XAction
+  ): Promise<Update_PropertyGalleryOrders_WC_MLS_XAction_Response> => {
+    const response = await api.patch<GenericApiResponse<Update_PropertyGalleryOrders_WC_MLS_XAction_Response>>(
+      '/property-galleries/re-order',
+      body
+    );
+    return response.data.object;
   },
 };

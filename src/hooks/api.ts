@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi, villaFacilitiesApi, villaNearbyServicesApi } from '@/lib/services';
+import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi, villaFacilitiesApi, villaNearbyServicesApi, propertyGalleriesApi } from '@/lib/services';
 import type { 
   AppUserLogin_WC_MLS_XAction, 
   Verify_LoginVerification_XAction,
@@ -12,6 +12,8 @@ import type {
   Update_ServicableItemStatus_WC_MLS_XAction,
   Create_VillaFacilityItem_WC_MLS_XAction,
   Create_VillaNearbyService_WC_MLS_XAction,
+  Create_PropertyGallery_WC_MLS_XAction,
+  Update_PropertyGalleryOrders_WC_MLS_XAction,
 } from '@/types';
 
 // Auth hooks
@@ -362,6 +364,76 @@ export const useCreateVillaNearbyService = () => {
     onSuccess: () => {
       // Invalidate and refetch villa nearby services
       queryClient.invalidateQueries({ queryKey: ['villa-nearby-services'] });
+    },
+  });
+};
+
+// Property Galleries hooks
+export const usePropertyGalleries = () => {
+  return useQuery({
+    queryKey: ['property-galleries'],
+    queryFn: () => propertyGalleriesApi.getCurrentVillaPropertyGalleries(),
+    enabled: (() => {
+      if (!authApi.isAuthenticated()) return false;
+      const villaAdminUser = authApi.getCurrentVillaAdminUser();
+      return !!(villaAdminUser && villaAdminUser.villa && villaAdminUser.villa.id);
+    })(),
+    retry: false,
+    staleTime: 2 * 60 * 1000,
+  });
+};
+
+export const useCreatePropertyGallery = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (galleryData: Create_PropertyGallery_WC_MLS_XAction) =>
+      propertyGalleriesApi.createCurrentVillaPropertyGallery(galleryData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['property-galleries'] });
+    },
+  });
+};
+
+export const useUploadGalleryImages = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      galleryId,
+      files,
+      descriptions,
+    }: {
+      galleryId: string;
+      files: File[];
+      descriptions: string[];
+    }) => propertyGalleriesApi.uploadGalleryImages(galleryId, files, descriptions),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['property-galleries'] });
+    },
+  });
+};
+
+export const useDeleteGalleryImage = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ galleryId, imageId }: { galleryId: string; imageId: string }) =>
+      propertyGalleriesApi.deleteGalleryImage(galleryId, imageId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['property-galleries'] });
+    },
+  });
+};
+
+export const useReorderPropertyGalleries = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: Update_PropertyGalleryOrders_WC_MLS_XAction) =>
+      propertyGalleriesApi.reorderPropertyGalleries(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['property-galleries'] });
     },
   });
 };
