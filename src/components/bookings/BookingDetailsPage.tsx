@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { VillaBookingSummaryView, BookingFullDetails, VillaBookingStatus } from '@/types';
+import { VillaBookingSummaryView, VillaBookingStatus } from '@/types';
 import { formatDisplayDate, formatDateTime } from '@/lib/date-utils';
 import { getBookingStatusColor, formatCurrency, calculateBookingNights } from '@/lib/booking-utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
@@ -84,27 +84,27 @@ const InquirorDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = (
             <h4 className="font-medium text-gray-900 mb-3">Primary Guest</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-gray-500">Full Name</label>
+                <p className="text-sm font-medium text-gray-500">Full Name</p>
                 <p className="text-gray-900">
                   {booking.inquiror.personalinfo.firstname} {booking.inquiror.personalinfo.middlename} {booking.inquiror.personalinfo.lastname}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-500">Email</label>
+                <p className="text-sm font-medium text-gray-500">Email</p>
                 <div className="flex items-center">
                   <Mail className="w-4 h-4 mr-2 text-gray-400" />
                   <p className="text-gray-900">{booking.inquiror.personalinfo.email}</p>
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-500">Phone</label>
+                <p className="text-sm font-medium text-gray-500">Phone</p>
                 <div className="flex items-center">
                   <Phone className="w-4 h-4 mr-2 text-gray-400" />
                   <p className="text-gray-900">{booking.inquiror.personalinfo.phonenumber}</p>
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-500">Identity Number</label>
+                <p className="text-sm font-medium text-gray-500">Identity Number</p>
                 <p className="text-gray-900">{booking.inquiror.identitynumber}</p>
               </div>
             </div>
@@ -148,8 +148,8 @@ const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({
   const bookingNights = calculateBookingNights(booking.startdate, booking.enddate);
 
   const servicesTotal = booking.services?.reduce((sum, service) =>
-    sum + (service.item.price ? parseFloat(service.item.price.amount) * service.quantity : 0), 0) || 0;
-  const totalAmount = booking.bookingpayment ? parseFloat(booking.bookingpayment.amount) : 0;
+    sum + (service.item.price ? Number.parseFloat(service.item.price.amount) * service.quantity : 0), 0) || 0;
+  const totalAmount = booking.bookingpayment ? Number.parseFloat(booking.bookingpayment.amount) : 0;
   const accomodationTotal = totalAmount - servicesTotal;
   return (
     <Card className="mb-6">
@@ -194,7 +194,7 @@ const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({
               <h4 className="font-medium text-gray-900 mb-3">Additional Services</h4>
               <div className="space-y-3">
                 {booking.services.map((service, index) => (
-                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                  <div key={service.item.id} className="bg-gray-50 p-3 rounded-lg">
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <p className="font-medium">{service.item.name}</p>
@@ -202,7 +202,7 @@ const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({
                       </div>
                       <div className="text-right">
                         <p className="font-medium">
-                          {formatCurrency((parseFloat(service.item.price.amount) * service.quantity).toString(), service.item.price.currency)}
+                          {formatCurrency((Number.parseFloat(service.item.price.amount) * service.quantity).toString(), service.item.price.currency)}
                         </p>
                         <p className="text-sm text-gray-600">Qty: {service.quantity}</p>
                       </div>

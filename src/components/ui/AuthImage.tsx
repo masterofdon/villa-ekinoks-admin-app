@@ -2,12 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { ImageIcon } from 'lucide-react';
+import { imageCacheApi } from '@/lib/services';
 
 interface AuthImageProps {
   url: string;
   alt: string;
   className?: string;
   fallback?: React.ReactNode;
+  onLoad?: () => void;
+  onError?: () => void;
 }
 
 export const AuthImage: React.FC<AuthImageProps> = ({
@@ -15,37 +18,77 @@ export const AuthImage: React.FC<AuthImageProps> = ({
   alt,
   className,
   fallback = <ImageIcon className="h-12 w-12 text-gray-300" />,
+  onLoad,
+  onError,
 }) => {
-  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    let objectUrl: string | null = null;
     let cancelled = false;
+    
+    setIsLoading(true);
+    setHasError(false);
+    setImageUrl(null);
 
-    const token = globalThis.window === undefined ? null : localStorage.getItem('accesstoken');
-    const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-
-    fetch(url, { headers })
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.blob();
-      })
-      .then((blob) => {
+    const loadImage = async () => {
+      try {
+        const cachedUrl = await imageCacheApi.getCachedImageUrl(url);
+        
         if (!cancelled) {
-          objectUrl = URL.createObjectURL(blob);
-          setBlobUrl(objectUrl);
+          if (cachedUrl) {
+            setImageUrl(cachedUrl);
+            setIsLoading(false);
+            onLoad?.();
+          } else {
+            // Cache service returned null, treat as error
+            setHasError(true);
+            setIsLoading(false);
+            onError?.();
+          }
         }
-      })
-      .catch(() => {
-        if (!cancelled) setBlobUrl(null);
-      });
+      } catch (error) {
+        console.error('Failed to load cached image:', error);
+        if (!cancelled) {
+          setHasError(true);
+          setIsLoading(false);
+          onError?.();
+        }
+      }
+    };
+
+    loadImage();
 
     return () => {
       cancelled = true;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [url]);
+  }, [url, onLoad, onError]);
 
-  if (!blobUrl) return <>{fallback}</>;
-  return <img src={blobUrl} alt={alt} className={className} />;
+  if (isLoading) {
+    return (
+      <div className={`flex items-center justify-center ${className}`}>
+        <div className="animate-pulse">
+          <div className="bg-gray-200 rounded h-12 w-12" />
+        </div>
+      </div>
+    );
+  }
+
+  if (hasError || !imageUrl) {
+    return <>{fallback}</>;
+  }
+
+  return (
+    <img
+      src={imageUrl}
+      alt={alt}
+      className={className}
+      onLoad={onLoad}
+      onError={() => {
+        setHasError(true);
+        onError?.();
+      }}
+    />
+  );
 };

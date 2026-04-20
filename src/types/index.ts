@@ -473,19 +473,26 @@ export type PropertyGallery = {
   name: string;
   description: string;
   images: PropertyImage[];
+  timestamps: PropertyGalleryTimestamps;
 };
+
+export type PropertyGalleryTimestamps = {
+  creationdate: number;
+  lastupdate: number;
+}
 
 export type PropertyImage = {
   id: string;
   name: string;
   description: string;
   file: AppFile;
+  previewfile: AppFile;
+  resizedlargefile: AppFile;
 };
 
 export type Create_PropertyGallery_WC_MLS_XAction = {
   name: string;
   description: string;
-  order: number;
 };
 
 export type Create_PropertyGallery_WC_MLS_XAction_Response = {
@@ -497,11 +504,53 @@ export type Get_VillaPropertyGalleries_WC_MLS_XAction_Response = {
 };
 
 export type Upload_PropertyGallery_Images_Response = {
-  galleryId: string;
-  uploadedCount: number;
-  imageUrls: string[];
-  message: string;
+  id: string;
 }
+
+// Upload job tracking types
+export type UploadJobStatus = 'pending' | 'uploading' | 'completed' | 'failed';
+
+// Upload progress stages from backend SSE
+export type UploadProgressStage =
+  | 'started'
+  | 'validating'
+  | 'preparing'
+  | 'uploading-original'
+  | 'uploading-preview'
+  | 'uploading-resized'
+  | 'creating-records'
+  | 'finalizing'
+  | 'complete'
+  | 'error';
+
+export type UploadProgressEvent = {
+  stage: UploadProgressStage;
+  timestamp: number; // timestamp of the event 
+  message?: string;
+  percentage?: number;
+  error?: string;
+};
+
+export type UploadJob = {
+  id: string;
+  uploadId?: string; // Backend upload ID for SSE tracking
+  file: File;
+  description: string;
+  status: UploadJobStatus;
+  progress: number;
+  stage?: UploadProgressStage;
+  stageMessage?: string;
+  error?: string;
+  result?: Upload_PropertyGallery_Images_Response;
+};
+
+export type UploadProgress = {
+  jobs: UploadJob[];
+  totalJobs: number;
+  completedJobs: number;
+  failedJobs: number;
+  isAllCompleted: boolean;
+};
 
 export type Update_PropertyGalleryOrders_WC_MLS_XAction = {
   idordermap: { [id: string]: number };

@@ -40,6 +40,7 @@ import type {
   Update_PropertyGalleryOrders_WC_MLS_XAction,
   Update_PropertyGalleryOrders_WC_MLS_XAction_Response,
 } from '@/types';
+import { imageCacheService } from './image-cache';
 
 export const authApi = {
   // Step 1: Initial login request
@@ -488,23 +489,49 @@ export const propertyGalleriesApi = {
 
   uploadGalleryImages: async (
     galleryId: string,
-    files: File[],
-    descriptions: string[]
+    file: File,
+    description?: string,
+    uploadId?: string
   ): Promise<Upload_PropertyGallery_Images_Response> => {
+    console.log(`Starting upload to /property-galleries/${galleryId}/images`);
+    console.log(`File: ${file.name}, Size: ${file.size}, Type: ${file.type}`);
+    console.log(`Description: ${description || 'none'}, UploadId: ${uploadId || 'none'}`);
+    
     const formData = new FormData();
-    files.forEach((file) => formData.append('files', file));
-    descriptions.forEach((desc) => formData.append('descriptions', desc));
+    formData.append('file', file);
+    if (description && description.trim() !== '') {
+      formData.append('description', description.trim());
+    }
+    if (uploadId) {
+      formData.append('uploadId', uploadId);
+    }
+
+    // Log the FormData contents
+    console.log('FormData entries:');
+    Array.from(formData.entries()).forEach(([key, value]) => {
+      if (value instanceof File) {
+        console.log(`${key}: File(${value.name}, ${value.size} bytes)`);
+      } else {
+        console.log(`${key}: ${value}`);
+      }
+    });
 
     const response = await api.post<Upload_PropertyGallery_Images_Response>(
       `/property-galleries/${galleryId}/images`,
       formData,
       { headers: { 'Content-Type': 'multipart/form-data' } }
     );
+    
+    console.log('Upload response:', response.data);
     return response.data;
   },
 
   deleteGalleryImage: async (galleryId: string, imageId: string): Promise<void> => {
     await api.delete(`/property-galleries/${galleryId}/images/${imageId}`);
+  },
+
+  deletePropertyGallery: async (galleryId: string): Promise<void> => {
+    await api.delete(`/property-galleries/${galleryId}`);
   },
 
   reorderPropertyGalleries: async (
@@ -515,5 +542,75 @@ export const propertyGalleriesApi = {
       body
     );
     return response.data.object;
+  },
+};
+
+// Image Cache API
+export const imageCacheApi = {
+  // Get cached image URL or fetch and cache if not available
+  getCachedImageUrl: async (imageUrl: string): Promise<string | null> => {
+    try {
+      return await imageCacheService.getImage(imageUrl);
+    } catch (error) {
+      console.error('Failed to get cached image:', error);
+      return null;
+    }
+  },
+
+  // Preload multiple images for better performance
+  preloadImages: async (imageUrls: string[]): Promise<void> => {
+    try {
+      await imageCacheService.preloadImages(imageUrls);
+    } catch (error) {
+      console.error('Failed to preload images:', error);
+    }
+  },
+
+  // Clear all cached images
+  clearImageCache: async (): Promise<void> => {
+    try {
+      await imageCacheService.clearCache();
+    } catch (error) {
+      console.error('Failed to clear image cache:', error);
+    }
+  },
+
+  // Get cache statistics for debugging/monitoring
+  getCacheStats: async () => {
+    try {
+      return await imageCacheService.getCacheStats();
+    } catch (error) {
+      console.error('Failed to get cache stats:', error);
+      return {
+        memoryEntries: 0,
+        memorySizeMB: 0,
+        indexedDBEntries: 0,
+        indexedDBSizeMB: 0,
+      };
+    }
+  },
+
+  // Helper method to get property gallery image URLs for preloading
+  preloadPropertyGalleryImages: async (villaId?: string): Promise<void> => {
+    try {
+      const galleries = villaId 
+        ? await propertyGalleriesApi.getPropertyGalleries(villaId)
+        : await propertyGalleriesApi.getCurrentVillaPropertyGalleries();
+      
+      const imageUrls: string[] = [];
+      galleries.galleries?.forEach(gallery => {
+        gallery.images?.forEach(image => {
+          if (image.resizedlargefile.url) {
+            imageUrls.push(image.resizedlargefile.url);
+          }
+        });
+      });
+
+      if (imageUrls.length > 0) {
+        await imageCacheApi.preloadImages(imageUrls);
+      }
+    } catch (error) {
+      console.error('Failed to preload property gallery images:', error);
+    }
   },
 };

@@ -1,6 +1,12 @@
 import React from 'react';
 
 export { AuthImage } from './AuthImage';
+export { 
+  ImagePreloader, 
+  PropertyGalleryPreloader, 
+  CacheStatsDisplay, 
+  CacheClearButton 
+} from './ImageCacheUtils';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 

@@ -1,9 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi, villaFacilitiesApi, villaNearbyServicesApi, propertyGalleriesApi } from '@/lib/services';
 import type { 
-  AppUserLogin_WC_MLS_XAction, 
-  Verify_LoginVerification_XAction,
-  CreateVillaRequest, 
   UpdateVillaRequest,
   VillaBookingsFilter,
   Create_DiscountCode_WC_MLS_XAction,
@@ -401,15 +398,24 @@ export const useUploadGalleryImages = () => {
   return useMutation({
     mutationFn: ({
       galleryId,
-      files,
-      descriptions,
+      file,
+      description,
+      uploadId,
     }: {
       galleryId: string;
-      files: File[];
-      descriptions: string[];
-    }) => propertyGalleriesApi.uploadGalleryImages(galleryId, files, descriptions),
-    onSuccess: (_, variables) => {
+      file: File;
+      description?: string;
+      uploadId?: string;
+    }) => {
+      console.log(`React Query mutation called for gallery ${galleryId}, file ${file.name}, uploadId ${uploadId}`);
+      return propertyGalleriesApi.uploadGalleryImages(galleryId, file, description, uploadId);
+    },
+    onSuccess: (data, variables) => {
+      console.log(`Upload mutation successful for ${variables.file.name}:`, data);
       queryClient.invalidateQueries({ queryKey: ['property-galleries'] });
+    },
+    onError: (error, variables) => {
+      console.error(`Upload mutation failed for ${variables.file.name}:`, error);
     },
   });
 };
@@ -426,14 +432,28 @@ export const useDeleteGalleryImage = () => {
   });
 };
 
-export const useReorderPropertyGalleries = () => {
+export const useDeletePropertyGallery = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (body: Update_PropertyGalleryOrders_WC_MLS_XAction) =>
-      propertyGalleriesApi.reorderPropertyGalleries(body),
+    mutationFn: (galleryId: string) => propertyGalleriesApi.deletePropertyGallery(galleryId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['property-galleries'] });
     },
   });
 };
+
+export const useReorderPropertyGalleries = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (reorderData: Update_PropertyGalleryOrders_WC_MLS_XAction) =>
+      propertyGalleriesApi.reorderPropertyGalleries(reorderData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['property-galleries'] });
+    },
+  });
+};
+
+// Re-export bulk delete hook
+export { useBulkDelete } from './useBulkDelete';

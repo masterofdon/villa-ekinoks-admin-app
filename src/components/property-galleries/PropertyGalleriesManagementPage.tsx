@@ -2,17 +2,18 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { usePropertyGalleries, useReorderPropertyGalleries } from '@/hooks/api';
+import { usePropertyGalleries, useReorderPropertyGalleries, useDeletePropertyGallery } from '@/hooks/api';
 import { PropertyGallery } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { Plus, Images, AlertTriangle, ChevronRight, ImageIcon, GripVertical, Save } from 'lucide-react';
+import { Plus, Images, AlertTriangle, ChevronRight, ImageIcon, GripVertical, Save, Trash2 } from 'lucide-react';
 import { CreatePropertyGalleryModal } from './CreatePropertyGalleryModal';
 import { AuthImage } from '@/components/ui/AuthImage';
 
 const GalleryCard: React.FC<{
   gallery: PropertyGallery;
   onClick: () => void;
+  onDelete: () => void;
   isDragging: boolean;
   isDragOver: boolean;
   onDragStart: (e: React.DragEvent) => void;
@@ -20,8 +21,8 @@ const GalleryCard: React.FC<{
   onDragLeave: () => void;
   onDrop: (e: React.DragEvent) => void;
   onDragEnd: () => void;
-}> = ({ gallery, onClick, isDragging, isDragOver, onDragStart, onDragOver, onDragLeave, onDrop, onDragEnd }) => {
-  const coverImage = gallery.images?.[0]?.file?.url;
+}> = ({ gallery, onClick, onDelete, isDragging, isDragOver, onDragStart, onDragOver, onDragLeave, onDrop, onDragEnd }) => {
+  const coverImage = gallery.images?.[0]?.resizedlargefile?.url;
 
   return (
     <li
@@ -49,6 +50,14 @@ const GalleryCard: React.FC<{
         <div className="absolute top-2 left-2 bg-white/80 rounded p-1 cursor-grab active:cursor-grabbing">
           <GripVertical className="h-4 w-4 text-gray-500" />
         </div>
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onDelete(); }}
+          className="absolute top-2 right-2 bg-white/80 hover:bg-red-50 rounded p-1 text-gray-400 hover:text-red-600 transition-colors"
+          title="Delete gallery"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
       </div>
       <button
         type="button"
@@ -77,8 +86,10 @@ export const PropertyGalleriesManagementPage: React.FC = () => {
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const originalOrderRef = useRef<string[]>([]);
 
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const { data, isLoading, error, refetch } = usePropertyGalleries();
   const reorderMutation = useReorderPropertyGalleries();
+  const deleteMutation = useDeletePropertyGallery();
 
   useEffect(() => {
     const galleries = data?.galleries ?? [];
@@ -90,6 +101,18 @@ export const PropertyGalleriesManagementPage: React.FC = () => {
   const handleModalSuccess = () => {
     setIsCreateModalOpen(false);
     refetch();
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!confirmDeleteId) return;
+    deleteMutation.mutate(confirmDeleteId, {
+      onSuccess: () => {
+        setConfirmDeleteId(null);
+      },
+      onError: () => {
+        setConfirmDeleteId(null);
+      },
+    });
   };
 
   const handleDragStart = (e: React.DragEvent, id: string) => {
@@ -253,6 +276,7 @@ export const PropertyGalleriesManagementPage: React.FC = () => {
                   key={gallery.id}
                   gallery={gallery}
                   onClick={() => router.push(`/property-galleries/${gallery.id}`)}
+                  onDelete={() => setConfirmDeleteId(gallery.id)}
                   isDragging={draggingId === gallery.id}
                   isDragOver={dragOverId === gallery.id}
                   onDragStart={(e) => handleDragStart(e, gallery.id)}
@@ -272,6 +296,38 @@ export const PropertyGalleriesManagementPage: React.FC = () => {
         onClose={() => setIsCreateModalOpen(false)}
         onSuccess={handleModalSuccess}
       />
+
+      {confirmDeleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full mx-4">
+            <div className="flex items-start gap-3 mb-4">
+              <AlertTriangle className="h-6 w-6 text-red-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-base font-semibold text-gray-900">Delete Gallery</h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  Are you sure you want to delete this gallery? This action cannot be undone.
+                </p>
+              </div>
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button
+                onClick={() => setConfirmDeleteId(null)}
+                disabled={deleteMutation.isPending}
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDeleteConfirm}
+                disabled={deleteMutation.isPending}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
