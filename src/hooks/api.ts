@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi, villaFacilitiesApi, villaNearbyServicesApi, propertyGalleriesApi } from '@/lib/services';
+import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi, villaFacilitiesApi, villaNearbyServicesApi, propertyGalleriesApi, villaRatePlansApi, parityRatesApi } from '@/lib/services';
 import type { 
   UpdateVillaRequest,
   VillaBookingsFilter,
@@ -11,6 +11,8 @@ import type {
   Create_VillaNearbyService_WC_MLS_XAction,
   Create_PropertyGallery_WC_MLS_XAction,
   Update_PropertyGalleryOrders_WC_MLS_XAction,
+  Create_VillaRatePlan_WC_MLS_XAction,
+  Create_ParityRate_WC_MLS_XAction,
 } from '@/types';
 
 // Auth hooks
@@ -451,6 +453,71 @@ export const useReorderPropertyGalleries = () => {
       propertyGalleriesApi.reorderPropertyGalleries(reorderData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['property-galleries'] });
+    },
+  });
+};
+
+// Villa Rate Plans hooks
+export const useVillaRatePlans = () => {
+  return useQuery({
+    queryKey: ['villa-rate-plans'],
+    queryFn: () => villaRatePlansApi.getCurrentVillaRatePlans(),
+    enabled: (() => {
+      // Only enable if user is authenticated and has villa data
+      if (!authApi.isAuthenticated()) return false;
+      const villaAdminUser = authApi.getCurrentVillaAdminUser();
+      return !!(villaAdminUser && villaAdminUser.villa && villaAdminUser.villa.id);
+    })(),
+    retry: false, // Don't retry if user doesn't have villa data
+    staleTime: 2 * 60 * 1000, // 2 minutes stale time
+  });
+};
+
+export const useCreateVillaRatePlan = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (ratePlanData: Create_VillaRatePlan_WC_MLS_XAction) => 
+      villaRatePlansApi.createCurrentVillaRatePlan(ratePlanData),
+    onSuccess: () => {
+      // Invalidate and refetch villa rate plans
+      queryClient.invalidateQueries({ queryKey: ['villa-rate-plans'] });
+    },
+  });
+};
+
+export const useDeleteVillaRatePlan = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (ratePlanId: string) => 
+      villaRatePlansApi.deleteVillaRatePlan(ratePlanId),
+    onSuccess: () => {
+      // Invalidate and refetch villa rate plans
+      queryClient.invalidateQueries({ queryKey: ['villa-rate-plans'] });
+    },
+  });
+};
+
+// Parity Rates hooks
+export const useParityRates = () => {
+  return useQuery({
+    queryKey: ['parity-rates'],
+    queryFn: () => parityRatesApi.getParityRates(),
+    enabled: authApi.isAuthenticated(),
+    staleTime: 5 * 60 * 1000, // 5 minutes stale time
+  });
+};
+
+export const useCreateParityRate = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (parityRateData: Create_ParityRate_WC_MLS_XAction) => 
+      parityRatesApi.createParityRate(parityRateData),
+    onSuccess: () => {
+      // Invalidate and refetch parity rates
+      queryClient.invalidateQueries({ queryKey: ['parity-rates'] });
     },
   });
 };

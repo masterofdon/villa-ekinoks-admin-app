@@ -8,9 +8,9 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { deviceSN: string } }
+  { params }: { params: Promise<{ deviceSN: string }> }
 ) {
-  const { deviceSN } = params;
+  const { deviceSN } = await params;
 
   try {
     const client = await getEufyClient();

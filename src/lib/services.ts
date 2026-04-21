@@ -39,6 +39,12 @@ import type {
   Upload_PropertyGallery_Images_Response,
   Update_PropertyGalleryOrders_WC_MLS_XAction,
   Update_PropertyGalleryOrders_WC_MLS_XAction_Response,
+  VillaRatePlan,
+  Create_VillaRatePlan_WC_MLS_XAction,
+  Create_VillaRatePlan_WC_MLS_XAction_Response,
+  Get_ParityRates_WC_MLS_XAction_Response,
+  Create_ParityRate_WC_MLS_XAction,
+  Create_ParityRate_WC_MLS_XAction_Response,
 } from '@/types';
 import { imageCacheService } from './image-cache';
 
@@ -612,5 +618,62 @@ export const imageCacheApi = {
     } catch (error) {
       console.error('Failed to preload property gallery images:', error);
     }
+  },
+};
+
+// Villa Rate Plans API
+export const villaRatePlansApi = {
+  // Get villa rate plans for a villa
+  getVillaRatePlans: async (villaId: string): Promise<VillaRatePlan[]> => {
+    const response = await api.get<GenericApiResponse<VillaRatePlan[]>>(`/villas/${villaId}/villa-rate-plans`);
+    return response.data.object;
+  },
+
+  // Helper function to get villa rate plans for current user's villa
+  getCurrentVillaRatePlans: async (): Promise<VillaRatePlan[]> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    return villaRatePlansApi.getVillaRatePlans(villaAdminUser.villa.id);
+  },
+
+  // Create a new villa rate plan
+  createVillaRatePlan: async (villaId: string, ratePlanData: Create_VillaRatePlan_WC_MLS_XAction): Promise<Create_VillaRatePlan_WC_MLS_XAction_Response> => {
+    const response = await api.post<GenericApiResponse<Create_VillaRatePlan_WC_MLS_XAction_Response>>(`/villas/${villaId}/villa-rate-plans`, ratePlanData);
+    return response.data.object;
+  },
+
+  // Helper function to create villa rate plan for current user's villa
+  createCurrentVillaRatePlan: async (
+    ratePlanData: Create_VillaRatePlan_WC_MLS_XAction
+  ): Promise<Create_VillaRatePlan_WC_MLS_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    
+    return villaRatePlansApi.createVillaRatePlan(villaAdminUser.villa.id, ratePlanData);
+  },
+
+  // Delete a villa rate plan
+  deleteVillaRatePlan: async (ratePlanId: string): Promise<void> => {
+    await api.delete(`/villa-rate-plans/${ratePlanId}`);
+  },
+};
+
+// Parity Rates API
+export const parityRatesApi = {
+  // Get all parity rates
+  getParityRates: async (): Promise<Get_ParityRates_WC_MLS_XAction_Response> => {
+    const response = await api.get<GenericApiResponse<Get_ParityRates_WC_MLS_XAction_Response>>('/parities');
+    return response.data.object;
+  },
+
+  // Create a new parity rate
+  createParityRate: async (parityRateData: Create_ParityRate_WC_MLS_XAction): Promise<Create_ParityRate_WC_MLS_XAction_Response> => {
+    const response = await api.post<GenericApiResponse<Create_ParityRate_WC_MLS_XAction_Response>>('/parities', parityRateData);
+    return response.data.object;
   },
 };

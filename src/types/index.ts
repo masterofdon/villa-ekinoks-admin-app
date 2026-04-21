@@ -559,3 +559,69 @@ export type Update_PropertyGalleryOrders_WC_MLS_XAction = {
 export type Update_PropertyGalleryOrders_WC_MLS_XAction_Response = {
   id: string;
 }
+
+export type VillaRatePlan = {
+  id: string;
+  villa: Villa;
+  timestamps: VillaRatePlanTimestamps;
+  name: string;
+  startperiod: string; // YYYYMMDD format
+  endperiod: string; // YYYYMMDD format
+  conditiontype: VillaRatePlanConditionType;
+  conditionoperator: VillaRatePlanConditionOperator;
+  conditionvalue: string;
+  applicationtype: VillaRatePlanApplicationType;
+  applicationvalue: string;
+  applicationvaluetype: VillaRatePlanApplicationValueType;
+}
+
+export type VillaRatePlanConditionType = "NUMBEROFGUESTS" | "NUMBEROFNIGHTS";
+
+export type VillaRatePlanConditionOperator = "EQUALS" | "GREATER_THAN" | "LESS_THAN";
+
+export type VillaRatePlanApplicationValueType = "PERCENTAGE" | "AMOUNT";
+
+export type VillaRatePlanApplicationType = "PERGUEST" | "PERDAY" | "PERGUESTPERDAY";
+
+export type VillaRatePlanTimestamps = {
+  creationdate: number;
+  lastupdate: number;
+}
+
+export type Create_VillaRatePlan_WC_MLS_XAction = {
+  name: string;
+  startperiod: string;
+  endperiod: string;
+  conditiontype: VillaRatePlanConditionType;
+  conditionoperator: VillaRatePlanConditionOperator;
+  conditionvalue: string;
+  applicationtype: VillaRatePlanApplicationType;
+  applicationvalue: string;
+  applicationvaluetype: VillaRatePlanApplicationValueType;
+}
+
+export type Create_VillaRatePlan_WC_MLS_XAction_Response = {
+  id: string;
+}
+
+export type ParityRate = {
+  id: string;
+  fromCurrency: string;
+  toCurrency: string;
+  rate: string;
+  lastupdate: number;
+}
+
+export type Get_ParityRates_WC_MLS_XAction_Response = {
+  rates: Record<string, string>;
+}
+
+export type Create_ParityRate_WC_MLS_XAction = {
+  fromcurrency: string;
+  tocurrency: string;
+  rate: string;
+}
+
+export type Create_ParityRate_WC_MLS_XAction_Response = {
+  id: string;
+}
