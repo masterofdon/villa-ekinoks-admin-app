@@ -625,3 +625,29 @@ export type Create_ParityRate_WC_MLS_XAction = {
 export type Create_ParityRate_WC_MLS_XAction_Response = {
   id: string;
 }
+
+export type Create_VillaBookingManual_WC_MLS_XAction = {
+
+  villaid: string;
+  inquiroremail: string;
+  inquirorname: string;
+  inquirorlastname: string;
+  inquirorlocale: string;
+  inquirorcurrency: string;
+  startdate: string;
+  enddate: string;
+  numberofguests: number;
+  numberofchildren: number;
+  totalamount: string;
+  totalamountcurrency: string;
+  additionalservices: Create_VillaBookingAdditionalService_WC_MLS_XAction[];
+}
+
+export type Create_VillaBookingAdditionalService_WC_MLS_XAction = {
+  servicableitemid: string;
+  quantity: number;
+}
+
+export type Create_VillaBookingManual_WC_MLS_XAction_Response = {
+  id: string;
+}

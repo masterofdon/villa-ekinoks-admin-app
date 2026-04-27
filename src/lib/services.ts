@@ -45,6 +45,8 @@ import type {
   Get_ParityRates_WC_MLS_XAction_Response,
   Create_ParityRate_WC_MLS_XAction,
   Create_ParityRate_WC_MLS_XAction_Response,
+  Create_VillaBookingManual_WC_MLS_XAction,
+  Create_VillaBookingManual_WC_MLS_XAction_Response,
 } from '@/types';
 import { imageCacheService } from './image-cache';
 
@@ -248,6 +250,24 @@ export const villaBookingsApi = {
 
   deleteBooking: async (id: string): Promise<void> => {
     await api.delete(`/villa-bookings/${id}`);
+  },
+
+  createManualBooking: async (bookingData: Create_VillaBookingManual_WC_MLS_XAction): Promise<Create_VillaBookingManual_WC_MLS_XAction_Response> => {
+    const response = await api.post<GenericApiResponse<Create_VillaBookingManual_WC_MLS_XAction_Response>>('/villa-bookings/manual-creations', bookingData);
+    return response.data.object;
+  },
+
+  createCurrentVillaManualBooking: async (
+    bookingData: Omit<Create_VillaBookingManual_WC_MLS_XAction, 'villaid'>
+  ): Promise<Create_VillaBookingManual_WC_MLS_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser || !villaAdminUser.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    return villaBookingsApi.createManualBooking({
+      ...bookingData,
+      villaid: villaAdminUser.villa.id,
+    });
   },
 };
 

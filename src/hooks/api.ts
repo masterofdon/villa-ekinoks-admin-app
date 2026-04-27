@@ -13,6 +13,7 @@ import type {
   Update_PropertyGalleryOrders_WC_MLS_XAction,
   Create_VillaRatePlan_WC_MLS_XAction,
   Create_ParityRate_WC_MLS_XAction,
+  Create_VillaBookingManual_WC_MLS_XAction,
 } from '@/types';
 
 // Auth hooks
@@ -205,6 +206,18 @@ export const useDeleteBooking = () => {
 
   return useMutation({
     mutationFn: (id: string) => villaBookingsApi.deleteBooking(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['villa-bookings'] });
+    },
+  });
+};
+
+export const useCreateManualBooking = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (bookingData: Omit<Create_VillaBookingManual_WC_MLS_XAction, 'villaid'>) =>
+      villaBookingsApi.createCurrentVillaManualBooking(bookingData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['villa-bookings'] });
     },

@@ -7,8 +7,9 @@ import { VillaBookingsFilter, VillaBookingSummaryView, VillaBookingStatus } from
 import { formatDisplayDate, formatDateTime, htmlDateToYYYYMMDD, yyyymmddToHtmlDate } from '@/lib/date-utils';
 import { getBookingStatusColor, formatCurrency, calculateBookingNights } from '@/lib/booking-utils';
 import { Card, CardHeader, CardTitle, CardContent, Input, Label } from '@/components/ui';
-import { Search, Calendar, Users, CreditCard, Clock, Filter, Moon } from 'lucide-react';
+import { Search, Calendar, Users, CreditCard, Clock, Filter, Moon, Plus } from 'lucide-react';
 import { BookingDetailsPage } from './BookingDetailsPage';
+import { CreateManualBookingModal } from './CreateManualBookingModal';
 
 const BookingStatusBadge: React.FC<{ status: VillaBookingSummaryView['status'] }> = ({ status }) => {
   const colorClass = getBookingStatusColor(status);
@@ -315,6 +316,7 @@ export const BookingsManagementPage: React.FC<{
   });
 
   const [selectedBooking, setSelectedBooking] = useState<VillaBookingSummaryView | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const { data: bookingsData, isLoading, error } = useVillaBookings(filter);
 
@@ -400,7 +402,16 @@ export const BookingsManagementPage: React.FC<{
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Villa Bookings</h1>
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-3xl font-bold text-gray-900">Villa Bookings</h1>
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            New Booking
+          </button>
+        </div>
         <p className="text-gray-600">Manage and view all bookings for your villa</p>
       </div>
 
@@ -459,6 +470,12 @@ export const BookingsManagementPage: React.FC<{
           </CardContent>
         </Card>
       )}
+
+      <CreateManualBookingModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => setIsCreateModalOpen(false)}
+      />
     </div>
   );
 };
