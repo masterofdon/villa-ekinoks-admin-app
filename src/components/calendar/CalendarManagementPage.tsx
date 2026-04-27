@@ -31,10 +31,27 @@ interface CalendarManagementPageProps {
 export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
   initialPricing
 }) => {
-  // Initialize with current month/year
-  const currentDate = new Date();
-  const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth());
-  const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
+  // Initialize with current month/year, restoring from localStorage if available
+  const [currentMonth, setCurrentMonth] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('calendar-position');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.month ?? new Date().getMonth();
+      }
+    }
+    return new Date().getMonth();
+  });
+  const [currentYear, setCurrentYear] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('calendar-position');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.year ?? new Date().getFullYear();
+      }
+    }
+    return new Date().getFullYear();
+  });
 
   // Calculate second month
   const getSecondMonth = () => {
@@ -335,6 +352,49 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
     };
   }, [isDragging]);
 
+  // Pre-fill amount based on selected date range pricing
+  useEffect(() => {
+    if (!selectedStartDate) return;
+
+    const endDate = selectedEndDate || selectedStartDate;
+    const pricingRanges = pricing?.pricing?.pricingranges ?? [];
+
+    const priceKeys = new Set<string>();
+    let lastPrice: { amount: string; currency: string } | null = null;
+
+    const current = new Date(selectedStartDate);
+    const end = new Date(endDate);
+    while (current <= end) {
+      const y = current.getFullYear();
+      const m = (current.getMonth() + 1).toString().padStart(2, '0');
+      const d = current.getDate().toString().padStart(2, '0');
+      const dateStr = `${y}${m}${d}`;
+      const range = pricingRanges.find(
+        r => r.startperiod <= dateStr && r.endperiod >= dateStr
+      );
+      if (range) {
+        priceKeys.add(`${range.pricepernight.amount}:${range.pricepernight.currency}`);
+        lastPrice = range.pricepernight;
+      }
+      current.setDate(current.getDate() + 1);
+    }
+
+    if (priceKeys.size === 1 && lastPrice) {
+      setPriceAmount(lastPrice.amount.replace(',', '.'));
+      setPriceCurrency(lastPrice.currency);
+    } else {
+      setPriceAmount('');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedStartDate, selectedEndDate, pricing]);
+
+  // Persist calendar position to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('calendar-position', JSON.stringify({ month: currentMonth, year: currentYear }));
+    }
+  }, [currentMonth, currentYear]);
+
   // Navigation functions
   const goToPreviousMonth = () => {
     if (currentMonth === 0) {
@@ -558,9 +618,8 @@ export const CalendarManagementPage: React.FC<CalendarManagementPageProps> = ({
                     <div>
                       <label className="text-xs font-medium text-gray-700 mb-1 block">Amount</label>
                       <input
-                        type="number"
-                        step="0.01"
-                        min="0"
+                        type="text"
+                        inputMode="decimal"
                         value={priceAmount}
                         onChange={(e) => setPriceAmount(e.target.value)}
                         placeholder="150.00"

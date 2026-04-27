@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider, theme, App } from 'antd';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,7 +29,9 @@ export default function Providers({ children }: ProvidersProps) {
           algorithm: theme.defaultAlgorithm,
         }}
       >
-        {children}
+        <App>
+          {children}
+        </App>
       </ConfigProvider>
     </QueryClientProvider>
   );

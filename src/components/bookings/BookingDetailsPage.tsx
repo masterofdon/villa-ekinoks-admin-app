@@ -6,6 +6,7 @@ import { formatDisplayDate, formatDateTime } from '@/lib/date-utils';
 import { getBookingStatusColor, formatCurrency, calculateBookingNights } from '@/lib/booking-utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
+import { useDeleteBooking } from '@/hooks/api';
 import {
   ArrowLeft,
   User,
@@ -14,16 +15,14 @@ import {
   CreditCard,
   Calendar,
   Users,
-  MapPin,
   FileText,
   Download,
   Edit,
   CheckCircle,
   XCircle,
-  Clock,
   AlertCircle,
   Moon,
-  Euro
+  Trash2
 } from 'lucide-react';
 
 interface BookingDetailsPageProps {
@@ -31,6 +30,7 @@ interface BookingDetailsPageProps {
   onBack: () => void;
   onStatusChange?: (bookingId: string, newStatus: VillaBookingStatus) => void;
   onEdit?: (bookingId: string) => void;
+  onDelete?: (bookingId: string) => void;
 }
 
 const BookingStatusBadge: React.FC<{ status: VillaBookingSummaryView['status'] }> = ({ status }) => {
@@ -245,12 +245,48 @@ const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({
   );
 };
 
+const ConfirmDialog: React.FC<{
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  isLoading: boolean;
+}> = ({ message, onConfirm, onCancel, isLoading }) => (
+  <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <button
+        type="button"
+        className="absolute inset-0 bg-black/40 w-full cursor-default"
+        aria-label="Close dialog"
+        onClick={onCancel}
+      />
+    <div className="relative bg-white rounded-lg shadow-xl p-6 max-w-sm w-full mx-4">
+      <h3 className="text-lg font-semibold text-gray-900 mb-2">Confirm Cancellation</h3>
+      <p className="text-gray-600 mb-6">{message}</p>
+      <div className="flex justify-end gap-3">
+        <Button variant="outline" onClick={onCancel} disabled={isLoading}>
+          No, keep it
+        </Button>
+        <Button
+          onClick={onConfirm}
+          disabled={isLoading}
+          className="bg-red-600 hover:bg-red-700 text-white"
+        >
+          {isLoading ? 'Cancelling...' : 'Yes, cancel booking'}
+        </Button>
+      </div>
+    </div>
+  </div>
+);
+
 const BookingOperationsSection: React.FC<{
   booking: VillaBookingSummaryView;
   onStatusChange?: (bookingId: string, newStatus: VillaBookingStatus) => void;
   onEdit?: (bookingId: string) => void;
-}> = ({ booking, onStatusChange, onEdit }) => {
+  onDelete?: (bookingId: string) => void;
+  onBack?: () => void;
+}> = ({ booking, onStatusChange, onEdit, onDelete, onBack }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const deleteBooking = useDeleteBooking();
 
   const handleStatusChange = async (newStatus: VillaBookingStatus) => {
     if (!onStatusChange) return;
@@ -263,11 +299,29 @@ const BookingOperationsSection: React.FC<{
     }
   };
 
+  const handleDeleteConfirm = async () => {
+    try {
+      await deleteBooking.mutateAsync(booking.id);
+      onDelete?.(booking.id);
+    } finally {
+      setShowDeleteConfirm(false);
+    }
+  };
+
   const canConfirm = booking.status === 'PENDING';
   const canCancel = booking.status === 'PENDING' || booking.status === 'CONFIRMED';
   const canReject = booking.status === 'PENDING';
 
   return (
+    <>
+      {showDeleteConfirm && (
+        <ConfirmDialog
+          message="Are you sure you want to cancel this booking? This action cannot be undone."
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setShowDeleteConfirm(false)}
+          isLoading={deleteBooking.isPending}
+        />
+      )}
     <Card>
       <CardHeader>
         <CardTitle>Operations</CardTitle>
@@ -364,9 +418,24 @@ const BookingOperationsSection: React.FC<{
               </div>
             </div>
           </div>
+
+          {/* Danger Zone */}
+          <div className="border-t pt-4">
+            <h4 className="font-medium text-red-700 mb-3">Danger Zone</h4>
+            <Button
+              onClick={() => setShowDeleteConfirm(true)}
+              variant="outline"
+              className="w-full border-red-300 text-red-700 hover:bg-red-50"
+              disabled={deleteBooking.isPending}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Cancel Booking
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
+    </>
   );
 };
 
@@ -374,7 +443,8 @@ export const BookingDetailsPage: React.FC<BookingDetailsPageProps> = ({
   booking,
   onBack,
   onStatusChange,
-  onEdit
+  onEdit,
+  onDelete
 }) => {
   const bookingNights = calculateBookingNights(booking.startdate, booking.enddate);
 
@@ -469,6 +539,8 @@ export const BookingDetailsPage: React.FC<BookingDetailsPageProps> = ({
               booking={booking}
               onStatusChange={onStatusChange}
               onEdit={onEdit}
+              onDelete={onDelete}
+              onBack={onBack}
             />
           </div>
         </div>

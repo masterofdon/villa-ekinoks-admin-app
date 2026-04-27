@@ -341,6 +341,11 @@ export const BookingsManagementPage: React.FC<{
   const handleStatusChange = async (bookingId: string, newStatus: VillaBookingStatus) => {
     // TODO: Implement API call to update booking status
     console.log('Updating booking status:', bookingId, newStatus);
+
+    if (newStatus === 'CANCELLED') {
+      setSelectedBooking(null);
+      return;
+    }
     
     // Update the selected booking if it's the one being changed
     if (selectedBooking && selectedBooking.id === bookingId) {
@@ -360,6 +365,10 @@ export const BookingsManagementPage: React.FC<{
     console.log('Edit booking:', bookingId);
   };
 
+  const handleDeleteBooking = (bookingId: string) => {
+    setSelectedBooking(null);
+  };
+
   // If a booking is selected and we're in modal mode, show the details page
   if (selectedBooking && mode === 'modal') {
     return (
@@ -368,6 +377,7 @@ export const BookingsManagementPage: React.FC<{
         onBack={handleBackToList}
         onStatusChange={handleStatusChange}
         onEdit={handleEditBooking}
+        onDelete={handleDeleteBooking}
       />
     );
   }

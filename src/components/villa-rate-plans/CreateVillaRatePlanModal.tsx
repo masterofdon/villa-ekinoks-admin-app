@@ -165,13 +165,13 @@ export const CreateVillaRatePlanModal: React.FC<CreateVillaRatePlanModalProps> =
               label="Adjustment Value"
               rules={[
                 { required: true, message: 'Please enter adjustment value' },
-                { type: 'number', min: 0.01, message: 'Value must be greater than 0' },
+                { type: 'number', message: 'Please enter a valid number' },
               ]}
+              help="Enter a positive value for surcharges or negative value for discounts"
             >
               <InputNumber
                 style={{ width: '100%' }}
-                placeholder="Enter value"
-                min={0.01}
+                placeholder="Enter value (positive for surcharge, negative for discount)"
                 precision={2}
                 step={0.01}
               />

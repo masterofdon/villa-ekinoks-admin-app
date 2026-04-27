@@ -200,6 +200,17 @@ export const useVillaBookings = (filter: Omit<VillaBookingsFilter, 'villaid'>) =
   });
 };
 
+export const useDeleteBooking = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => villaBookingsApi.deleteBooking(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['villa-bookings'] });
+    },
+  });
+};
+
 // Discount Codes hooks
 export const useDiscountCodes = () => {
   return useQuery({

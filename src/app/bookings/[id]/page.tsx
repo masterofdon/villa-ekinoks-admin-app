@@ -36,6 +36,10 @@ const IndividualBookingPage: React.FC = () => {
     console.log('Edit booking:', bookingId);
   };
 
+  const handleDeleteBooking = () => {
+    router.push('/bookings');
+  };
+
   if (isLoading) {
     return (
       <AuthGuard>
@@ -82,6 +86,7 @@ const IndividualBookingPage: React.FC = () => {
           onBack={handleBack}
           onStatusChange={handleStatusChange}
           onEdit={handleEditBooking}
+          onDelete={handleDeleteBooking}
         />
       </Sidebar>
     </AuthGuard>

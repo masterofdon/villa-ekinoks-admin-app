@@ -75,7 +75,7 @@ export const CreateParityRateModal: React.FC<CreateParityRateModalProps> = ({
       okText="Create Parity Rate"
       cancelText="Cancel"
       width={600}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form
         form={form}

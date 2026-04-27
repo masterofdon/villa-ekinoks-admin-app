@@ -245,6 +245,10 @@ export const villaBookingsApi = {
       villaid: villaAdminUser.villa.id,
     });
   },
+
+  deleteBooking: async (id: string): Promise<void> => {
+    await api.delete(`/villa-bookings/${id}`);
+  },
 };
 
 export const discountCodesApi = {
