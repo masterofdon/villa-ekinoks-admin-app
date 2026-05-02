@@ -5,7 +5,13 @@ const nextConfig = {
     serverComponentsExternalPackages: ['eufy-security-client', 'protobufjs'],
   },
   images: {
-    domains: ['localhost', 'api.villaekinoks.com', 'villaekinoks.com', 'admin.villaekinoks.com', 'storage.googleapis.com'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'localhost' },
+      { protocol: 'https', hostname: 'api.villaekinoks.com' },
+      { protocol: 'https', hostname: 'villaekinoks.com' },
+      { protocol: 'https', hostname: 'admin.villaekinoks.com' },
+      { protocol: 'https', hostname: 'storage.googleapis.com' },
+    ],
   },
   // Optimize for production
   compress: true,

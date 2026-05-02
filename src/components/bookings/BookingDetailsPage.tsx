@@ -150,7 +150,20 @@ const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({
   const servicesTotal = booking.services?.reduce((sum, service) =>
     sum + (service.item.price ? Number.parseFloat(service.item.price.amount) * service.quantity : 0), 0) || 0;
   const totalAmount = booking.bookingpayment ? Number.parseFloat(booking.bookingpayment.amount) : 0;
-  const accomodationTotal = totalAmount - servicesTotal;
+
+  const sortedServices = booking.services ? [...booking.services].sort((a, b) => {
+    const aPayment = a.payment;
+    const bPayment = b.payment;
+
+    if (aPayment && bPayment) {
+      if (Number.parseFloat(aPayment.amount) > Number.parseFloat(bPayment.amount)) {
+        return -1;
+      } else if (Number.parseFloat(aPayment.amount) < Number.parseFloat(bPayment.amount)) {
+        return 1;
+      }
+    }
+    return 0;
+  }) : [];
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -173,7 +186,7 @@ const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-gray-600">Amount</span>
                   <span className="font-medium">
-                    {formatCurrency(accomodationTotal.toFixed(2), booking.bookingpayment.currency)}
+                    {formatCurrency(totalAmount.toFixed(2), booking.bookingpayment.currency)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
@@ -189,11 +202,11 @@ const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({
           )}
 
           {/* Additional Services */}
-          {booking.services && booking.services.length > 0 && (
+          {sortedServices.length > 0 && (
             <div>
-              <h4 className="font-medium text-gray-900 mb-3">Additional Services</h4>
+              <h4 className="font-medium text-gray-900 mb-3">Services</h4>
               <div className="space-y-3">
-                {booking.services.map((service, index) => (
+                {sortedServices.map((service, index) => (
                   <div key={service.item.id} className="bg-gray-50 p-3 rounded-lg">
                     <div className="flex justify-between items-start mb-2">
                       <div>
@@ -219,26 +232,6 @@ const PaymentDetailsSection: React.FC<{ booking: VillaBookingSummaryView }> = ({
             </div>
           )}
 
-          {/* Payment Summary */}
-          <div className="border-t pt-4">
-            <h4 className="font-medium text-gray-900 mb-3">Payment Summary</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Accommodation ({bookingNights} nights)</span>
-                <span>{formatCurrency(accomodationTotal.toFixed(2), booking.bookingpayment?.currency || 'EUR')}</span>
-              </div>
-              {servicesTotal > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Additional Services</span>
-                  <span>{formatCurrency(servicesTotal.toString(), booking.bookingpayment?.currency || 'EUR')}</span>
-                </div>
-              )}
-              <div className="flex justify-between font-medium text-lg border-t pt-2">
-                <span>Total Amount</span>
-                <span>{formatCurrency(totalAmount.toString(), booking.bookingpayment?.currency || 'EUR')}</span>
-              </div>
-            </div>
-          </div>
         </div>
       </CardContent>
     </Card>
@@ -253,11 +246,11 @@ const ConfirmDialog: React.FC<{
 }> = ({ message, onConfirm, onCancel, isLoading }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center">
     <button
-        type="button"
-        className="absolute inset-0 bg-black/40 w-full cursor-default"
-        aria-label="Close dialog"
-        onClick={onCancel}
-      />
+      type="button"
+      className="absolute inset-0 bg-black/40 w-full cursor-default"
+      aria-label="Close dialog"
+      onClick={onCancel}
+    />
     <div className="relative bg-white rounded-lg shadow-xl p-6 max-w-sm w-full mx-4">
       <h3 className="text-lg font-semibold text-gray-900 mb-2">Confirm Cancellation</h3>
       <p className="text-gray-600 mb-6">{message}</p>
@@ -308,10 +301,6 @@ const BookingOperationsSection: React.FC<{
     }
   };
 
-  const canConfirm = booking.status === 'PENDING';
-  const canCancel = booking.status === 'PENDING' || booking.status === 'CONFIRMED';
-  const canReject = booking.status === 'PENDING';
-
   return (
     <>
       {showDeleteConfirm && (
@@ -322,119 +311,47 @@ const BookingOperationsSection: React.FC<{
           isLoading={deleteBooking.isPending}
         />
       )}
-    <Card>
-      <CardHeader>
-        <CardTitle>Operations</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {/* Status Actions */}
-          <div>
-            <h4 className="font-medium text-gray-900 mb-3">Booking Status</h4>
-            <div className="space-y-2">
-              {canConfirm && (
-                <Button
-                  onClick={() => handleStatusChange('CONFIRMED')}
-                  disabled={isLoading}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white"
-                >
-                  <CheckCircle className="w-4 h-4 mr-2" />
-                  Confirm Booking
-                </Button>
-              )}
-
-              {canReject && (
-                <Button
-                  onClick={() => handleStatusChange('REJECTED')}
-                  disabled={isLoading}
-                  variant="outline"
-                  className="w-full border-red-300 text-red-700 hover:bg-red-50"
-                >
-                  <XCircle className="w-4 h-4 mr-2" />
-                  Reject Booking
-                </Button>
-              )}
-
-              {canCancel && (
-                <Button
-                  onClick={() => handleStatusChange('CANCELLED')}
-                  disabled={isLoading}
-                  variant="outline"
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
-                >
-                  <AlertCircle className="w-4 h-4 mr-2" />
-                  Cancel Booking
-                </Button>
-              )}
+      <Card>
+        <CardHeader>
+          <CardTitle>Operations</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {/* Booking Info */}
+            <div className="border-t pt-4">
+              <h4 className="font-medium text-gray-900 mb-3">Booking Information</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Booking ID</span>
+                  <span className="font-mono">{booking.id}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Created</span>
+                  <span>{formatDateTime(booking.timestamps.creationdate)}</span>
+                </div>
+                {booking.timestamps.lastupdate && <div className="flex justify-between">
+                  <span className="text-gray-600">Last Updated</span>
+                  <span>{formatDateTime(booking.timestamps.lastupdate)}</span>
+                </div>}
+              </div>
             </div>
-          </div>
 
-          {/* Edit Actions */}
-          <div className="border-t pt-4">
-            <h4 className="font-medium text-gray-900 mb-3">Manage Booking</h4>
-            <div className="space-y-2">
+            {/* Danger Zone */}
+            <div className="border-t pt-4">
+              <h4 className="font-medium text-red-700 mb-3">Danger Zone</h4>
               <Button
-                onClick={() => onEdit?.(booking.id)}
+                onClick={() => setShowDeleteConfirm(true)}
                 variant="outline"
-                className="w-full"
+                className="w-full border-red-300 text-red-700 hover:bg-red-50"
+                disabled={deleteBooking.isPending}
               >
-                <Edit className="w-4 h-4 mr-2" />
-                Edit Booking
-              </Button>
-
-              <Button
-                variant="outline"
-                className="w-full"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download Confirmation
-              </Button>
-
-              <Button
-                variant="outline"
-                className="w-full"
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                View Contract
+                <Trash2 className="w-4 h-4 mr-2" />
+                Cancel Booking
               </Button>
             </div>
           </div>
-
-          {/* Booking Info */}
-          <div className="border-t pt-4">
-            <h4 className="font-medium text-gray-900 mb-3">Booking Information</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Booking ID</span>
-                <span className="font-mono">{booking.id}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Created</span>
-                <span>{formatDateTime(booking.timestamps.creationdate)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Last Updated</span>
-                <span>{formatDateTime(booking.timestamps.lastupdate)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Danger Zone */}
-          <div className="border-t pt-4">
-            <h4 className="font-medium text-red-700 mb-3">Danger Zone</h4>
-            <Button
-              onClick={() => setShowDeleteConfirm(true)}
-              variant="outline"
-              className="w-full border-red-300 text-red-700 hover:bg-red-50"
-              disabled={deleteBooking.isPending}
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Cancel Booking
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
     </>
   );
 };

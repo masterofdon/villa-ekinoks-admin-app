@@ -16,8 +16,6 @@
     "antd": "^5.27.5",
     "axios": "^1.15.1",
     "clsx": "^2.1.1",
-    "eufy-security-client": "^3.8.0",
-    "jmuxer": "^2.1.0",
     "lucide-react": "^0.408.0",
     "next": "16.2.4",
     "next-auth": "^4.24.7",
@@ -28,7 +26,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/jmuxer": "^2.0.7",
     "@types/node": "^20.14.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

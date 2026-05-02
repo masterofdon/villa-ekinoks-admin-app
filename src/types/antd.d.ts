@@ -1,5 +1,3 @@
-declare module 'jmuxer';
-
 // Ant Design component types
 declare module 'antd' {
   export * from 'antd/es';
