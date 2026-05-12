@@ -7,6 +7,10 @@ import type {
   AppUser,
   VillaAdminUser,
   GenericApiResponse,
+  Reset_VillaAdminUserPassword_WC_MLS_XAction,
+  Reset_VillaAdminUserPassword_WC_MLS_XAction_Response,
+  Update_VillaAdminUserPersonalInfo_WC_MLS_XAction,
+  Update_VillaAdminUserPersonalInfo_WC_MLS_XAction_Response,
   Villa,
   CreateVillaRequest,
   UpdateVillaRequest,
@@ -136,6 +140,31 @@ export const authApi = {
       localStorage.removeItem('user'); // Remove corrupted data
       return null;
     }
+  },
+
+  resetPassword: async (data: Reset_VillaAdminUserPassword_WC_MLS_XAction): Promise<Reset_VillaAdminUserPassword_WC_MLS_XAction_Response> => {
+    const response = await api.post<GenericApiResponse<Reset_VillaAdminUserPassword_WC_MLS_XAction_Response>>('/villa-admin-users/reset-password', data);
+    return response.data.object;
+  },
+
+  updatePersonalInfo: async (
+    userId: string,
+    data: Update_VillaAdminUserPersonalInfo_WC_MLS_XAction
+  ): Promise<Update_VillaAdminUserPersonalInfo_WC_MLS_XAction_Response> => {
+    const response = await api.put<GenericApiResponse<Update_VillaAdminUserPersonalInfo_WC_MLS_XAction_Response>>(
+      `/villa-admin-users/${userId}/personal-info`,
+      data
+    );
+    // Update localStorage with the new personal info
+    if (typeof window !== 'undefined') {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr) as AppUser;
+        user.personalinfo = { ...user.personalinfo, ...data };
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+    }
+    return response.data.object;
   },
 };
 
@@ -476,6 +505,11 @@ export const villaNearbyServicesApi = {
       ...serviceData,
       villaid: villaAdminUser.villa.id,
     });
+  },
+
+  // Delete villa nearby service
+  deleteVillaNearbyService: async (id: string): Promise<void> => {
+    await api.delete<GenericApiResponse<void>>(`/villa-nearby-services/${id}`);
   },
 };
 

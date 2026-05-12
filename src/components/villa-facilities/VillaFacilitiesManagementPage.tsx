@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useVillaFacilityItems, useVillaNearbyServices } from '@/hooks/api';
+import { useVillaFacilityItems, useVillaNearbyServices, useDeleteVillaNearbyService } from '@/hooks/api';
 import { SimpleVillaFacilityItemView, VillaNearbyService } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { Plus, Sparkles, AlertTriangle, MapPin } from 'lucide-react';
+import { Plus, Sparkles, AlertTriangle, MapPin, Trash2 } from 'lucide-react';
 import { CreateVillaFacilityModal } from './CreateVillaFacilityModal';
 import { CreateVillaNearbyServiceModal } from './CreateVillaNearbyServiceModal';
 
@@ -41,6 +41,10 @@ const FacilityCategoryDisplay: React.FC<FacilityCategoryDisplayProps> = ({
 export const VillaFacilitiesManagementPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCreateNearbyServiceModalOpen, setIsCreateNearbyServiceModalOpen] = useState(false);
+  const [deletingServiceId, setDeletingServiceId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  const deleteNearbyService = useDeleteVillaNearbyService();
 
   const { 
     data: villaFacilityItems, 
@@ -64,6 +68,16 @@ export const VillaFacilitiesManagementPage: React.FC = () => {
   const handleNearbyServiceModalClose = () => {
     setIsCreateNearbyServiceModalOpen(false);
     refetchNearbyServices(); // Refresh the nearby services list when modal closes
+  };
+
+  const handleDeleteNearbyService = async (id: string) => {
+    setDeletingServiceId(id);
+    try {
+      await deleteNearbyService.mutateAsync(id);
+    } finally {
+      setDeletingServiceId(null);
+      setConfirmDeleteId(null);
+    }
   };
 
   if (isLoading) {
@@ -220,20 +234,52 @@ export const VillaFacilitiesManagementPage: React.FC = () => {
                   key={service.id}
                   className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {service.type.replace(/_/g, ' ')}
-                        </span>
+                  {confirmDeleteId === service.id ? (
+                    <div className="flex flex-col gap-3">
+                      <p className="text-sm text-gray-700 font-medium">Delete &ldquo;{service.name}&rdquo;?</p>
+                      <p className="text-xs text-gray-500">This action cannot be undone.</p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleDeleteNearbyService(service.id)}
+                          disabled={deletingServiceId === service.id}
+                          className="flex-1 px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white text-xs font-medium rounded transition-colors"
+                        >
+                          {deletingServiceId === service.id ? 'Deleting...' : 'Delete'}
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          disabled={deletingServiceId === service.id}
+                          className="flex-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-700 text-xs font-medium rounded transition-colors"
+                        >
+                          Cancel
+                        </button>
                       </div>
-                      <h4 className="font-semibold text-gray-900">{service.name}</h4>
                     </div>
-                  </div>
-                  <div className="space-y-1 text-sm text-gray-600">
-                    <p>📍 Distance: {service.distance}</p>
-                    <p>🌍 Location: {service.location.latitude.toFixed(6)}, {service.location.longitude.toFixed(6)}</p>
-                  </div>
+                  ) : (
+                    <>
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              {service.type.replace(/_/g, ' ')}
+                            </span>
+                          </div>
+                          <h4 className="font-semibold text-gray-900">{service.name}</h4>
+                        </div>
+                        <button
+                          onClick={() => setConfirmDeleteId(service.id)}
+                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                          title="Delete nearby service"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                      <div className="space-y-1 text-sm text-gray-600">
+                        <p>📍 Distance: {service.distance}</p>
+                        <p>🌍 Location: {service.location.latitude.toFixed(6)}, {service.location.longitude.toFixed(6)}</p>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>

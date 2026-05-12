@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLogin, useVerifyLogin, useAuthState } from '@/hooks/api';
 import { Button } from '@/components/ui/Button';
@@ -133,6 +134,15 @@ export default function LoginPage() {
               >
                 {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
               </Button>
+
+              <div className="text-center">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
 
               {errors.general && (
                 <div className="text-red-600 text-sm text-center">

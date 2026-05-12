@@ -1,17 +1,56 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '@/components/layout/Sidebar';
 import AuthGuard from '@/components/auth/AuthGuard';
-import { useCurrentUser } from '@/hooks/api';
+import { useCurrentUser, useUpdatePersonalInfo } from '@/hooks/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { Settings as SettingsIcon, User, Bell, Lock, Palette } from 'lucide-react';
-import type { VillaAdminUser } from '@/types';
+import { Settings as SettingsIcon, User, Bell, Lock, Palette, Save } from 'lucide-react';
+import type { VillaAdminUser, Update_VillaAdminUserPersonalInfo_WC_MLS_XAction } from '@/types';
 
 export default function SettingsPage() {
   const { data: user } = useCurrentUser();
   const villaAdminUser = user as VillaAdminUser;
+  const updatePersonalInfo = useUpdatePersonalInfo();
+
+  const [formValues, setFormValues] = useState<Update_VillaAdminUserPersonalInfo_WC_MLS_XAction>({
+    firstname: '',
+    middlename: '',
+    lastname: '',
+    email: '',
+    phonenumber: '',
+  });
+
+  useEffect(() => {
+    if (user) {
+      setFormValues({
+        firstname: user.personalinfo.firstname ?? '',
+        middlename: user.personalinfo.middlename ?? '',
+        lastname: user.personalinfo.lastname ?? '',
+        email: user.personalinfo.email ?? '',
+        phonenumber: user.personalinfo.phonenumber ?? '',
+      });
+    }
+  }, [user]);
+
+  const isDirty = user
+    ? formValues.firstname !== (user.personalinfo.firstname ?? '') ||
+      formValues.middlename !== (user.personalinfo.middlename ?? '') ||
+      formValues.lastname !== (user.personalinfo.lastname ?? '') ||
+      formValues.email !== (user.personalinfo.email ?? '') ||
+      formValues.phonenumber !== (user.personalinfo.phonenumber ?? '')
+    : false;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    if (!user) return;
+    updatePersonalInfo.mutate({ userId: user.id, data: formValues });
+  };
 
   return (
     <AuthGuard>
@@ -31,30 +70,66 @@ export default function SettingsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {user && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">First Name</label>
-                    <p className="mt-1 text-gray-900">{user.personalinfo.firstname}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">Last Name</label>
-                    <p className="mt-1 text-gray-900">{user.personalinfo.lastname}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">Email</label>
-                    <p className="mt-1 text-gray-900">{user.personalinfo.email}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">Phone Number</label>
-                    <p className="mt-1 text-gray-900">{user.personalinfo.phonenumber || 'Not provided'}</p>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label htmlFor="firstname" className="text-sm font-medium text-gray-600 block mb-1">First Name</label>
+                  <input
+                    id="firstname"
+                    name="firstname"
+                    value={formValues.firstname}
+                    onChange={handleChange}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
                 </div>
-              )}
+                <div>
+                  <label htmlFor="middlename" className="text-sm font-medium text-gray-600 block mb-1">Middle Name</label>
+                  <input
+                    id="middlename"
+                    name="middlename"
+                    value={formValues.middlename}
+                    onChange={handleChange}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="lastname" className="text-sm font-medium text-gray-600 block mb-1">Last Name</label>
+                  <input
+                    id="lastname"
+                    name="lastname"
+                    value={formValues.lastname}
+                    onChange={handleChange}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="email" className="text-sm font-medium text-gray-600 block mb-1">Email</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formValues.email}
+                    onChange={handleChange}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="phonenumber" className="text-sm font-medium text-gray-600 block mb-1">Phone Number</label>
+                  <input
+                    id="phonenumber"
+                    name="phonenumber"
+                    value={formValues.phonenumber}
+                    onChange={handleChange}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
               <div className="pt-4">
-                <Button variant="outline" disabled>
-                  <User className="w-4 h-4 mr-2" />
-                  Edit Profile (Coming Soon)
+                <Button
+                  onClick={handleSave}
+                  disabled={!isDirty || updatePersonalInfo.isPending}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {updatePersonalInfo.isPending ? 'Saving...' : 'Save'}
                 </Button>
               </div>
             </CardContent>

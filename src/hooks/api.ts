@@ -14,6 +14,8 @@ import type {
   Create_VillaRatePlan_WC_MLS_XAction,
   Create_ParityRate_WC_MLS_XAction,
   Create_VillaBookingManual_WC_MLS_XAction,
+  Reset_VillaAdminUserPassword_WC_MLS_XAction,
+  Update_VillaAdminUserPersonalInfo_WC_MLS_XAction,
 } from '@/types';
 
 // Auth hooks
@@ -43,6 +45,23 @@ export const useLogout = () => {
     mutationFn: authApi.logout,
     onSuccess: () => {
       queryClient.clear();
+    },
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: (data: Reset_VillaAdminUserPassword_WC_MLS_XAction) => authApi.resetPassword(data),
+  });
+};
+
+export const useUpdatePersonalInfo = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ userId, data }: { userId: string; data: Update_VillaAdminUserPersonalInfo_WC_MLS_XAction }) =>
+      authApi.updatePersonalInfo(userId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
     },
   });
 };
@@ -386,6 +405,17 @@ export const useCreateVillaNearbyService = () => {
       villaNearbyServicesApi.createCurrentVillaNearbyService(serviceData),
     onSuccess: () => {
       // Invalidate and refetch villa nearby services
+      queryClient.invalidateQueries({ queryKey: ['villa-nearby-services'] });
+    },
+  });
+};
+
+export const useDeleteVillaNearbyService = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => villaNearbyServicesApi.deleteVillaNearbyService(id),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['villa-nearby-services'] });
     },
   });

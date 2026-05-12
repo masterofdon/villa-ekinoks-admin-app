@@ -20,7 +20,23 @@ export type AppUserPersonalInfo = {
 export type AppUser = {
   id: string;
   personalinfo: AppUserPersonalInfo;
+  statusset: UserStatusSet;
+  username: string;
+  localesettings: AppUserLocaleSettings;
 };
+
+export type AppUserLocaleSettings = {
+  locale: string;
+  currency: "EUR" | "USD" | "GBP" | "TRY";
+}
+
+export type UserStatusSet = {
+  id: string;
+  lockstatus: "LOCKED" | "UNLOCKED";
+  servicestatus: "ACTIVE" | "INACTIVE" | "SUSPENDED";
+  operationstatus: "ENABLED" | "DISABLED";
+  verificationstatus: "VERIFIED" | "REJECTED" | "PENDING";
+}
 
 export type VillaAdminUser = AppUser & {
   villa: Villa;
@@ -93,6 +109,25 @@ export type Villa = {
   publicinfo: VillaPublicInfo;
   privateinfo: VillaPrivateInfo;
   pricing: VillaPricingSchema;
+  owner: VillaAdminUser;
+  operators: VillaOperator[];
+};
+
+export type VillaOperator = {
+  id: string;
+  user: VillaAdminUser;
+  villa : Villa;
+  priviliges: VillaOperatorPrivileges;
+};
+
+export type VillaOperatorPrivileges = {
+  bookings: number;
+  pricing: number;
+  availability: number;
+  publicinfo: number;
+  privateinfo: number;
+  reviews: number;
+  messages: number;
 };
 
 export interface CreateVillaRequest {
@@ -164,6 +199,7 @@ export type Sort = {
 // Calendar Management Types
 export type SimpleVillaBooking = {
   id: string;
+  bookingcode: string;
   startdate: string;
   enddate: string;
   inquiror: AppUser;
@@ -242,6 +278,7 @@ export type VillaBookingAdditionalService = {
 
 export type VillaBookingSummaryView = {
   id: string;
+  bookingcode: string;
   timestamps: VillaBookingTimestamps;
   startdate: string; // YYYYMMDD format
   enddate: string; // YYYYMMDD format
@@ -649,5 +686,25 @@ export type Create_VillaBookingAdditionalService_WC_MLS_XAction = {
 }
 
 export type Create_VillaBookingManual_WC_MLS_XAction_Response = {
+  id: string;
+}
+
+export type Reset_VillaAdminUserPassword_WC_MLS_XAction = {
+  email: string;
+}
+
+export type Reset_VillaAdminUserPassword_WC_MLS_XAction_Response = {
+  id: string;
+}
+
+export type Update_VillaAdminUserPersonalInfo_WC_MLS_XAction = {
+  firstname: string;
+  middlename: string;
+  lastname: string;
+  email: string;
+  phonenumber: string;
+}
+
+export type Update_VillaAdminUserPersonalInfo_WC_MLS_XAction_Response = {
   id: string;
 }
