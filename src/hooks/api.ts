@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi, villaFacilitiesApi, villaNearbyServicesApi, propertyGalleriesApi, villaRatePlansApi, parityRatesApi } from '@/lib/services';
+import { authApi, dashboardApi, villasApi, villaPricingApi, villaStatsApi, villaBookingsApi, discountCodesApi, servicableItemsApi, villaFacilitiesApi, villaNearbyServicesApi, propertyGalleriesApi, villaRatePlansApi, parityRatesApi, propertyRentablesApi } from '@/lib/services';
 import type { 
   UpdateVillaRequest,
   VillaBookingsFilter,
@@ -16,6 +16,9 @@ import type {
   Create_VillaBookingManual_WC_MLS_XAction,
   Reset_VillaAdminUserPassword_WC_MLS_XAction,
   Update_VillaAdminUserPersonalInfo_WC_MLS_XAction,
+  PropertyRentable,
+  Create_PropertyRentable_WC_API_XAction,
+  Update_PropertyRentable_WC_API_XAction,
 } from '@/types';
 
 // Auth hooks
@@ -578,3 +581,85 @@ export const useCreateParityRate = () => {
 
 // Re-export bulk delete hook
 export { useBulkDelete } from './useBulkDelete';
+
+// Property Rentables hooks
+export const usePropertyRentables = () => {
+  return useQuery({
+    queryKey: ['property-rentables'],
+    queryFn: () => propertyRentablesApi.getCurrentVillaPropertyRentables(),
+    enabled: (() => {
+      if (!authApi.isAuthenticated()) return false;
+      const villaAdminUser = authApi.getCurrentVillaAdminUser();
+      return Boolean(villaAdminUser?.villa?.id);
+    })(),
+    retry: false,
+    staleTime: 2 * 60 * 1000,
+  });
+};
+
+export const useCreatePropertyRentable = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: Create_PropertyRentable_WC_API_XAction) =>
+      propertyRentablesApi.createCurrentVillaPropertyRentable(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['property-rentables'] });
+    },
+  });
+};
+
+export const useUpdatePropertyRentable = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Update_PropertyRentable_WC_API_XAction }) =>
+      propertyRentablesApi.updatePropertyRentable(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['property-rentables'] });
+    },
+  });
+};
+
+export const useUploadPropertyRentableGalleryImages = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      rentableId,
+      galleryId,
+      files,
+    }: {
+      rentableId: string;
+      galleryId: string;
+      files: File[];
+    }) => propertyRentablesApi.uploadGalleryImages(rentableId, galleryId, files),
+    onSuccess: (updatedRentable) => {
+      queryClient.setQueryData<PropertyRentable[]>(['property-rentables'], (rentables) =>
+        rentables?.map((rentable) =>
+          rentable.id === updatedRentable.id ? updatedRentable : rentable
+        )
+      );
+      queryClient.invalidateQueries({ queryKey: ['property-rentables'] });
+    },
+  });
+};
+
+export const useDeletePropertyRentableGalleryImage = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      rentableId,
+      galleryId,
+      imageId,
+    }: {
+      rentableId: string;
+      galleryId: string;
+      imageId: string;
+    }) => propertyRentablesApi.deleteGalleryImage(rentableId, galleryId, imageId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['property-rentables'] });
+    },
+  });
+};

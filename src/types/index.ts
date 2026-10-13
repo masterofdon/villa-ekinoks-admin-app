@@ -708,3 +708,60 @@ export type Update_VillaAdminUserPersonalInfo_WC_MLS_XAction = {
 export type Update_VillaAdminUserPersonalInfo_WC_MLS_XAction_Response = {
   id: string;
 }
+
+export type EkinoksImage = {
+  id: string;
+  name: string;
+  description: string;
+  alt: string;
+  lg: AppFile;
+  md: AppFile;
+  sm: AppFile;
+};
+
+export type PropertyRentableGalleryImage = {
+  id: string;
+  image: EkinoksImage;
+  order: number;
+};
+
+export type PropertyRentableGallery = {
+  id: string;
+  name: string;
+  description: string;
+  images: PropertyRentableGalleryImage[];
+};
+
+export type PropertyRentableFeature = {
+  id: string;
+  name: string;
+  description: string;
+  value: string;
+  icon: string;
+};
+
+export type PropertyRentable = {
+  id: string;
+  name: string;
+  description: string;
+  gallery?: PropertyRentableGallery;
+  features: PropertyRentableFeature[];
+};
+
+export type Create_PropertyRentable_WC_API_XAction = {
+  name: string;
+  description: string;
+};
+
+export type Create_PropertyRentable_WC_API_XAction_Response = {
+  id: string;
+};
+
+export type Update_PropertyRentable_WC_API_XAction = {
+  name: string;
+  description: string;
+};
+
+export type Update_PropertyRentable_WC_API_XAction_Response = {
+  id: string;
+};

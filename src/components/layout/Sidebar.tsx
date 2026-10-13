@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, LogOut, Settings, Calendar, BookOpen, Percent, Package, Sparkles, Images, Calculator, ArrowLeftRight } from 'lucide-react';
+import { LayoutDashboard, LogOut, Settings, Calendar, BookOpen, Percent, Package, Sparkles, Images, Calculator, ArrowLeftRight, Building2 } from 'lucide-react';
 import { useLogout } from '@/hooks/api';
 import { UserProfile, UserAvatar } from '@/components/user/UserProfile';
 
@@ -34,6 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     { name: 'Parity Rates', href: '/parity-rates', icon: ArrowLeftRight },
     { name: 'Discount Codes', href: '/discount-codes', icon: Percent },
     { name: 'Property Galleries', href: '/property-galleries', icon: Images },
+    { name: 'Property Rentables', href: '/property-rentables', icon: Building2 },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 

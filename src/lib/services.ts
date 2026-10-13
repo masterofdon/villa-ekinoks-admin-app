@@ -51,6 +51,11 @@ import type {
   Create_ParityRate_WC_MLS_XAction_Response,
   Create_VillaBookingManual_WC_MLS_XAction,
   Create_VillaBookingManual_WC_MLS_XAction_Response,
+  PropertyRentable,
+  Create_PropertyRentable_WC_API_XAction,
+  Create_PropertyRentable_WC_API_XAction_Response,
+  Update_PropertyRentable_WC_API_XAction,
+  Update_PropertyRentable_WC_API_XAction_Response,
 } from '@/types';
 import { imageCacheService } from './image-cache';
 
@@ -718,6 +723,82 @@ export const villaRatePlansApi = {
   // Delete a villa rate plan
   deleteVillaRatePlan: async (ratePlanId: string): Promise<void> => {
     await api.delete(`/villa-rate-plans/${ratePlanId}`);
+  },
+};
+
+// Property Rentables API
+export const propertyRentablesApi = {
+  getPropertyRentables: async (villaId: string): Promise<PropertyRentable[]> => {
+    const response = await api.get<GenericApiResponse<PropertyRentable[]>>('/property-rentables', {
+      params: { villaid: villaId },
+    });
+    return response.data.object;
+  },
+
+  getCurrentVillaPropertyRentables: async (): Promise<PropertyRentable[]> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser?.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    return propertyRentablesApi.getPropertyRentables(villaAdminUser.villa.id);
+  },
+
+  createPropertyRentable: async (
+    villaId: string,
+    data: Create_PropertyRentable_WC_API_XAction
+  ): Promise<Create_PropertyRentable_WC_API_XAction_Response> => {
+    const response = await api.post<GenericApiResponse<Create_PropertyRentable_WC_API_XAction_Response>>(
+      `/villas/${villaId}/property-rentables`,
+      data
+    );
+    return response.data.object;
+  },
+
+  createCurrentVillaPropertyRentable: async (
+    data: Create_PropertyRentable_WC_API_XAction
+  ): Promise<Create_PropertyRentable_WC_API_XAction_Response> => {
+    const villaAdminUser = authApi.getCurrentVillaAdminUser();
+    if (!villaAdminUser?.villa.id) {
+      throw new Error('No villa found for current user');
+    }
+    return propertyRentablesApi.createPropertyRentable(villaAdminUser.villa.id, data);
+  },
+
+  updatePropertyRentable: async (
+    rentableId: string,
+    data: Update_PropertyRentable_WC_API_XAction
+  ): Promise<Update_PropertyRentable_WC_API_XAction_Response> => {
+    const response = await api.put<GenericApiResponse<Update_PropertyRentable_WC_API_XAction_Response>>(
+      `/property-rentables/${rentableId}`,
+      data
+    );
+    return response.data.object;
+  },
+
+  uploadGalleryImages: async (
+    rentableId: string,
+    galleryId: string,
+    files: File[]
+  ): Promise<PropertyRentable> => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+
+    const response = await api.post<GenericApiResponse<PropertyRentable>>(
+      `/property-rentables/${rentableId}/gallery/${galleryId}/images`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+    return response.data.object;
+  },
+
+  deleteGalleryImage: async (
+    rentableId: string,
+    galleryId: string,
+    imageId: string
+  ): Promise<void> => {
+    await api.delete(
+      `/property-rentables/${rentableId}/gallery/${galleryId}/images/${imageId}`
+    );
   },
 };
 
