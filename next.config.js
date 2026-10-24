@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    agentUpgrade: 'security',
+  },
   // Prevent webpack from bundling Node.js-only packages used in API routes
   serverExternalPackages: ['eufy-security-client', 'protobufjs'],
   images: {
