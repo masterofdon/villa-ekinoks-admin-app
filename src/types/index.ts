@@ -45,6 +45,8 @@ export type VillaAdminUser = AppUser & {
 export type TokenizedUser = {
   accesstoken: string;
   refreshtoken: string;
+  accesstokenexpiration?: number;
+  refreshtokenexpiration?: number;
   user: AppUser;
 };
 
@@ -725,6 +727,10 @@ export type PropertyRentableGalleryImage = {
   order: number;
 };
 
+export type Update_PropertyRentableGalleryImageOrders_WC_API_XAction = {
+  idordermap: { [id: string]: number };
+};
+
 export type PropertyRentableGallery = {
   id: string;
   name: string;
@@ -744,6 +750,8 @@ export type PropertyRentable = {
   id: string;
   name: string;
   description: string;
+  order: number | null;
+  capacity: number | null;
   gallery?: PropertyRentableGallery;
   features: PropertyRentableFeature[];
 };
@@ -751,6 +759,8 @@ export type PropertyRentable = {
 export type Create_PropertyRentable_WC_API_XAction = {
   name: string;
   description: string;
+  order: number;
+  capacity: number;
 };
 
 export type Create_PropertyRentable_WC_API_XAction_Response = {
@@ -760,8 +770,18 @@ export type Create_PropertyRentable_WC_API_XAction_Response = {
 export type Update_PropertyRentable_WC_API_XAction = {
   name: string;
   description: string;
+  order: number;
+  capacity: number;
 };
 
 export type Update_PropertyRentable_WC_API_XAction_Response = {
+  id: string;
+};
+
+export type Update_PropertyRentableOrders_WC_API_XAction = {
+  idordermap: { [id: string]: number };
+};
+
+export type Update_PropertyRentableOrders_WC_API_XAction_Response = {
   id: string;
 };

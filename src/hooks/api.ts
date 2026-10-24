@@ -19,6 +19,8 @@ import type {
   PropertyRentable,
   Create_PropertyRentable_WC_API_XAction,
   Update_PropertyRentable_WC_API_XAction,
+  Update_PropertyRentableOrders_WC_API_XAction,
+  Update_PropertyRentableGalleryImageOrders_WC_API_XAction,
 } from '@/types';
 
 // Auth hooks
@@ -621,6 +623,39 @@ export const useUpdatePropertyRentable = () => {
   });
 };
 
+export const useReorderPropertyRentables = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: Update_PropertyRentableOrders_WC_API_XAction) =>
+      propertyRentablesApi.reorderPropertyRentables(data),
+    onSuccess: (_response, data) => {
+      queryClient.setQueryData<PropertyRentable[]>(['property-rentables'], (rentables) =>
+        rentables?.map((rentable) => ({
+          ...rentable,
+          order: data.idordermap[rentable.id] ?? rentable.order,
+        }))
+      );
+      queryClient.invalidateQueries({ queryKey: ['property-rentables'] });
+    },
+  });
+};
+
+export const useDeletePropertyRentable = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (rentableId: string) =>
+      propertyRentablesApi.deletePropertyRentable(rentableId),
+    onSuccess: (_response, rentableId) => {
+      queryClient.setQueryData<PropertyRentable[]>(['property-rentables'], (rentables) =>
+        rentables?.filter((rentable) => rentable.id !== rentableId)
+      );
+      queryClient.invalidateQueries({ queryKey: ['property-rentables'] });
+    },
+  });
+};
+
 export const useUploadPropertyRentableGalleryImages = () => {
   const queryClient = useQueryClient();
 
@@ -638,6 +673,41 @@ export const useUploadPropertyRentableGalleryImages = () => {
       queryClient.setQueryData<PropertyRentable[]>(['property-rentables'], (rentables) =>
         rentables?.map((rentable) =>
           rentable.id === updatedRentable.id ? updatedRentable : rentable
+        )
+      );
+      queryClient.invalidateQueries({ queryKey: ['property-rentables'] });
+    },
+  });
+};
+
+export const useReorderPropertyRentableGalleryImages = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      rentableId,
+      galleryId,
+      data,
+    }: {
+      rentableId: string;
+      galleryId: string;
+      data: Update_PropertyRentableGalleryImageOrders_WC_API_XAction;
+    }) => propertyRentablesApi.reorderGalleryImages(rentableId, galleryId, data),
+    onSuccess: (_response, { rentableId, galleryId, data }) => {
+      queryClient.setQueryData<PropertyRentable[]>(['property-rentables'], (rentables) =>
+        rentables?.map((rentable) =>
+          rentable.id === rentableId && rentable.gallery?.id === galleryId
+            ? {
+                ...rentable,
+                gallery: {
+                  ...rentable.gallery,
+                  images: rentable.gallery.images.map((galleryImage) => ({
+                    ...galleryImage,
+                    order: data.idordermap[galleryImage.id] ?? galleryImage.order,
+                  })),
+                },
+              }
+            : rentable
         )
       );
       queryClient.invalidateQueries({ queryKey: ['property-rentables'] });

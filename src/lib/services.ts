@@ -56,8 +56,12 @@ import type {
   Create_PropertyRentable_WC_API_XAction_Response,
   Update_PropertyRentable_WC_API_XAction,
   Update_PropertyRentable_WC_API_XAction_Response,
+  Update_PropertyRentableOrders_WC_API_XAction,
+  Update_PropertyRentableOrders_WC_API_XAction_Response,
+  Update_PropertyRentableGalleryImageOrders_WC_API_XAction,
 } from '@/types';
 import { imageCacheService } from './image-cache';
+import { clearSession, storeSession } from './auth-session';
 
 export const authApi = {
   // Step 1: Initial login request
@@ -70,24 +74,15 @@ export const authApi = {
   verifyLogin: async (verification: Verify_LoginVerification_XAction): Promise<TokenizedUser> => {
     const response = await api.post<GenericApiResponse<TokenizedUser>>('/verification-pair-controller/login-verifications', verification);
     
-    // Store tokens and user data in localStorage (only on client side)
+    // Store tokens, expirations and user data in localStorage (only on client side)
     const tokenizedUser = response.data.object;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('accesstoken', tokenizedUser.accesstoken);
-      localStorage.setItem('refreshtoken', tokenizedUser.refreshtoken);
-      localStorage.setItem('user', JSON.stringify(tokenizedUser.user));
-    }
+    storeSession(tokenizedUser);
     
     return tokenizedUser;
   },
 
   logout: async (): Promise<void> => {
-    // Clear tokens and user data from localStorage (only on client side)
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('accesstoken');
-      localStorage.removeItem('refreshtoken');
-      localStorage.removeItem('user');
-    }
+    clearSession();
     // You can add a logout API call here if needed
   },
 
@@ -773,6 +768,31 @@ export const propertyRentablesApi = {
       data
     );
     return response.data.object;
+  },
+
+  reorderPropertyRentables: async (
+    data: Update_PropertyRentableOrders_WC_API_XAction
+  ): Promise<Update_PropertyRentableOrders_WC_API_XAction_Response> => {
+    const response = await api.patch<GenericApiResponse<Update_PropertyRentableOrders_WC_API_XAction_Response>>(
+      '/property-rentables/re-order',
+      data
+    );
+    return response.data.object;
+  },
+
+  deletePropertyRentable: async (rentableId: string): Promise<void> => {
+    await api.delete(`/property-rentables/${rentableId}`);
+  },
+
+  reorderGalleryImages: async (
+    rentableId: string,
+    galleryId: string,
+    data: Update_PropertyRentableGalleryImageOrders_WC_API_XAction
+  ): Promise<void> => {
+    await api.patch(
+      `/property-rentables/${rentableId}/gallery/${galleryId}/images/re-order`,
+      data
+    );
   },
 
   uploadGalleryImages: async (

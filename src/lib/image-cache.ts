@@ -187,7 +187,7 @@ class ImageCacheService {
     if (!this.db) return null;
 
     return new Promise((resolve) => {
-      const transaction = this.db!.transaction([this.storeName], 'readonly');
+      const transaction = this.db!.transaction([this.storeName], 'readwrite');
       const store = transaction.objectStore(this.storeName);
       
       const request = store.get(url);

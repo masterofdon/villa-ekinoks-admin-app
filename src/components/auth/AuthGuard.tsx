@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthState } from '@/hooks/api';
+import { ensureValidSession } from '@/lib/auth-session';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -19,18 +20,27 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
     // Mark that we're now on the client side
     setIsClient(true);
     
+    let cancelled = false;
+
     // Small delay to prevent hydration mismatches
-    const checkAuth = () => {
+    const checkAuth = async () => {
       if (!isAuthenticated) {
         router.push('/login');
-      } else {
+        return;
+      }
+      // Skips the mirror call while the access token is valid; forces logout if renewal fails
+      const valid = await ensureValidSession();
+      if (!cancelled && valid) {
         setIsChecking(false);
       }
     };
 
     // Check authentication after component mounts
     const timer = setTimeout(checkAuth, 100);
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [isAuthenticated, router]);
 
   // Show consistent loading state during SSR and initial client render

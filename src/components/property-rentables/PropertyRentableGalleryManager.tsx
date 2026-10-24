@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   useDeletePropertyRentableGalleryImage,
+  useReorderPropertyRentableGalleryImages,
   useUploadPropertyRentableGalleryImages,
 } from '@/hooks/api';
 import { PropertyRentable } from '@/types';
 import { AuthImage } from '@/components/ui/AuthImage';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
-import { AlertCircle, ImageIcon, Images, Loader2, Trash2, Upload, X } from 'lucide-react';
+import { AlertCircle, GripVertical, ImageIcon, Images, Loader2, Save, Trash2, Upload, X } from 'lucide-react';
 
 interface PropertyRentableGalleryManagerProps {
   rentable: PropertyRentable;
@@ -21,14 +22,39 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadMutation = useUploadPropertyRentableGalleryImages();
   const deleteMutation = useDeletePropertyRentableGalleryImage();
+  const reorderMutation = useReorderPropertyRentableGalleryImages();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [deleteImageId, setDeleteImageId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [pendingOrderIds, setPendingOrderIds] = useState<string[] | null>(null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
   const gallery = rentable.gallery;
-  const images = gallery?.images
-    ? [...gallery.images].sort((first, second) => (first.order ?? 0) - (second.order ?? 0))
-    : [];
+  const serverOrderedImages = useMemo(
+    () => gallery?.images
+      ? [...gallery.images].sort(
+          (first, second) =>
+            (first.order ?? Number.MAX_SAFE_INTEGER) -
+            (second.order ?? Number.MAX_SAFE_INTEGER)
+        )
+      : [],
+    [gallery]
+  );
+  const images = useMemo(() => {
+    if (!pendingOrderIds) return serverOrderedImages;
+
+    const imageById = new Map(serverOrderedImages.map((galleryImage) => [galleryImage.id, galleryImage]));
+    const pendingImages = pendingOrderIds
+      .map((id) => imageById.get(id))
+      .filter((galleryImage): galleryImage is (typeof serverOrderedImages)[number] => Boolean(galleryImage));
+    const pendingIdSet = new Set(pendingOrderIds);
+    return [
+      ...pendingImages,
+      ...serverOrderedImages.filter((galleryImage) => !pendingIdSet.has(galleryImage.id)),
+    ];
+  }, [pendingOrderIds, serverOrderedImages]);
+  const hasOrderChanged = pendingOrderIds !== null;
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
@@ -80,9 +106,75 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
         galleryId: gallery.id,
         imageId: deleteImageId,
       });
+      setPendingOrderIds((currentOrderIds) =>
+        currentOrderIds?.filter((id) => id !== deleteImageId) ?? null
+      );
       setDeleteImageId(null);
     } catch {
       setErrorMessage('Failed to remove the image. Please try again.');
+    }
+  };
+
+  const handleDragStart = (event: React.DragEvent, imageId: string) => {
+    setDraggingId(imageId);
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', imageId);
+  };
+
+  const handleDragOver = (event: React.DragEvent, imageId: string) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    if (imageId !== draggingId) {
+      setDragOverId(imageId);
+    }
+  };
+
+  const handleDrop = (event: React.DragEvent, targetId: string) => {
+    event.preventDefault();
+    const sourceId = event.dataTransfer.getData('text/plain');
+    if (!sourceId || sourceId === targetId) {
+      setDragOverId(null);
+      return;
+    }
+
+    setPendingOrderIds((currentOrderIds) => {
+      const serverOrderIds = serverOrderedImages.map((galleryImage) => galleryImage.id);
+      const reorderedIds = [...(currentOrderIds ?? serverOrderIds)];
+      const sourceIndex = reorderedIds.indexOf(sourceId);
+      const targetIndex = reorderedIds.indexOf(targetId);
+      if (sourceIndex === -1 || targetIndex === -1) return currentOrderIds;
+
+      const [movedId] = reorderedIds.splice(sourceIndex, 1);
+      reorderedIds.splice(targetIndex, 0, movedId);
+      return reorderedIds.some((id, index) => id !== serverOrderIds[index])
+        ? reorderedIds
+        : null;
+    });
+    setDragOverId(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggingId(null);
+    setDragOverId(null);
+  };
+
+  const handleSaveOrder = async () => {
+    if (!gallery) return;
+
+    setErrorMessage('');
+    try {
+      await reorderMutation.mutateAsync({
+        rentableId: rentable.id,
+        galleryId: gallery.id,
+        data: {
+          idordermap: Object.fromEntries(
+            images.map((galleryImage, index) => [galleryImage.id, index])
+          ),
+        },
+      });
+      setPendingOrderIds(null);
+    } catch {
+      setErrorMessage('Failed to save the image order. Please try again.');
     }
   };
 
@@ -101,16 +193,33 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
                 {images.length} image{images.length === 1 ? '' : 's'} in this rentable gallery
               </p>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={!gallery || uploadMutation.isPending || deleteMutation.isPending}
-              className="flex items-center gap-2"
-            >
-              <Upload className="h-4 w-4" />
-              Select images
-            </Button>
+            <div className="flex items-center gap-2">
+              {hasOrderChanged && (
+                <Button
+                  type="button"
+                  onClick={handleSaveOrder}
+                  disabled={reorderMutation.isPending}
+                  className="flex items-center gap-2 bg-amber-500 text-white hover:bg-amber-600"
+                >
+                  {reorderMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
+                  {reorderMutation.isPending ? 'Saving...' : 'Save image order'}
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={!gallery || uploadMutation.isPending || deleteMutation.isPending || hasOrderChanged}
+                className="flex items-center gap-2"
+              >
+                <Upload className="h-4 w-4" />
+                Select images
+              </Button>
+            </div>
             <input
               ref={fileInputRef}
               type="file"
@@ -198,7 +307,19 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
                 return (
                   <div
                     key={galleryImage.id}
-                    className="group relative aspect-[4/3] overflow-hidden rounded-md border border-gray-200 bg-gray-100"
+                    draggable
+                    onDragStart={(event) => handleDragStart(event, galleryImage.id)}
+                    onDragOver={(event) => handleDragOver(event, galleryImage.id)}
+                    onDragLeave={() => setDragOverId(null)}
+                    onDrop={(event) => handleDrop(event, galleryImage.id)}
+                    onDragEnd={handleDragEnd}
+                    className={`group relative aspect-[4/3] overflow-hidden rounded-md border bg-gray-100 transition-all ${
+                      draggingId === galleryImage.id
+                        ? 'scale-95 border-gray-200 opacity-40'
+                        : dragOverId === galleryImage.id
+                          ? 'border-blue-400 ring-2 ring-blue-300'
+                          : 'border-gray-200'
+                    }`}
                   >
                     {imageUrl ? (
                       <AuthImage
@@ -216,6 +337,12 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
                         Cover
                       </span>
                     )}
+                    <div
+                      className="absolute left-2 top-2 cursor-grab rounded bg-white/95 p-1 shadow-sm active:cursor-grabbing"
+                      title="Drag to reorder"
+                    >
+                      <GripVertical className="h-4 w-4 text-gray-500" />
+                    </div>
                     <button
                       type="button"
                       onClick={() => setDeleteImageId(galleryImage.id)}

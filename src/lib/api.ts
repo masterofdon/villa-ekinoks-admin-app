@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.villaekinoks.com/api/v1';
+import { API_BASE_URL, ensureValidSession, forceLogout } from '@/lib/auth-session';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -12,8 +11,10 @@ export const api = axios.create({
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
-  (config) => {
+  async (config) => {
     if (typeof window !== 'undefined') {
+      // Renews the session through the mirror endpoint when the access token expired
+      await ensureValidSession();
       const token = localStorage.getItem('accesstoken');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -32,12 +33,17 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access - clear all auth data
-      localStorage.removeItem('accesstoken');
-      localStorage.removeItem('refreshtoken');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+    // 401: unauthorized, 407: the backend requires re-authorization (e.g. permissions changed)
+    const status = error.response?.status;
+    if (status === 401 || status === 407) {
+      forceLogout();
+    }
+    // Backend in maintenance/overloaded: show the 503 page and let the user come back
+    if (status === 503 && typeof window !== 'undefined' && !window.location.pathname.startsWith('/503')) {
+      const from = window.location.pathname + window.location.search;
+      // Full navigation on purpose: resets any broken client state
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      globalThis.location.href = `/503?from=${encodeURIComponent(from)}`;
     }
     return Promise.reject(error);
   }

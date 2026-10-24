@@ -2,88 +2,57 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { LayoutDashboard, LogOut, Settings, Calendar, BookOpen, Percent, Package, Sparkles, Images, Calculator, ArrowLeftRight, Building2 } from 'lucide-react';
-import { useLogout } from '@/hooks/api';
-import { UserProfile, UserAvatar } from '@/components/user/UserProfile';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { Tooltip } from 'antd';
+import { LayoutDashboard, Settings, Calendar, BookOpen, Percent, Package, Sparkles, Images, Calculator, ArrowLeftRight, Building2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import ekinoksLogo from '../../../assets/logo/logo-symbol-color.svg';
 
-interface SidebarProps {
-  children: React.ReactNode;
-}
+const navigation = [
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Calendar', href: '/calendar', icon: Calendar },
+  { name: 'Bookings', href: '/bookings', icon: BookOpen },
+  { name: 'Villa Facilities', href: '/villa-facilities', icon: Sparkles },
+  { name: 'Serviceable Items', href: '/servicable-items', icon: Package },
+  { name: 'Villa Rate Plans', href: '/villa-rate-plans', icon: Calculator },
+  { name: 'Parity Rates', href: '/parity-rates', icon: ArrowLeftRight },
+  { name: 'Discount Codes', href: '/discount-codes', icon: Percent },
+  { name: 'Property Galleries', href: '/property-galleries', icon: Images },
+  { name: 'Property Rentables', href: '/property-rentables', icon: Building2 },
+  { name: 'Settings', href: '/settings', icon: Settings },
+];
 
-const Sidebar: React.FC<SidebarProps> = ({ children }) => {
-  const router = useRouter();
-  const logoutMutation = useLogout();
-
-  const handleLogout = async () => {
-    try {
-      await logoutMutation.mutateAsync();
-      router.push('/login');
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
-
-  const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Calendar', href: '/calendar', icon: Calendar },
-    { name: 'Bookings', href: '/bookings', icon: BookOpen },
-    { name: 'Villa Facilities', href: '/villa-facilities', icon: Sparkles },
-    { name: 'Serviceable Items', href: '/servicable-items', icon: Package },
-    { name: 'Villa Rate Plans', href: '/villa-rate-plans', icon: Calculator },
-    { name: 'Parity Rates', href: '/parity-rates', icon: ArrowLeftRight },
-    { name: 'Discount Codes', href: '/discount-codes', icon: Percent },
-    { name: 'Property Galleries', href: '/property-galleries', icon: Images },
-    { name: 'Property Rentables', href: '/property-rentables', icon: Building2 },
-    { name: 'Settings', href: '/settings', icon: Settings },
-  ];
+const Sidebar: React.FC = () => {
+  const pathname = usePathname();
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="flex flex-col w-64 bg-white shadow-lg">
-        <div className="flex items-center justify-center h-16 px-4 bg-primary text-primary-foreground">
-          <h1 className="text-xl font-bold">Villa Admin</h1>
-        </div>
-        
-        <nav className="flex-1 px-4 py-4 space-y-2">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors"
-            >
-              <item.icon className="w-5 h-5 mr-3" />
-              {item.name}
-            </Link>
-          ))}
-        </nav>
-        
-        {/* User Profile Section */}
-        <div className="px-4 py-4 border-t border-gray-200">
-          <div className="flex items-center space-x-3 mb-4">
-            <UserAvatar className="w-10 h-10 text-sm" />
-            <UserProfile className="flex-1 min-w-0" />
-          </div>
-          
-          <button
-            onClick={handleLogout}
-            className="flex items-center w-full px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors"
-            disabled={logoutMutation.isPending}
-          >
-            <LogOut className="w-5 h-5 mr-3" />
-            {logoutMutation.isPending ? 'Signing out...' : 'Sign out'}
-          </button>
-        </div>
+    <aside className="flex w-16 shrink-0 flex-col bg-white shadow-lg">
+      <div className="flex items-center justify-center h-16 px-2 border-b border-gray-200">
+        <Image src={ekinoksLogo} alt="Villa Ekinoks" priority className="h-auto w-8" />
       </div>
-      
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
-        </main>
-      </div>
-    </div>
+
+      <nav className="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
+        {navigation.map((item) => {
+          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          return (
+            <Tooltip key={item.name} title={item.name} placement="right">
+              <Link
+                href={item.href}
+                aria-label={item.name}
+                aria-current={isActive ? 'page' : undefined}
+                className={cn(
+                  'flex items-center justify-center h-10 text-brand-olive rounded-lg hover:bg-brand-olive/10 hover:text-brand-olive transition-colors',
+                  isActive && 'bg-brand-olive/10'
+                )}
+              >
+                <item.icon className="w-5 h-5" />
+              </Link>
+            </Tooltip>
+          );
+        })}
+      </nav>
+    </aside>
   );
 };
 
