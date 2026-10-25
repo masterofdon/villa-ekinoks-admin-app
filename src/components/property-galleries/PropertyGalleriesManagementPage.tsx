@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { Plus, Images, AlertTriangle, ChevronRight, ImageIcon, GripVertical, Save, Trash2 } from 'lucide-react';
 import { CreatePropertyGalleryModal } from './CreatePropertyGalleryModal';
 import { AuthImage } from '@/components/ui/AuthImage';
+import styles from './PropertyGalleriesManagementPage.module.css';
 
 const GalleryCard: React.FC<{
   gallery: PropertyGallery;
@@ -32,46 +33,45 @@ const GalleryCard: React.FC<{
       onDragLeave={onDragLeave}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-      className={`border rounded-lg overflow-hidden bg-white transition-all select-none
-        ${isDragging ? 'opacity-40 scale-95' : ''}
-        ${isDragOver ? 'border-blue-400 shadow-lg ring-2 ring-blue-300' : 'border-gray-200 hover:shadow-md'}
+      className={`${styles.li} ${isDragging ? styles.li2 : ''}
+        ${isDragOver ? styles.li3 : styles.li4}
       `}
     >
-      <div className="relative h-40 bg-gray-100 flex items-center justify-center">
+      <div className={styles.div}>
         {coverImage ? (
           <AuthImage
             url={coverImage}
             alt={gallery.name}
-            className="w-full h-full object-cover"
+            className={styles.authImage}
           />
         ) : (
-          <ImageIcon className="h-12 w-12 text-gray-300" />
+          <ImageIcon className={styles.imageIcon} />
         )}
-        <div className="absolute top-2 left-2 bg-white/80 rounded p-1 cursor-grab active:cursor-grabbing">
-          <GripVertical className="h-4 w-4 text-gray-500" />
+        <div className={styles.div2}>
+          <GripVertical className={styles.gripVertical} />
         </div>
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); onDelete(); }}
-          className="absolute top-2 right-2 bg-white/80 hover:bg-red-50 rounded p-1 text-gray-400 hover:text-red-600 transition-colors"
+          className={styles.button}
           title="Delete gallery"
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className={styles.trash2} />
         </button>
       </div>
       <button
         type="button"
         onClick={onClick}
-        className="p-4 flex items-center justify-between w-full text-left group"
+        className={`${styles.button2} ${styles.group}`}
       >
-        <div className="min-w-0">
-          <h3 className="font-semibold text-gray-900 truncate">{gallery.name}</h3>
-          <p className="text-sm text-gray-500 truncate mt-0.5">{gallery.description}</p>
-          <p className="text-xs text-gray-400 mt-1">
+        <div className={styles.div3}>
+          <h3 className={styles.h3}>{gallery.name}</h3>
+          <p className={styles.p}>{gallery.description}</p>
+          <p className={styles.p2}>
             {gallery.images?.length ?? 0} image{(gallery.images?.length ?? 0) === 1 ? '' : 's'}
           </p>
         </div>
-        <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0 ml-2 group-hover:text-gray-600" />
+        <ChevronRight className={styles.chevronRight} />
       </button>
     </li>
   );
@@ -182,12 +182,12 @@ export const PropertyGalleriesManagementPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className={styles.div4}>
+        <div className={styles.div5}>
+          <div className={styles.div6}></div>
+          <div className={styles.div7}>
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-48 bg-gray-200 rounded-lg"></div>
+              <div key={i} className={styles.div8}></div>
             ))}
           </div>
         </div>
@@ -197,15 +197,15 @@ export const PropertyGalleriesManagementPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="p-6">
+      <div className={styles.div4}>
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <CardContent className={styles.div4}>
+            <div className={styles.div9}>
+              <AlertTriangle className={styles.alertTriangle} />
+              <h3 className={styles.h32}>
                 Error Loading Galleries
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className={styles.p3}>
                 {error instanceof Error ? error.message : 'An unexpected error occurred'}
               </p>
               <Button onClick={() => refetch()}>Try Again</Button>
@@ -217,60 +217,60 @@ export const PropertyGalleriesManagementPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <Images className="h-7 w-7 text-blue-600" />
+    <div className={styles.div10}>
+      <div className={styles.div11}>
+        <h1 className={styles.h1}>
+          <Images className={styles.images} />
           Property Galleries
         </h1>
-        <p className="text-gray-600 mt-1">
+        <p className={styles.p4}>
           Manage photo galleries for your villa property
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className={styles.div12}>
+            <div className={styles.div13}>
               <CardTitle>Galleries</CardTitle>
               {hasOrderChanged && (
                 <Button
                   onClick={handleSaveOrder}
                   disabled={reorderMutation.isPending}
-                  className="bg-amber-500 hover:bg-amber-600 text-white text-sm h-8 px-3"
+                  className={styles.button3}
                 >
-                  <Save className="h-3.5 w-3.5 mr-1.5" />
+                  <Save className={styles.save} />
                   {reorderMutation.isPending ? 'Saving...' : 'Save gallery order'}
                 </Button>
               )}
             </div>
             <Button
               onClick={() => setIsCreateModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className={styles.button4}
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className={styles.plus} />
               New Gallery
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {orderedGalleries.length === 0 ? (
-            <div className="text-center py-12">
-              <Images className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Galleries Yet</h3>
-              <p className="text-gray-600 mb-4">
+            <div className={styles.div14}>
+              <Images className={styles.images2} />
+              <h3 className={styles.h32}>No Galleries Yet</h3>
+              <p className={styles.p3}>
                 Create your first gallery to start showcasing your villa.
               </p>
               <Button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className={styles.button4}
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className={styles.plus} />
                 Create First Gallery
               </Button>
             </div>
           ) : (
-            <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 list-none p-0">
+            <ol className={styles.ol}>
               {orderedGalleries.map((gallery) => (
                 <GalleryCard
                   key={gallery.id}
@@ -298,29 +298,29 @@ export const PropertyGalleriesManagementPage: React.FC = () => {
       />
 
       {confirmDeleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full mx-4">
-            <div className="flex items-start gap-3 mb-4">
-              <AlertTriangle className="h-6 w-6 text-red-500 flex-shrink-0 mt-0.5" />
+        <div className={styles.div15}>
+          <div className={styles.div16}>
+            <div className={styles.div17}>
+              <AlertTriangle className={styles.alertTriangle2} />
               <div>
-                <h3 className="text-base font-semibold text-gray-900">Delete Gallery</h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <h3 className={styles.h33}>Delete Gallery</h3>
+                <p className={styles.p5}>
                   Are you sure you want to delete this gallery? This action cannot be undone.
                 </p>
               </div>
             </div>
-            <div className="flex justify-end gap-3">
+            <div className={styles.div18}>
               <Button
                 onClick={() => setConfirmDeleteId(null)}
                 disabled={deleteMutation.isPending}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700"
+                className={styles.button5}
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleDeleteConfirm}
                 disabled={deleteMutation.isPending}
-                className="bg-red-600 hover:bg-red-700 text-white"
+                className={styles.button6}
               >
                 {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
               </Button>

@@ -1,0 +1,35 @@
+.div {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(249 250 251 / 1);
+}
+
+.div2 {
+  text-align: center;
+}
+
+.div3 {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1rem;
+  height: 2rem;
+  width: 2rem;
+  animation: spin 1s linear infinite;
+  border-radius: 9999px;
+  border-bottom-width: 2px;
+  border-color: rgb(37 99 235 / 1);
+}
+
+.div4 {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  color: rgb(75 85 99 / 1);
+}
+
+@keyframes spin {
+  to {
+  transform: rotate(360deg)
+  }
+}

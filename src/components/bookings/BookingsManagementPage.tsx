@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useVillaBookings } from '@/hooks/api';
 import { VillaBookingsFilter, VillaBookingSummaryView, VillaBookingStatus } from '@/types';
@@ -10,18 +10,19 @@ import { Card, CardHeader, CardTitle, CardContent, Input, Label } from '@/compon
 import { Search, Calendar, Users, CreditCard, Clock, Filter, Moon, Plus } from 'lucide-react';
 import { BookingDetailsPage } from './BookingDetailsPage';
 import { CreateManualBookingModal } from './CreateManualBookingModal';
+import styles from './BookingsManagementPage.module.css';
 
 const BookingStatusBadge: React.FC<{ status: VillaBookingSummaryView['status'] }> = ({ status }) => {
   const colorClass = getBookingStatusColor(status);
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${colorClass}`}>
+    <span className={`${styles.span} ${colorClass}`}>
       {status}
     </span>
   );
 };
 
-const BookingCard: React.FC<{ 
+const BookingCard: React.FC<{
   booking: VillaBookingSummaryView;
   onClick?: (booking: VillaBookingSummaryView) => void;
 }> = ({ booking, onClick }) => {
@@ -31,65 +32,65 @@ const BookingCard: React.FC<{
   const bookingNights = calculateBookingNights(booking.startdate, booking.enddate);
 
   return (
-    <Card 
-      className="mb-4 hover:shadow-md transition-shadow cursor-pointer" 
+    <Card
+      className={styles.card}
       onClick={() => onClick?.(booking)}
     >
-      <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-gray-900">
+      <CardContent className={styles.cardContent}>
+        <div className={styles.div}>
+          <div className={styles.div2}>
+            <div className={styles.div3}>
+              <h3 className={styles.h3}>
                 {booking.inquiror.personalinfo.firstname} {booking.inquiror.personalinfo.lastname}
               </h3>
               <BookingStatusBadge status={booking.status} />
             </div>
-            <p className="text-sm text-gray-600 mb-1">
+            <p className={styles.p}>
               {booking.inquiror.personalinfo.email}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className={styles.p2}>
               {booking.inquiror.personalinfo.phonenumber}
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
-          <div className="flex items-center text-sm text-gray-600">
-            <Calendar className="w-4 h-4 mr-2" />
+        <div className={styles.div4}>
+          <div className={styles.div5}>
+            <Calendar className={styles.calendar} />
             <div>
-              <div className="font-medium">Check-in</div>
+              <div className={styles.div6}>Check-in</div>
               <div>{formatDisplayDate(booking.startdate)}</div>
             </div>
           </div>
 
-          <div className="flex items-center text-sm text-gray-600">
-            <Calendar className="w-4 h-4 mr-2" />
+          <div className={styles.div5}>
+            <Calendar className={styles.calendar} />
             <div>
-              <div className="font-medium">Check-out</div>
+              <div className={styles.div6}>Check-out</div>
               <div>{formatDisplayDate(booking.enddate)}</div>
             </div>
           </div>
 
-          <div className="flex items-center text-sm text-gray-600">
-            <Moon className="w-4 h-4 mr-2" />
+          <div className={styles.div5}>
+            <Moon className={styles.calendar} />
             <div>
-              <div className="font-medium">Nights</div>
+              <div className={styles.div6}>Nights</div>
               <div>{bookingNights}</div>
             </div>
           </div>
 
-          <div className="flex items-center text-sm text-gray-600">
-            <Users className="w-4 h-4 mr-2" />
+          <div className={styles.div5}>
+            <Users className={styles.calendar} />
             <div>
-              <div className="font-medium">Guests</div>
+              <div className={styles.div6}>Guests</div>
               <div>{booking.numberofguests}</div>
             </div>
           </div>
 
-          <div className="flex items-center text-sm text-gray-600">
-            <CreditCard className="w-4 h-4 mr-2" />
+          <div className={styles.div5}>
+            <CreditCard className={styles.calendar} />
             <div>
-              <div className="font-medium">Total</div>
+              <div className={styles.div6}>Total</div>
               <div>
                 {booking.bookingpayment
                   ? formatCurrency(booking.bookingpayment.amount, booking.bookingpayment.currency)
@@ -101,11 +102,11 @@ const BookingCard: React.FC<{
         </div>
 
         {booking.services && booking.services.length > 0 && (
-          <div className="mb-4">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Additional Services</h4>
-            <div className="space-y-1">
+          <div className={styles.div7}>
+            <h4 className={styles.h4}>Additional Services</h4>
+            <div className={styles.div8}>
               {booking.services.map((service, index) => (
-                <div key={index} className="flex justify-between text-sm text-gray-600">
+                <div key={index} className={styles.div9}>
                   <span>{service.item.name} (x{service.quantity})</span>
                   <span>
                     {service.payment
@@ -119,12 +120,12 @@ const BookingCard: React.FC<{
           </div>
         )}
 
-        <div className="flex items-center justify-between text-xs text-gray-500 pt-4 border-t border-gray-100">
-          <div className="flex items-center">
-            <Clock className="w-3 h-3 mr-1" />
+        <div className={styles.div10}>
+          <div className={styles.div11}>
+            <Clock className={styles.clock} />
             Created: {formatDateTime(booking.timestamps.creationdate)}
           </div>
-          <div className="text-right">
+          <div className={styles.div12}>
             Booking ID: {booking.id}
           </div>
         </div>
@@ -133,102 +134,111 @@ const BookingCard: React.FC<{
   );
 };
 
-const BookingsFilterForm: React.FC<{
-  filter: Omit<VillaBookingsFilter, 'villaid'>;
-  onFilterChange: (filter: Omit<VillaBookingsFilter, 'villaid'>) => void;
-  isLoading: boolean;
-}> = ({ filter, onFilterChange, isLoading }) => {
-  const [localStartDate, setLocalStartDate] = useState(yyyymmddToHtmlDate(filter.startdate || ''));
-  const [localEndDate, setLocalEndDate] = useState(yyyymmddToHtmlDate(filter.enddate || ''));
-  const [localQuery, setLocalQuery] = useState(filter.query || '');
+type BookingsFilterState = Omit<VillaBookingsFilter, 'villaid'>;
 
-  const handleFilterUpdate = () => {
-    onFilterChange({
-      ...filter,
-      startdate: htmlDateToYYYYMMDD(localStartDate),
-      enddate: htmlDateToYYYYMMDD(localEndDate),
-      query: localQuery.trim() || undefined,
-      page: 1, // Reset to first page when filtering
-    });
+const BookingsToolbar: React.FC<{
+  filter: BookingsFilterState;
+  onFilterChange: React.Dispatch<React.SetStateAction<BookingsFilterState>>;
+  onNewBooking: () => void;
+}> = ({ filter, onFilterChange, onNewBooking }) => {
+  const [localQuery, setLocalQuery] = useState(filter.query || '');
+  const [filtersOpen, setFiltersOpen] = useState(Boolean(filter.startdate || filter.enddate));
+
+  // Keep the input in sync when the filter is reset from outside (e.g. empty-state button)
+  const [prevFilterQuery, setPrevFilterQuery] = useState(filter.query);
+  if (filter.query !== prevFilterQuery) {
+    setPrevFilterQuery(filter.query);
+    if ((filter.query || '') !== localQuery.trim()) setLocalQuery(filter.query || '');
+  }
+
+  // Debounce search input before applying it to the filter
+  useEffect(() => {
+    const trimmed = localQuery.trim();
+    if (trimmed === (filter.query || '')) return;
+    const timer = setTimeout(() => {
+      onFilterChange(prev => ({ ...prev, query: trimmed || undefined, page: 0 }));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [localQuery, filter.query, onFilterChange]);
+
+  const activeDateFilters = (filter.startdate ? 1 : 0) + (filter.enddate ? 1 : 0);
+
+  const handleDateChange = (key: 'startdate' | 'enddate', value: string) => {
+    onFilterChange(prev => ({ ...prev, [key]: htmlDateToYYYYMMDD(value) || undefined, page: 0 }));
   };
 
-  const handleClearFilters = () => {
-    setLocalStartDate('');
-    setLocalEndDate('');
-    setLocalQuery('');
-    onFilterChange({
-      page: 1,
-      size: filter.size,
-    });
+  const handleClearDates = () => {
+    onFilterChange(prev => ({ ...prev, startdate: undefined, enddate: undefined, page: 0 }));
   };
 
   return (
-    <Card className="mb-6">
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <Filter className="w-5 h-5 mr-2" />
-          Filter Bookings
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-          <div>
+    <div className={styles.toolbar}>
+      <div className={styles.toolbarRow}>
+        <div className={styles.searchWrapper}>
+          <Search className={styles.search} />
+          <Input
+            id="query"
+            type="text"
+            aria-label="Search bookings"
+            placeholder="Search by guest name, email, or booking ID..."
+            value={localQuery}
+            onChange={(e) => setLocalQuery(e.target.value)}
+            className={styles.input2}
+          />
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setFiltersOpen(open => !open)}
+          aria-expanded={filtersOpen}
+          className={`${styles.button2} ${styles.filtersButton} ${filtersOpen ? styles.filtersButtonActive : ''}`}
+        >
+          <Filter className={styles.plus} />
+          Filters
+          {activeDateFilters > 0 && <span className={styles.filterCount}>{activeDateFilters}</span>}
+        </button>
+
+        <button type="button" onClick={onNewBooking} className={`${styles.button8} ${styles.newBookingButton}`}>
+          <Plus className={styles.plus} />
+          New Booking
+        </button>
+      </div>
+
+      {filtersOpen && (
+        <div className={styles.filtersRow}>
+          <div className={styles.dateField}>
             <Label htmlFor="startdate">Start Date</Label>
             <Input
               id="startdate"
               type="date"
-              value={localStartDate}
-              onChange={(e) => setLocalStartDate(e.target.value)}
-              className="mt-1"
+              value={yyyymmddToHtmlDate(filter.startdate || '')}
+              onChange={(e) => handleDateChange('startdate', e.target.value)}
+              className={styles.input}
             />
           </div>
 
-          <div>
+          <div className={styles.dateField}>
             <Label htmlFor="enddate">End Date</Label>
             <Input
               id="enddate"
               type="date"
-              value={localEndDate}
-              onChange={(e) => setLocalEndDate(e.target.value)}
-              className="mt-1"
+              value={yyyymmddToHtmlDate(filter.enddate || '')}
+              onChange={(e) => handleDateChange('enddate', e.target.value)}
+              className={styles.input}
             />
           </div>
 
-          <div className="md:col-span-2">
-            <Label htmlFor="query">Search</Label>
-            <div className="relative mt-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                id="query"
-                type="text"
-                placeholder="Search by guest name, email, or booking ID..."
-                value={localQuery}
-                onChange={(e) => setLocalQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex gap-2">
           <button
-            onClick={handleFilterUpdate}
-            disabled={isLoading}
-            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            type="button"
+            onClick={handleClearDates}
+            disabled={activeDateFilters === 0}
+            className={styles.button2}
           >
-            {isLoading ? 'Searching...' : 'Apply Filters'}
-          </button>
-
-          <button
-            onClick={handleClearFilters}
-            disabled={isLoading}
-            className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            Clear Filters
+            Clear Dates
           </button>
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 };
 
@@ -267,11 +277,11 @@ const Pagination: React.FC<{
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-center space-x-1 mt-6">
+    <div className={styles.div17}>
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage <= 1 || isLoading}
-        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        className={styles.button3}
       >
         Previous
       </button>
@@ -279,15 +289,15 @@ const Pagination: React.FC<{
       {pages.map((page, index) => (
         <React.Fragment key={index}>
           {page === '...' ? (
-            <span className="px-3 py-2 text-sm text-gray-500">...</span>
+            <span className={styles.span2}>...</span>
           ) : (
             <button
               onClick={() => onPageChange(page as number)}
               disabled={isLoading}
-              className={`px-3 py-2 text-sm font-medium border rounded-md ${page === currentPage
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              className={`${styles.button4} ${page === currentPage
+                ? styles.button6
+                : styles.button7
+                } ${styles.button5}`}
             >
               {page}
             </button>
@@ -298,7 +308,7 @@ const Pagination: React.FC<{
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage >= totalPages || isLoading}
-        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        className={styles.button3}
       >
         Next
       </button>
@@ -325,7 +335,7 @@ export const BookingsManagementPage: React.FC<{
   };
 
   const handlePageSizeChange = (size: number) => {
-    setFilter(prev => ({ ...prev, size, page: 1 }));
+    setFilter(prev => ({ ...prev, size, page: 0 }));
   };
 
   const handleBookingClick = (booking: VillaBookingSummaryView) => {
@@ -348,7 +358,7 @@ export const BookingsManagementPage: React.FC<{
       setSelectedBooking(null);
       return;
     }
-    
+
     // Update the selected booking if it's the one being changed
     if (selectedBooking && selectedBooking.id === bookingId) {
       setSelectedBooking({
@@ -386,12 +396,12 @@ export const BookingsManagementPage: React.FC<{
 
   if (error) {
     return (
-      <div className="p-6">
+      <div className={styles.cardContent}>
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center text-red-600">
-              <p className="text-lg font-medium mb-2">Error Loading Bookings</p>
-              <p className="text-sm">{error instanceof Error ? error.message : 'An unexpected error occurred'}</p>
+          <CardContent className={styles.cardContent}>
+            <div className={styles.div18}>
+              <p className={styles.p3}>Error Loading Bookings</p>
+              <p className={styles.p4}>{error instanceof Error ? error.message : 'An unexpected error occurred'}</p>
             </div>
           </CardContent>
         </Card>
@@ -400,48 +410,29 @@ export const BookingsManagementPage: React.FC<{
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-3xl font-bold text-gray-900">Villa Bookings</h1>
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            New Booking
-          </button>
-        </div>
-        <p className="text-gray-600">Manage and view all bookings for your villa</p>
-      </div>
-
-      <BookingsFilterForm
+    <div className={styles.div19}>
+      <BookingsToolbar
         filter={filter}
         onFilterChange={setFilter}
-        isLoading={isLoading}
+        onNewBooking={() => setIsCreateModalOpen(true)}
       />
 
       {isLoading && !bookingsData ? (
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading bookings...</p>
+          <CardContent className={styles.cardContent}>
+            <div className={styles.div20}>
+              <div className={styles.div21}></div>
+              <p className={styles.p5}>Loading bookings...</p>
             </div>
           </CardContent>
         </Card>
       ) : bookingsData && bookingsData.content.length > 0 ? (
         <>
-          <div className="mb-4 flex items-center justify-between">
-            <div className="text-sm text-gray-600">
-              Showing {bookingsData.content.length} of {bookingsData.totalElements} bookings
-            </div>
-          </div>
-          <div className="space-y-4">
+          <div className={styles.div23}>
             {bookingsData.content.map((booking) => (
-              <BookingCard 
-                key={booking.id} 
-                booking={booking} 
+              <BookingCard
+                key={booking.id}
+                booking={booking}
                 onClick={handleBookingClick}
               />
             ))}
@@ -449,19 +440,19 @@ export const BookingsManagementPage: React.FC<{
         </>
       ) : (
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Bookings Found</h3>
-              <p className="text-gray-600 mb-4">
+          <CardContent className={styles.cardContent}>
+            <div className={styles.div20}>
+              <Calendar className={styles.calendar2} />
+              <h3 className={styles.h32}>No Bookings Found</h3>
+              <p className={styles.p6}>
                 {filter.query || filter.startdate || filter.enddate
                   ? 'No bookings match your current filters.'
                   : 'There are no bookings for your villa yet.'}
               </p>
               {(filter.query || filter.startdate || filter.enddate) && (
                 <button
-                  onClick={() => setFilter({ page: 1, size: filter.size })}
-                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
+                  onClick={() => setFilter({ page: 0, size: filter.size })}
+                  className={styles.button9}
                 >
                   Clear Filters
                 </button>

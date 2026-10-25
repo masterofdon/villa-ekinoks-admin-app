@@ -11,6 +11,7 @@ import { AuthImage } from '@/components/ui/AuthImage';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import { AlertCircle, GripVertical, ImageIcon, Images, Loader2, Save, Trash2, Upload, X } from 'lucide-react';
+import styles from './PropertyRentableGalleryManager.module.css';
 
 interface PropertyRentableGalleryManagerProps {
   rentable: PropertyRentable;
@@ -180,31 +181,31 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
 
   return (
     <>
-      <section id="gallery" className="scroll-mt-6">
+      <section id="gallery" className={styles.section}>
         <Card>
           <CardHeader>
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className={styles.div}>
             <div>
-              <CardTitle className="flex items-center gap-2">
-                <Images className="h-5 w-5 text-blue-600" />
+              <CardTitle className={styles.cardTitle}>
+                <Images className={styles.images} />
                 Gallery images
               </CardTitle>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className={styles.p}>
                 {images.length} image{images.length === 1 ? '' : 's'} in this rentable gallery
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className={styles.cardTitle}>
               {hasOrderChanged && (
                 <Button
                   type="button"
                   onClick={handleSaveOrder}
                   disabled={reorderMutation.isPending}
-                  className="flex items-center gap-2 bg-amber-500 text-white hover:bg-amber-600"
+                  className={styles.button}
                 >
                   {reorderMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className={styles.loader2} />
                   ) : (
-                    <Save className="h-4 w-4" />
+                    <Save className={styles.save} />
                   )}
                   {reorderMutation.isPending ? 'Saving...' : 'Save image order'}
                 </Button>
@@ -214,9 +215,9 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={!gallery || uploadMutation.isPending || deleteMutation.isPending || hasOrderChanged}
-                className="flex items-center gap-2"
+                className={styles.cardTitle}
               >
-                <Upload className="h-4 w-4" />
+                <Upload className={styles.save} />
                 Select images
               </Button>
             </div>
@@ -226,64 +227,64 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
               accept="image/*"
               multiple
               onChange={handleFileSelect}
-              className="hidden"
+              className={styles.input}
             />
           </div>
           </CardHeader>
-          <CardContent className="space-y-5">
+          <CardContent className={styles.cardContent}>
           {errorMessage && (
-            <div className="flex items-center gap-2 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              <AlertCircle className="h-4 w-4 shrink-0" />
+            <div className={styles.div2}>
+              <AlertCircle className={styles.alertCircle} />
               {errorMessage}
             </div>
           )}
 
           {!gallery && (
-            <div className="rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <div className={styles.div3}>
               This rentable does not have a gallery yet. Refresh the page and try again.
             </div>
           )}
 
           {selectedFiles.length > 0 && (
-            <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-sm font-medium text-blue-900">
+            <div className={styles.div4}>
+              <div className={styles.div5}>
+                <p className={styles.p2}>
                   {selectedFiles.length} image{selectedFiles.length === 1 ? '' : 's'} ready to upload
                 </p>
                 <Button
                   type="button"
                   onClick={handleUpload}
                   disabled={uploadMutation.isPending || !gallery}
-                  className="flex items-center gap-2"
+                  className={styles.cardTitle}
                 >
                   {uploadMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className={styles.loader2} />
                   ) : (
-                    <Upload className="h-4 w-4" />
+                    <Upload className={styles.save} />
                   )}
                   {uploadMutation.isPending ? 'Uploading...' : 'Upload images'}
                 </Button>
               </div>
-              <div className="space-y-2">
+              <div className={styles.div6}>
                 {selectedFiles.map((file) => (
                   <div
                     key={`${file.name}:${file.size}:${file.lastModified}`}
-                    className="flex items-center gap-3 rounded border border-blue-100 bg-white px-3 py-2"
+                    className={styles.div7}
                   >
-                    <ImageIcon className="h-4 w-4 shrink-0 text-blue-500" />
-                    <span className="min-w-0 flex-1 truncate text-sm text-gray-700">{file.name}</span>
-                    <span className="shrink-0 text-xs text-gray-400">
+                    <ImageIcon className={styles.imageIcon} />
+                    <span className={styles.span}>{file.name}</span>
+                    <span className={styles.span2}>
                       {(file.size / 1024 / 1024).toFixed(1)} MB
                     </span>
                     <button
                       type="button"
                       onClick={() => setSelectedFiles((current) => current.filter((item) => item !== file))}
                       disabled={uploadMutation.isPending}
-                      className="inline-flex h-7 w-7 items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50"
+                      className={styles.button2}
                       aria-label={`Remove ${file.name} from upload`}
                       title={`Remove ${file.name}`}
                     >
-                      <X className="h-4 w-4" />
+                      <X className={styles.save} />
                     </button>
                   </div>
                 ))}
@@ -292,12 +293,12 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
           )}
 
           {images.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-gray-300 py-12 text-gray-400">
-              <ImageIcon className="mb-3 h-10 w-10" />
-              <p className="text-sm font-medium">No gallery images yet</p>
+            <div className={styles.div8}>
+              <ImageIcon className={styles.imageIcon2} />
+              <p className={styles.p3}>No gallery images yet</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={styles.div9}>
               {images.map((galleryImage, index) => {
                 const imageUrl =
                   galleryImage.image.md?.url ??
@@ -313,45 +314,45 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
                     onDragLeave={() => setDragOverId(null)}
                     onDrop={(event) => handleDrop(event, galleryImage.id)}
                     onDragEnd={handleDragEnd}
-                    className={`group relative aspect-[4/3] overflow-hidden rounded-md border bg-gray-100 transition-all ${
+                    className={`${styles.div10} ${styles.group} ${
                       draggingId === galleryImage.id
-                        ? 'scale-95 border-gray-200 opacity-40'
+                        ? styles.div11
                         : dragOverId === galleryImage.id
-                          ? 'border-blue-400 ring-2 ring-blue-300'
-                          : 'border-gray-200'
+                          ? styles.div12
+                          : styles.div13
                     }`}
                   >
                     {imageUrl ? (
                       <AuthImage
                         url={imageUrl}
                         alt={galleryImage.image.alt || `${rentable.name} gallery image ${index + 1}`}
-                        className="h-full w-full object-cover"
+                        className={styles.authImage}
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <ImageIcon className="h-10 w-10 text-gray-300" />
+                      <div className={styles.div14}>
+                        <ImageIcon className={styles.imageIcon3} />
                       </div>
                     )}
                     {index === 0 && (
-                      <span className="absolute bottom-2 left-2 rounded bg-black/65 px-2 py-1 text-xs font-medium text-white">
+                      <span className={styles.span3}>
                         Cover
                       </span>
                     )}
                     <div
-                      className="absolute left-2 top-2 cursor-grab rounded bg-white/95 p-1 shadow-sm active:cursor-grabbing"
+                      className={styles.div15}
                       title="Drag to reorder"
                     >
-                      <GripVertical className="h-4 w-4 text-gray-500" />
+                      <GripVertical className={styles.gripVertical} />
                     </div>
                     <button
                       type="button"
                       onClick={() => setDeleteImageId(galleryImage.id)}
                       disabled={deleteMutation.isPending || uploadMutation.isPending}
-                      className="absolute right-2 top-2 inline-flex h-9 w-9 items-center justify-center rounded-md bg-white/95 text-red-600 shadow-sm transition-colors hover:bg-red-600 hover:text-white disabled:opacity-50"
+                      className={styles.button3}
                       aria-label={`Remove image ${index + 1}`}
                       title="Remove image"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className={styles.save} />
                     </button>
                   </div>
                 );
@@ -363,19 +364,19 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
       </section>
 
       {deleteImageId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className={styles.div16}>
           <dialog
             open
             aria-labelledby="delete-rentable-image-title"
-            className="w-full max-w-md rounded-md bg-white p-6 shadow-xl"
+            className={styles.dialog}
           >
-            <h2 id="delete-rentable-image-title" className="text-lg font-semibold text-gray-900">
+            <h2 id="delete-rentable-image-title" className={styles.h2}>
               Remove gallery image?
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className={styles.p4}>
               This permanently removes the image and its resized files.
             </p>
-            <div className="mt-6 flex justify-end gap-3">
+            <div className={styles.div17}>
               <Button
                 type="button"
                 variant="outline"
@@ -388,12 +389,12 @@ export const PropertyRentableGalleryManager: React.FC<PropertyRentableGalleryMan
                 type="button"
                 onClick={handleDelete}
                 disabled={deleteMutation.isPending}
-                className="flex items-center gap-2 bg-red-600 hover:bg-red-700"
+                className={styles.button4}
               >
                 {deleteMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className={styles.loader2} />
                 ) : (
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className={styles.save} />
                 )}
                 {deleteMutation.isPending ? 'Removing...' : 'Remove image'}
               </Button>

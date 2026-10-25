@@ -1,0 +1,148 @@
+.div {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+@media (min-width: 768px) {
+  .div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .div {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.card {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+}
+.cardHeader > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.div2 {
+  height: 1rem;
+  width: 5rem;
+  border-radius: 0.25rem;
+  background-color: rgb(229 231 235 / 1);
+}
+
+.div3 {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 0.25rem;
+  background-color: rgb(229 231 235 / 1);
+}
+
+.div4 {
+  margin-bottom: 0.5rem;
+  height: 2rem;
+  width: 4rem;
+  border-radius: 0.25rem;
+  background-color: rgb(229 231 235 / 1);
+}
+
+.div5 {
+  height: 0.75rem;
+  width: 6rem;
+  border-radius: 0.25rem;
+  background-color: rgb(229 231 235 / 1);
+}
+
+.card2 {
+  grid-column: 1 / -1;
+}
+
+.cardContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.div6 {
+  text-align: center;
+}
+
+.activity {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0.5rem;
+  height: 2rem;
+  width: 2rem;
+  color: rgb(239 68 68 / 1);
+}
+
+.p {
+  color: rgb(220 38 38 / 1);
+}
+
+.p2 {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: rgb(107 114 128 / 1);
+}
+
+.barChart3 {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0.5rem;
+  height: 2rem;
+  width: 2rem;
+  color: rgb(156 163 175 / 1);
+}
+
+.p3 {
+  color: rgb(75 85 99 / 1);
+}
+
+.card3 {
+  transition-property: box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.card3:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.cardTitle {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: rgb(75 85 99 / 1);
+}
+
+.statIcon {
+  height: 1rem;
+  width: 1rem;
+}
+
+.div7 {
+  margin-bottom: 0.25rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+}
+
+.p4 {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgb(107 114 128 / 1);
+}
+
+@keyframes pulse {
+  50% {
+  opacity: .5
+  }
+}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useResetPassword } from '@/hooks/api';
 import { Button } from '@/components/ui/Button';
 import { Input, Label, Card, CardHeader, CardContent, CardTitle } from '@/components/ui';
+import styles from './page.module.css';
 
 export default function ForgotPasswordPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -34,26 +35,26 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className={styles.div}>
+      <Card className={styles.card}>
         <CardHeader>
-          <CardTitle className="text-center">Forgot Password</CardTitle>
+          <CardTitle className={styles.cardTitle}>Forgot Password</CardTitle>
         </CardHeader>
         <CardContent>
           {submitted ? (
-            <div className="space-y-4 text-center">
-              <p className="text-sm text-gray-600">
+            <div className={styles.div2}>
+              <p className={styles.p}>
                 If an account exists for this email, you will receive password reset instructions shortly.
               </p>
               <Link
                 href="/login"
-                className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                className={styles.link}
               >
                 Back to Sign in
               </Link>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className={styles.form}>
               <div>
                 <Label htmlFor="email">Email Address</Label>
                 <Input
@@ -61,32 +62,32 @@ export default function ForgotPasswordPage() {
                   id="email"
                   type="email"
                   autoComplete="email"
-                  className="mt-1"
+                  className={styles.input}
                   placeholder="Enter your email address"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                  <p className={styles.p2}>{errors.email}</p>
                 )}
               </div>
 
               <Button
                 type="submit"
-                className="w-full"
+                className={styles.button}
                 disabled={resetPasswordMutation.isPending}
               >
                 {resetPasswordMutation.isPending ? 'Sending...' : 'Send Reset Link'}
               </Button>
 
               {errors.general && (
-                <div className="text-red-600 text-sm text-center">
+                <div className={styles.div3}>
                   {errors.general}
                 </div>
               )}
 
-              <div className="text-center">
+              <div className={styles.cardTitle}>
                 <Link
                   href="/login"
-                  className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                  className={styles.link}
                 >
                   Back to Sign in
                 </Link>

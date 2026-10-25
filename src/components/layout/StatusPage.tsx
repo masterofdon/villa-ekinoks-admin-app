@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './StatusPage.module.css';
 
 interface StatusPageProps {
   code: string;
@@ -11,23 +12,23 @@ interface StatusPageProps {
 }
 
 export const statusPrimaryActionClass =
-  'inline-flex items-center justify-center rounded-lg bg-brand-olive px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90';
+  styles.statusPrimaryAction;
 
 export const statusSecondaryActionClass =
-  'inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50';
+  styles.statusSecondaryAction;
 
 // Plain markup only (no antd, hooks or next/link) so it also works inside global-error
 export default function StatusPage({ code, title, description, reference, fullScreen = false, children }: StatusPageProps) {
   return (
     <div
-      className={`flex items-center justify-center px-4 ${fullScreen ? 'min-h-screen bg-gray-50' : 'min-h-[60vh]'}`}
+      className={`${styles.div} ${fullScreen ? styles.div2 : styles.div3}`}
     >
-      <div className="max-w-md text-center">
-        <p className="text-7xl font-bold tracking-tight text-brand-olive">{code}</p>
-        <h1 className="mt-4 text-2xl font-semibold text-gray-900">{title}</h1>
-        <p className="mt-3 text-gray-600">{description}</p>
-        {reference && <p className="mt-2 text-xs text-gray-400">Reference: {reference}</p>}
-        {children && <div className="mt-8 flex flex-wrap items-center justify-center gap-3">{children}</div>}
+      <div className={styles.div4}>
+        <p className={styles.p}>{code}</p>
+        <h1 className={styles.h1}>{title}</h1>
+        <p className={styles.p2}>{description}</p>
+        {reference && <p className={styles.p3}>Reference: {reference}</p>}
+        {children && <div className={styles.div5}>{children}</div>}
       </div>
     </div>
   );

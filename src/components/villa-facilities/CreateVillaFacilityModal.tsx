@@ -10,6 +10,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { X, Sparkles, AlertTriangle, Loader2 } from 'lucide-react';
+import styles from './CreateVillaFacilityModal.module.css';
 
 interface CreateVillaFacilityModalProps {
   isOpen: boolean;
@@ -144,82 +145,82 @@ export const CreateVillaFacilityModal: React.FC<CreateVillaFacilityModalProps> =
   }, {} as Record<string, FacilityWithCategory[]>);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center z-50 p-4" style={{ paddingTop: '5vh' }}>
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col">
-        <Card className="flex-1 flex flex-col h-full">
-          <CardHeader className="border-b shrink-0">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-blue-600" />
+    <div className={styles.div} style={{ paddingTop: '5vh' }}>
+      <div className={styles.div2}>
+        <Card className={styles.card}>
+          <CardHeader className={styles.cardHeader}>
+            <div className={styles.div3}>
+              <CardTitle className={styles.cardTitle}>
+                <Sparkles className={styles.sparkles} />
                 Add Villa Facilities
               </CardTitle>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className={styles.button}
                 disabled={createMutation.isPending}
               >
-                <X className="h-5 w-5" />
+                <X className={styles.x} />
               </button>
             </div>
-            <p className="text-sm text-gray-600 mt-2">
+            <p className={styles.p}>
               Select facilities from the pool to add to your villa. Already added facilities are checked by default.
             </p>
           </CardHeader>
 
-          <CardContent className="flex-1 overflow-y-auto min-h-0 p-6">
+          <CardContent className={styles.cardContent}>
             {isLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+              <div className={styles.div4}>
+                <Loader2 className={styles.loader2} />
               </div>
             ) : error ? (
-              <div className="text-center py-12">
-                <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Facilities</h3>
-                <p className="text-gray-600">
+              <div className={styles.div5}>
+                <AlertTriangle className={styles.alertTriangle} />
+                <h3 className={styles.h3}>Error Loading Facilities</h3>
+                <p className={styles.p2}>
                   {error instanceof Error ? error.message : 'An unexpected error occurred'}
                 </p>
               </div>
             ) : flattenedFacilities.length === 0 ? (
-              <div className="text-center py-12">
-                <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Facilities Available</h3>
-                <p className="text-gray-600 mb-4">
+              <div className={styles.div5}>
+                <AlertTriangle className={styles.alertTriangle2} />
+                <h3 className={styles.h3}>No Facilities Available</h3>
+                <p className={styles.p3}>
                   No facilities were found in the pool. This might be a data structure issue.
                 </p>
-                <details className="text-left bg-gray-50 p-4 rounded">
-                  <summary className="cursor-pointer font-medium">Debug Info (Click to expand)</summary>
-                  <pre className="mt-2 text-xs overflow-auto">
+                <details className={styles.details}>
+                  <summary className={styles.summary}>Debug Info (Click to expand)</summary>
+                  <pre className={styles.pre}>
                     {JSON.stringify(availableFacilitiesData, null, 2)}
                   </pre>
                 </details>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className={styles.div6}>
                 {Object.entries(facilitiesByCategory).map(([categoryName, items]) => (
-                  <div key={categoryName} className="border-b pb-4 last:border-b-0">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                  <div key={categoryName} className={styles.div7}>
+                    <h3 className={styles.h32}>
                       {categoryName}
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className={styles.div8}>
                       {items.map(({ facility }) => {
                         const isChecked = selectedFacilityIds.has(facility.id);
                         return (
                           <label
                             key={facility.id}
-                            className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                            className={styles.label}
                           >
                             <input
                               type="checkbox"
                               checked={isChecked}
                               onChange={() => handleToggleFacility(facility.id)}
-                              className="mt-1 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                              className={styles.input}
                             />
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">
+                            <div className={styles.div9}>
+                              <div className={styles.div10}>
                                 {facility.name}
                               </div>
                               {facility.description && (
-                                <div className="text-sm text-gray-600 mt-1">
+                                <div className={styles.div11}>
                                   {facility.description}
                                 </div>
                               )}
@@ -234,13 +235,13 @@ export const CreateVillaFacilityModal: React.FC<CreateVillaFacilityModalProps> =
             )}
           </CardContent>
 
-          <div className="border-t p-6 flex gap-3 shrink-0">
+          <div className={styles.div12}>
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
               disabled={createMutation.isPending}
-              className="flex-1"
+              className={styles.div9}
             >
               Cancel
             </Button>
@@ -248,11 +249,11 @@ export const CreateVillaFacilityModal: React.FC<CreateVillaFacilityModalProps> =
               type="button"
               onClick={handleSave}
               disabled={createMutation.isPending || isLoading}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+              className={styles.button2}
             >
               {createMutation.isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className={styles.loader22} />
                   Saving...
                 </>
               ) : (

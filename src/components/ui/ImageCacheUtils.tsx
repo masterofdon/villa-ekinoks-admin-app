@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useImagePreload } from '@/hooks/useImageCache';
+import styles from './ImageCacheUtils.module.css';
 
 interface ImagePreloaderProps {
   urls: string[];
@@ -116,8 +117,8 @@ export const CacheStatsDisplay: React.FC<CacheStatsDisplayProps> = ({
 
   if (isLoading) {
     return (
-      <div className={`p-4 bg-gray-100 rounded ${className}`}>
-        <div className="animate-pulse">Loading cache stats...</div>
+      <div className={`${styles.div} ${className}`}>
+        <div className={styles.div2}>Loading cache stats...</div>
       </div>
     );
   }
@@ -127,14 +128,14 @@ export const CacheStatsDisplay: React.FC<CacheStatsDisplayProps> = ({
   }
 
   return (
-    <div className={`p-4 bg-gray-100 rounded ${className}`}>
-      {showTitle && <h3 className="font-semibold mb-2">Image Cache Stats</h3>}
-      <div className="space-y-1 text-sm">
+    <div className={`${styles.div} ${className}`}>
+      {showTitle && <h3 className={styles.h3}>Image Cache Stats</h3>}
+      <div className={styles.div3}>
         <div>Memory: {stats.memoryEntries} images ({stats.memorySizeMB} MB)</div>
         <div>Storage: {stats.indexedDBEntries} images ({stats.indexedDBSizeMB} MB)</div>
         <button
           onClick={refreshStats}
-          className="mt-2 px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+          className={styles.button}
         >
           Refresh
         </button>
@@ -176,7 +177,7 @@ export const CacheClearButton: React.FC<CacheClearButtonProps> = ({
     <button
       onClick={handleClear}
       disabled={isClearing}
-      className={`px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 ${className}`}
+      className={`${styles.button2} ${className}`}
     >
       {isClearing ? 'Clearing...' : children}
     </button>

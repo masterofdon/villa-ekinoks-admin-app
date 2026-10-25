@@ -19,6 +19,7 @@ import {
   BarChart3,
   Activity
 } from 'lucide-react';
+import styles from './VillaStatsCards.module.css';
 
 // Icon mapping for different stat codes
 const getStatIcon = (statcode: string) => {
@@ -41,16 +42,16 @@ export default function VillaStatsCards() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className={styles.div}>
         {[...Array(4)].map((_, index) => (
-          <Card key={index} className="animate-pulse">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="h-4 bg-gray-200 rounded w-20"></div>
-              <div className="h-4 w-4 bg-gray-200 rounded"></div>
+          <Card key={index} className={styles.card}>
+            <CardHeader className={styles.cardHeader}>
+              <div className={styles.div2}></div>
+              <div className={styles.div3}></div>
             </CardHeader>
             <CardContent>
-              <div className="h-8 bg-gray-200 rounded w-16 mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-24"></div>
+              <div className={styles.div4}></div>
+              <div className={styles.div5}></div>
             </CardContent>
           </Card>
         ))}
@@ -60,12 +61,12 @@ export default function VillaStatsCards() {
 
   if (error) {
     return (
-      <Card className="col-span-full">
-        <CardContent className="flex items-center justify-center py-8">
-          <div className="text-center">
-            <Activity className="h-8 w-8 text-red-500 mx-auto mb-2" />
-            <p className="text-red-600">Failed to load villa statistics</p>
-            <p className="text-sm text-gray-500">Please try again later</p>
+      <Card className={styles.card2}>
+        <CardContent className={styles.cardContent}>
+          <div className={styles.div6}>
+            <Activity className={styles.activity} />
+            <p className={styles.p}>Failed to load villa statistics</p>
+            <p className={styles.p2}>Please try again later</p>
           </div>
         </CardContent>
       </Card>
@@ -76,12 +77,12 @@ export default function VillaStatsCards() {
 
   if (stats.length === 0) {
     return (
-      <Card className="col-span-full">
-        <CardContent className="flex items-center justify-center py-8">
-          <div className="text-center">
-            <BarChart3 className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-            <p className="text-gray-600">No statistics available</p>
-            <p className="text-sm text-gray-500">Stats will appear once data is available</p>
+      <Card className={styles.card2}>
+        <CardContent className={styles.cardContent}>
+          <div className={styles.div6}>
+            <BarChart3 className={styles.barChart3} />
+            <p className={styles.p3}>No statistics available</p>
+            <p className={styles.p2}>Stats will appear once data is available</p>
           </div>
         </CardContent>
       </Card>
@@ -92,7 +93,7 @@ export default function VillaStatsCards() {
   const sortedStats = sortVillaStats(stats);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className={styles.div}>
       {sortedStats.map((stat) => {
         const StatIcon = getStatIcon(stat.statcode);
         const title = getStatTitle(stat.statcode);
@@ -101,24 +102,24 @@ export default function VillaStatsCards() {
         const statColor = getStatColor(stat.color);
         
         return (
-          <Card key={stat.id} className="hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+          <Card key={stat.id} className={styles.card3}>
+            <CardHeader className={styles.cardHeader}>
+              <CardTitle className={styles.cardTitle}>
                 {title}
               </CardTitle>
               <StatIcon 
-                className="h-4 w-4" 
+                className={styles.statIcon} 
                 style={{ color: statColor }}
               />
             </CardHeader>
             <CardContent>
               <div 
-                className="text-2xl font-bold mb-1"
+                className={styles.div7}
                 style={{ color: statColor }}
               >
                 {formattedValue}
               </div>
-              <p className="text-xs text-gray-500">
+              <p className={styles.p4}>
                 Updated {lastUpdateText}
               </p>
             </CardContent>

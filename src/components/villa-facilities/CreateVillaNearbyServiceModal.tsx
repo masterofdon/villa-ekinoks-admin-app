@@ -6,6 +6,7 @@ import { VillaNearbyServiceType } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { X, MapPin, Loader2 } from 'lucide-react';
+import styles from './CreateVillaNearbyServiceModal.module.css';
 
 interface CreateVillaNearbyServiceModalProps {
   isOpen: boolean;
@@ -139,41 +140,41 @@ export const CreateVillaNearbyServiceModal: React.FC<CreateVillaNearbyServiceMod
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col">
-        <Card className="flex-1 flex flex-col">
-          <CardHeader className="border-b">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-blue-600" />
+    <div className={styles.div}>
+      <div className={styles.div2}>
+        <Card className={styles.card}>
+          <CardHeader className={styles.cardHeader}>
+            <div className={styles.div3}>
+              <CardTitle className={styles.cardTitle}>
+                <MapPin className={styles.mapPin} />
                 Add Nearby Service
               </CardTitle>
               <button
                 onClick={handleClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className={styles.button}
                 disabled={createMutation.isPending}
               >
-                <X className="h-5 w-5" />
+                <X className={styles.x} />
               </button>
             </div>
-            <p className="text-sm text-gray-600 mt-2">
+            <p className={styles.p}>
               Add a nearby service or point of interest for your villa guests.
             </p>
           </CardHeader>
 
-          <CardContent className="flex-1 overflow-y-auto p-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <CardContent className={styles.cardContent}>
+            <form onSubmit={handleSubmit} className={styles.form}>
               {/* Service Type */}
               <div>
-                <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
-                  Service Type <span className="text-red-500">*</span>
+                <label htmlFor="type" className={styles.label}>
+                  Service Type <span className={styles.span}>*</span>
                 </label>
                 <select
                   id="type"
                   value={formData.type}
                   onChange={(e) => handleInputChange('type', e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.type ? 'border-red-500' : 'border-gray-300'
+                  className={`${styles.select} ${
+                    errors.type ? styles.select2 : styles.select3
                   }`}
                   disabled={createMutation.isPending}
                 >
@@ -184,13 +185,13 @@ export const CreateVillaNearbyServiceModal: React.FC<CreateVillaNearbyServiceMod
                     </option>
                   ))}
                 </select>
-                {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type}</p>}
+                {errors.type && <p className={styles.p2}>{errors.type}</p>}
               </div>
 
               {/* Name */}
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Name <span className="text-red-500">*</span>
+                <label htmlFor="name" className={styles.label}>
+                  Name <span className={styles.span}>*</span>
                 </label>
                 <input
                   type="text"
@@ -198,35 +199,35 @@ export const CreateVillaNearbyServiceModal: React.FC<CreateVillaNearbyServiceMod
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
                   placeholder="e.g., Marina Bay Restaurant"
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.name ? 'border-red-500' : 'border-gray-300'
+                  className={`${styles.select} ${
+                    errors.name ? styles.select2 : styles.select3
                   }`}
                   disabled={createMutation.isPending}
                 />
-                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                {errors.name && <p className={styles.p2}>{errors.name}</p>}
               </div>
 
               {/* Distance */}
               <div>
-                <label htmlFor="distance" className="block text-sm font-medium text-gray-700 mb-1">
-                  Distance <span className="text-red-500">*</span>
+                <label htmlFor="distance" className={styles.label}>
+                  Distance <span className={styles.span}>*</span>
                 </label>
-                <div className="flex gap-2">
+                <div className={styles.div4}>
                   <input
                     type="text"
                     id="distance"
                     value={formData.distanceValue}
                     onChange={(e) => handleInputChange('distanceValue', e.target.value)}
                     placeholder="e.g., 2.5"
-                    className={`flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.distanceValue ? 'border-red-500' : 'border-gray-300'
+                    className={`${styles.input} ${
+                      errors.distanceValue ? styles.select2 : styles.select3
                     }`}
                     disabled={createMutation.isPending}
                   />
                   <select
                     value={formData.distanceUnit}
                     onChange={(e) => handleInputChange('distanceUnit', e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={styles.select4}
                     disabled={createMutation.isPending}
                   >
                     {DISTANCE_UNIT_OPTIONS.map((option) => (
@@ -236,14 +237,14 @@ export const CreateVillaNearbyServiceModal: React.FC<CreateVillaNearbyServiceMod
                     ))}
                   </select>
                 </div>
-                {errors.distanceValue && <p className="text-red-500 text-sm mt-1">{errors.distanceValue}</p>}
+                {errors.distanceValue && <p className={styles.p2}>{errors.distanceValue}</p>}
               </div>
 
               {/* Location */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className={styles.div5}>
                 <div>
-                  <label htmlFor="latitude" className="block text-sm font-medium text-gray-700 mb-1">
-                    Latitude <span className="text-red-500">*</span>
+                  <label htmlFor="latitude" className={styles.label}>
+                    Latitude <span className={styles.span}>*</span>
                   </label>
                   <input
                     type="text"
@@ -251,16 +252,16 @@ export const CreateVillaNearbyServiceModal: React.FC<CreateVillaNearbyServiceMod
                     value={formData.latitude}
                     onChange={(e) => handleInputChange('latitude', e.target.value)}
                     placeholder="e.g., 37.7749"
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.latitude ? 'border-red-500' : 'border-gray-300'
+                    className={`${styles.select} ${
+                      errors.latitude ? styles.select2 : styles.select3
                     }`}
                     disabled={createMutation.isPending}
                   />
-                  {errors.latitude && <p className="text-red-500 text-sm mt-1">{errors.latitude}</p>}
+                  {errors.latitude && <p className={styles.p2}>{errors.latitude}</p>}
                 </div>
                 <div>
-                  <label htmlFor="longitude" className="block text-sm font-medium text-gray-700 mb-1">
-                    Longitude <span className="text-red-500">*</span>
+                  <label htmlFor="longitude" className={styles.label}>
+                    Longitude <span className={styles.span}>*</span>
                   </label>
                   <input
                     type="text"
@@ -268,24 +269,24 @@ export const CreateVillaNearbyServiceModal: React.FC<CreateVillaNearbyServiceMod
                     value={formData.longitude}
                     onChange={(e) => handleInputChange('longitude', e.target.value)}
                     placeholder="e.g., -122.4194"
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.longitude ? 'border-red-500' : 'border-gray-300'
+                    className={`${styles.select} ${
+                      errors.longitude ? styles.select2 : styles.select3
                     }`}
                     disabled={createMutation.isPending}
                   />
-                  {errors.longitude && <p className="text-red-500 text-sm mt-1">{errors.longitude}</p>}
+                  {errors.longitude && <p className={styles.p2}>{errors.longitude}</p>}
                 </div>
               </div>
             </form>
           </CardContent>
 
-          <div className="border-t p-6 flex gap-3">
+          <div className={styles.div6}>
             <Button
               type="button"
               variant="outline"
               onClick={handleClose}
               disabled={createMutation.isPending}
-              className="flex-1"
+              className={styles.button2}
             >
               Cancel
             </Button>
@@ -293,11 +294,11 @@ export const CreateVillaNearbyServiceModal: React.FC<CreateVillaNearbyServiceMod
               type="button"
               onClick={handleSubmit}
               disabled={createMutation.isPending}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+              className={styles.button3}
             >
               {createMutation.isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className={styles.loader2} />
                   Creating...
                 </>
               ) : (

@@ -12,15 +12,16 @@ import { PropertyRentable, PropertyRentableFeature } from '@/types';
 import { Card, CardContent } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Building2, GripVertical, ImageIcon, Images, Star, AlertCircle, AlertTriangle, ListOrdered, Loader2, Pencil, Plus, Save, Trash2, Users } from 'lucide-react';
+import styles from './PropertyRentablesManagementPage.module.css';
 
 const FeatureBadge: React.FC<{ feature: PropertyRentableFeature }> = ({ feature }) => (
-  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-full text-xs text-gray-700">
+  <div className={styles.div}>
     {feature.icon && (
-      <span className="text-sm">{feature.icon}</span>
+      <span className={styles.span}>{feature.icon}</span>
     )}
-    <span className="font-medium">{feature.name}</span>
+    <span className={styles.span2}>{feature.name}</span>
     {feature.value && (
-      <span className="text-gray-500">: {feature.value}</span>
+      <span className={styles.span3}>: {feature.value}</span>
     )}
   </div>
 );
@@ -65,37 +66,37 @@ const RentableCard: React.FC<{
       onDragLeave={onDragLeave}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
-      className={`list-none transition-all ${
-        isDragging ? 'scale-95 opacity-40' : ''
+      className={`${styles.li} ${
+        isDragging ? styles.li2 : ''
       } ${
-        isDragOver ? 'rounded-lg ring-2 ring-blue-300' : ''
+        isDragOver ? styles.li3 : ''
       }`}
     >
-    <Card className="hover:shadow-md transition-shadow overflow-hidden h-full">
+    <Card className={styles.card}>
       {/* Gallery cover image */}
-      <div className="relative w-full h-48 bg-gray-100">
+      <div className={styles.div2}>
         {coverImage ? (
           <Image
             src={coverImage.image.md?.url ?? coverImage.image.lg?.url ?? coverImage.image.sm?.url}
             alt={coverImage.image.alt || rentable.name}
             fill
-            className="object-cover"
+            className={styles.image}
           />
         ) : (
-          <div className="flex items-center justify-center h-full">
-            <ImageIcon className="h-10 w-10 text-gray-300" />
+          <div className={styles.div3}>
+            <ImageIcon className={styles.imageIcon} />
           </div>
         )}
         {sortedImages.length > 1 && (
-          <span className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full">
+          <span className={styles.span4}>
             +{sortedImages.length - 1} photos
           </span>
         )}
         <div
-          className="absolute left-2 top-2 cursor-grab rounded bg-white/80 p-1 active:cursor-grabbing"
+          className={styles.div4}
           title="Drag to reorder"
         >
-          <GripVertical className="h-4 w-4 text-gray-500" />
+          <GripVertical className={styles.gripVertical} />
         </div>
         <button
           type="button"
@@ -103,71 +104,71 @@ const RentableCard: React.FC<{
             event.stopPropagation();
             onDelete();
           }}
-          className="absolute right-2 top-2 rounded bg-white/80 p-1 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
+          className={styles.button}
           aria-label={`Delete ${rentable.name}`}
           title={`Delete ${rentable.name}`}
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className={styles.trash2} />
         </button>
       </div>
 
-      <CardContent className="p-5">
-        <div className="flex items-start gap-3 mb-3">
-          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
-            <Building2 className="h-5 w-5 text-blue-600" />
+      <CardContent className={styles.cardContent}>
+        <div className={styles.div5}>
+          <div className={styles.div6}>
+            <Building2 className={styles.building2} />
           </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg text-gray-900 leading-tight truncate">
+          <div className={styles.div7}>
+            <h3 className={styles.h3}>
               {rentable.name}
             </h3>
             {rentable.gallery?.name && (
-              <p className="text-xs text-gray-500 truncate">{rentable.gallery.name}</p>
+              <p className={styles.p}>{rentable.gallery.name}</p>
             )}
           </div>
-          <div className="flex shrink-0 items-center gap-1">
+          <div className={styles.div8}>
             <button
               type="button"
               onClick={onManageGallery}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-gray-100 hover:text-blue-600"
+              className={styles.button2}
               aria-label={`Manage gallery for ${rentable.name}`}
               title={`Manage gallery for ${rentable.name}`}
             >
-              <Images className="h-4 w-4" />
+              <Images className={styles.trash2} />
             </button>
             <button
               type="button"
               onClick={onEdit}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-gray-100 hover:text-blue-600"
+              className={styles.button2}
               aria-label={`Edit ${rentable.name}`}
               title={`Edit ${rentable.name}`}
             >
-              <Pencil className="h-4 w-4" />
+              <Pencil className={styles.trash2} />
             </button>
           </div>
         </div>
 
         {rentable.description && (
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2">{rentable.description}</p>
+          <p className={styles.p2}>{rentable.description}</p>
         )}
 
-        <div className="mb-4 flex flex-wrap gap-3 text-xs text-gray-500">
-          <span className="inline-flex items-center gap-1">
-            <ListOrdered className="h-3.5 w-3.5" />
+        <div className={styles.div9}>
+          <span className={styles.span5}>
+            <ListOrdered className={styles.listOrdered} />
             Order: {displayOrder}
           </span>
-          <span className="inline-flex items-center gap-1">
-            <Users className="h-3.5 w-3.5" />
+          <span className={styles.span5}>
+            <Users className={styles.listOrdered} />
             Capacity: {rentable.capacity ?? 'Not set'}
           </span>
         </div>
 
         {rentable.features && rentable.features.length > 0 && (
           <div>
-            <div className="flex items-center gap-1 mb-2 text-xs font-medium text-gray-500 uppercase tracking-wide">
-              <Star className="h-3.5 w-3.5" />
+            <div className={styles.div10}>
+              <Star className={styles.listOrdered} />
               Features
             </div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className={styles.div11}>
               {rentable.features.map((feature) => (
                 <FeatureBadge key={feature.id} feature={feature} />
               ))}
@@ -283,55 +284,55 @@ export const PropertyRentablesManagementPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className={styles.div12}>
+      <div className={styles.div13}>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Property Rentables</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className={styles.h1}>Property Rentables</h1>
+          <p className={styles.p3}>
             Manage rentable units available at your villa.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className={styles.div14}>
           {hasOrderChanged && (
             <Button
               onClick={handleSaveOrder}
               disabled={reorderMutation.isPending}
-              className="flex items-center gap-2 bg-amber-500 text-white hover:bg-amber-600"
+              className={styles.button3}
             >
-              <Save className="h-4 w-4" />
+              <Save className={styles.trash2} />
               {reorderMutation.isPending ? 'Saving...' : 'Save order'}
             </Button>
           )}
-          <Button onClick={() => router.push('/property-rentables/create')} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
+          <Button onClick={() => router.push('/property-rentables/create')} className={styles.button4}>
+            <Plus className={styles.trash2} />
             Add Rentable
           </Button>
         </div>
       </div>
 
       {reorderMutation.isError && (
-        <div className="rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className={styles.div15}>
           Failed to save the rentable order. Please try again.
         </div>
       )}
 
       {deleteMutation.isError && (
-        <div className="rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className={styles.div15}>
           Failed to delete the property rentable. Please try again.
         </div>
       )}
 
       {isLoading && (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <div className={styles.div16}>
+          <Loader2 className={styles.loader2} />
         </div>
       )}
 
       {isError && (
         <Card>
-          <CardContent className="flex items-center gap-3 p-6 text-red-600">
-            <AlertCircle className="h-5 w-5 shrink-0" />
-            <p className="text-sm">
+          <CardContent className={styles.cardContent2}>
+            <AlertCircle className={styles.alertCircle} />
+            <p className={styles.span}>
               Failed to load property rentables.{' '}
               {error instanceof Error ? error.message : 'Please try again later.'}
             </p>
@@ -341,20 +342,20 @@ export const PropertyRentablesManagementPage: React.FC = () => {
 
       {!isLoading && !isError && orderedRentables.length === 0 && (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16 text-gray-400">
-            <Building2 className="h-12 w-12 mb-4" />
-            <p className="text-lg font-medium">No rentables found</p>
-            <p className="text-sm">There are no rentable units configured for this villa yet.</p>
+          <CardContent className={styles.cardContent3}>
+            <Building2 className={styles.building22} />
+            <p className={styles.p4}>No rentables found</p>
+            <p className={styles.span}>There are no rentable units configured for this villa yet.</p>
           </CardContent>
         </Card>
       )}
 
       {!isLoading && !isError && orderedRentables.length > 0 && (
         <>
-          <div className="text-sm text-gray-500">
+          <div className={styles.div17}>
             {orderedRentables.length} rentable{orderedRentables.length !== 1 ? 's' : ''} available
           </div>
-          <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ol className={styles.ol}>
             {orderedRentables.map((rentable, index) => (
               <RentableCard
                 key={rentable.id}
@@ -377,30 +378,30 @@ export const PropertyRentablesManagementPage: React.FC = () => {
       )}
 
       {rentableToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="mx-4 w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
-            <div className="mb-4 flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-6 w-6 shrink-0 text-red-500" />
+        <div className={styles.div18}>
+          <div className={styles.div19}>
+            <div className={styles.div20}>
+              <AlertTriangle className={styles.alertTriangle} />
               <div>
-                <h3 className="text-base font-semibold text-gray-900">Delete Property Rentable</h3>
-                <p className="mt-1 text-sm text-gray-600">
+                <h3 className={styles.h32}>Delete Property Rentable</h3>
+                <p className={styles.p5}>
                   Are you sure you want to delete &ldquo;{rentableToDelete.name}&rdquo;? Its gallery,
                   images, and features will also be deleted. This action cannot be undone.
                 </p>
               </div>
             </div>
-            <div className="flex justify-end gap-3">
+            <div className={styles.div21}>
               <Button
                 onClick={() => setRentableToDelete(null)}
                 disabled={deleteMutation.isPending}
-                className="bg-gray-100 text-gray-700 hover:bg-gray-200"
+                className={styles.button5}
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleDeleteConfirm}
                 disabled={deleteMutation.isPending}
-                className="bg-red-600 text-white hover:bg-red-700"
+                className={styles.button6}
               >
                 {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
               </Button>

@@ -9,27 +9,28 @@ import {
   CacheClearButton 
 } from '@/components/ui';
 import { useImageCache, useImagePreload } from '@/hooks/useImageCache';
+import styles from './ImageCacheExamples.module.css';
 
 // Example 1: Basic usage with AuthImage (already updated)
 const BasicImageExample: React.FC = () => {
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Basic Cached Images</h3>
-      <div className="grid grid-cols-3 gap-4">
+    <div className={styles.div}>
+      <h3 className={styles.h3}>Basic Cached Images</h3>
+      <div className={styles.div2}>
         <AuthImage
           url="https://example.com/image1.jpg"
           alt="Example 1"
-          className="w-full h-32 object-cover rounded"
+          className={styles.authImage}
         />
         <AuthImage
           url="https://example.com/image2.jpg"
           alt="Example 2"
-          className="w-full h-32 object-cover rounded"
+          className={styles.authImage}
         />
         <AuthImage
           url="https://example.com/image3.jpg"
           alt="Example 3"
-          className="w-full h-32 object-cover rounded"
+          className={styles.authImage}
         />
       </div>
     </div>
@@ -41,14 +42,14 @@ const CustomImageComponent: React.FC<{ url: string; alt: string }> = ({ url, alt
   const { imageUrl, isLoading, hasError, retry } = useImageCache(url);
 
   if (isLoading) {
-    return <div className="w-32 h-32 bg-gray-200 animate-pulse rounded" />;
+    return <div className={styles.div3} />;
   }
 
   if (hasError) {
     return (
-      <div className="w-32 h-32 bg-gray-100 border-2 border-dashed border-gray-300 rounded flex flex-col items-center justify-center">
-        <span className="text-xs text-gray-500 mb-2">Failed to load</span>
-        <button onClick={retry} className="text-xs text-blue-500 hover:text-blue-700">
+      <div className={styles.div4}>
+        <span className={styles.span}>Failed to load</span>
+        <button onClick={retry} className={styles.button}>
           Retry
         </button>
       </div>
@@ -56,15 +57,15 @@ const CustomImageComponent: React.FC<{ url: string; alt: string }> = ({ url, alt
   }
 
   return imageUrl ? (
-    <img src={imageUrl} alt={alt} className="w-32 h-32 object-cover rounded" />
+    <img src={imageUrl} alt={alt} className={styles.img} />
   ) : null;
 };
 
 // Example 3: Property gallery with preloading
 const PropertyGalleryExample: React.FC<{ villaId?: string }> = ({ villaId }) => {
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Property Gallery with Preloading</h3>
+    <div className={styles.div}>
+      <h3 className={styles.h3}>Property Gallery with Preloading</h3>
       
       {/* Preload gallery images in background */}
       <PropertyGalleryPreloader
@@ -74,7 +75,7 @@ const PropertyGalleryExample: React.FC<{ villaId?: string }> = ({ villaId }) => 
       >
         {({ isPreloading }) => (
           isPreloading && (
-            <div className="text-sm text-blue-600 mb-2">
+            <div className={styles.div5}>
               📦 Preloading gallery images...
             </div>
           )
@@ -82,7 +83,7 @@ const PropertyGalleryExample: React.FC<{ villaId?: string }> = ({ villaId }) => 
       </PropertyGalleryPreloader>
 
       {/* Your existing gallery component would go here */}
-      <div className="text-gray-600">
+      <div className={styles.div6}>
         Gallery images will load much faster due to preloading!
       </div>
     </div>
@@ -105,12 +106,12 @@ const ManualPreloadExample: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Manual Preloading</h3>
+    <div className={styles.div}>
+      <h3 className={styles.h3}>Manual Preloading</h3>
       <button
         onClick={handlePreloadClick}
         disabled={isPreloading}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+        className={styles.button2}
       >
         {isPreloading ? 'Preloading...' : 'Preload Images'}
       </button>
@@ -121,8 +122,8 @@ const ManualPreloadExample: React.FC = () => {
 // Example 5: Cache management tools
 const CacheManagementExample: React.FC = () => {
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Cache Management</h3>
+    <div className={styles.div}>
+      <h3 className={styles.h3}>Cache Management</h3>
       
       {/* Display cache statistics */}
       <CacheStatsDisplay />
@@ -133,7 +134,7 @@ const CacheManagementExample: React.FC = () => {
           console.log('Cache cleared');
           alert('Image cache has been cleared!');
         }}
-        className="mt-2"
+        className={styles.cacheClearButton}
       />
     </div>
   );
@@ -159,8 +160,8 @@ const PropertyGalleryPageExample: React.FC<{ villaId: string }> = ({ villaId }) 
 // Complete usage example page
 const ImageCacheExamplesPage: React.FC = () => {
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <h1 className="text-2xl font-bold mb-6">Image Cache Service Examples</h1>
+    <div className={styles.div7}>
+      <h1 className={styles.h1}>Image Cache Service Examples</h1>
       
       <BasicImageExample />
       <PropertyGalleryExample villaId="example-villa-id" />
@@ -169,8 +170,8 @@ const ImageCacheExamplesPage: React.FC = () => {
       
       {/* Development tools - only show in development */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="border-t pt-6">
-          <h2 className="text-xl font-semibold mb-4">Development Tools</h2>
+        <div className={styles.div8}>
+          <h2 className={styles.h2}>Development Tools</h2>
           <CacheStatsDisplay showTitle={false} />
         </div>
       )}

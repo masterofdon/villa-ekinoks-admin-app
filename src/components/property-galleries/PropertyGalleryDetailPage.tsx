@@ -25,6 +25,7 @@ import {
   Check,
   Loader2,
 } from 'lucide-react';
+import styles from './PropertyGalleryDetailPage.module.css';
 
 interface PropertyGalleryDetailPageProps {
   galleryId: string;
@@ -109,11 +110,11 @@ const ImageCard: React.FC<{
   return (
     <button 
       type="button"
-      className={`relative group border-2 rounded-lg overflow-hidden bg-white transition-all w-full ${
-        isBulkDeleteMode ? 'cursor-pointer' : ''
+      className={`${styles.button} ${styles.group} ${
+        isBulkDeleteMode ? styles.button2 : ''
       } ${
-        isSelected ? 'border-blue-500 shadow-lg' : 'border-gray-200'
-      } ${isBulkDeleteMode ? 'hover:border-blue-400' : ''}`}
+        isSelected ? styles.button3 : styles.button4
+      } ${isBulkDeleteMode ? styles.button5 : ''}`}
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
       disabled={!isBulkDeleteMode}
@@ -121,8 +122,8 @@ const ImageCard: React.FC<{
     >
       {/* Loading overlay */}
       {isIndividualDeleting && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
-          <Loader2 className="h-8 w-8 text-white animate-spin" />
+        <div className={styles.div}>
+          <Loader2 className={styles.loader2} />
         </div>
       )}
       
@@ -130,27 +131,27 @@ const ImageCard: React.FC<{
       {isBulkDeleteMode && (
         <button
           onClick={handleSelectClick}
-          className={`absolute top-2 left-2 z-20 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+          className={`${styles.button6} ${
             isSelected 
-              ? 'bg-blue-500 border-blue-500 text-white' 
-              : 'bg-white/80 border-gray-300 hover:border-blue-400'
+              ? styles.button7 
+              : styles.button8
           }`}
         >
-          {isSelected && <Check className="h-3 w-3" />}
+          {isSelected && <Check className={styles.check} />}
         </button>
       )}
       
-      <div className="h-40 bg-gray-100 flex items-center justify-center">
+      <div className={styles.div2}>
         <AuthImage
           url={image.resizedlargefile.url}
           alt={image.name}
-          className="w-full h-full object-cover"
+          className={styles.authImage}
         />
       </div>
-      <div className="p-3">
-        <p className="text-sm font-medium text-gray-800 truncate">{image.name}</p>
+      <div className={styles.div3}>
+        <p className={styles.p}>{image.name}</p>
         {image.description && (
-          <p className="text-xs text-gray-500 truncate mt-0.5">{image.description}</p>
+          <p className={styles.p2}>{image.description}</p>
         )}
       </div>
       
@@ -159,10 +160,10 @@ const ImageCard: React.FC<{
         <button
           onClick={handleDeleteClick}
           disabled={isDeleting}
-          className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
+          className={styles.button9}
           title="Delete image"
         >
-          <Trash2 className="h-3.5 w-3.5" />
+          <Trash2 className={styles.trash2} />
         </button>
       )}
     </button>
@@ -491,10 +492,10 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+      <div className={styles.div4}>
+        <div className={styles.div5}>
+          <div className={styles.div6}></div>
+          <div className={styles.div7}></div>
         </div>
       </div>
     );
@@ -502,19 +503,19 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
 
   if (error || !gallery) {
     return (
-      <div className="p-6">
+      <div className={styles.div4}>
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <CardContent className={styles.div4}>
+            <div className={styles.div8}>
+              <AlertTriangle className={styles.alertTriangle} />
+              <h3 className={styles.h3}>
                 Gallery Not Found
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className={styles.p3}>
                 {error instanceof Error ? error.message : 'The gallery you are looking for does not exist.'}
               </p>
               <Button onClick={() => router.push('/property-galleries')}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
+                <ArrowLeft className={styles.arrowLeft} />
                 Back to Galleries
               </Button>
             </div>
@@ -525,51 +526,51 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className={styles.div9}>
       {/* Header */}
-      <div className="mb-6">
+      <div className={styles.div10}>
         <button
           onClick={() => router.push('/property-galleries')}
-          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4"
+          className={styles.button10}
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className={styles.arrowLeft2} />
           Back to Galleries
         </button>
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <Images className="h-7 w-7 text-blue-600" />
+        <h1 className={styles.h1}>
+          <Images className={styles.images} />
           {gallery.name}
         </h1>
         {gallery.description && (
-          <p className="text-gray-600 mt-1">{gallery.description}</p>
+          <p className={styles.p4}>{gallery.description}</p>
         )}
       </div>
 
       {/* Existing Images */}
-      <Card className="mb-6">
+      <Card className={styles.div10}>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-3">
+          <div className={styles.div11}>
+            <CardTitle className={styles.cardTitle}>
               Images ({gallery.images?.length ?? 0})
               {isBulkDeleteMode && selectedImages.size > 0 && (
                 <Button
                   onClick={() => setShowDeleteConfirmation(true)}
-                  className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 h-8"
+                  className={styles.button11}
                   disabled={deletingImages.size > 0}
                 >
-                  <Trash2 className="h-4 w-4 mr-1" />
+                  <Trash2 className={styles.trash22} />
                   Delete Selected ({selectedImages.size})
                 </Button>
               )}
             </CardTitle>
             {gallery.images && gallery.images.length > 0 && (
-              <div className="flex items-center gap-2">
+              <div className={styles.div12}>
                 {isBulkDeleteMode ? (
                   <>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={selectedImages.size === gallery.images.length ? handleDeselectAll : handleSelectAll}
-                      className="text-xs"
+                      className={styles.button12}
                     >
                       {selectedImages.size === gallery.images.length ? 'Deselect All' : 'Select All'}
                     </Button>
@@ -577,7 +578,7 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
                       variant="outline"
                       size="sm"
                       onClick={toggleBulkDeleteMode}
-                      className="text-xs"
+                      className={styles.button12}
                     >
                       Cancel
                     </Button>
@@ -587,7 +588,7 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
                     variant="outline"
                     size="sm"
                     onClick={toggleBulkDeleteMode}
-                    className="text-xs"
+                    className={styles.button12}
                   >
                     Select Multiple
                   </Button>
@@ -598,12 +599,12 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
         </CardHeader>
         <CardContent>
           {!gallery.images || gallery.images.length === 0 ? (
-            <div className="text-center py-10">
-              <ImageIcon className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">No images in this gallery yet.</p>
+            <div className={styles.div13}>
+              <ImageIcon className={styles.imageIcon} />
+              <p className={styles.p5}>No images in this gallery yet.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className={styles.div14}>
               {gallery.images.map((image) => (
                 <ImageCard
                   key={image.id}
@@ -624,14 +625,14 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
       {/* Upload New Images */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className={styles.div11}>
             <CardTitle>Upload Photos</CardTitle>
             <Button
               onClick={() => fileInputRef.current?.click()}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className={styles.button13}
               disabled={isUploading}
             >
-              <Upload className="h-4 w-4 mr-2" />
+              <Upload className={styles.arrowLeft} />
               Select Files
             </Button>
           </div>
@@ -642,40 +643,40 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
             type="file"
             multiple
             accept="image/*"
-            className="hidden"
+            className={styles.input}
             onChange={handleFileSelect}
           />
 
           {pendingFiles.length === 0 ? (
             <button
               type="button"
-              className="w-full border-2 border-dashed border-gray-200 rounded-lg p-10 text-center cursor-pointer hover:border-blue-400 transition-colors bg-transparent"
+              className={styles.button14}
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
             >
-              <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-              <p className="text-gray-500 text-sm">
+              <Upload className={styles.upload} />
+              <p className={styles.p6}>
                 Click to select images or drag &amp; drop
               </p>
             </button>
           ) : (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className={styles.div15}>
+              <div className={styles.div16}>
                 {pendingFiles.map((pf, index) => (
                   <div
                     key={pf.file.name + pf.file.lastModified}
-                    className="flex gap-3 border border-gray-200 rounded-lg p-3 items-start"
+                    className={styles.div17}
                   >
                     <img
                       src={pf.preview}
                       alt="preview"
-                      className="w-20 h-20 object-cover rounded flex-shrink-0"
+                      className={styles.img}
                     />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-700 truncate mb-1">
+                    <div className={styles.div18}>
+                      <p className={styles.p7}>
                         {pf.file.name}
                       </p>
-                      <Label htmlFor={`desc-${index}`} className="text-xs">
+                      <Label htmlFor={`desc-${index}`} className={styles.button12}>
                         Description (Optional)
                       </Label>
                       <Input
@@ -683,26 +684,26 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
                         value={pf.description}
                         onChange={(e) => updateDescription(index, e.target.value)}
                         placeholder="Optional description"
-                        className="mt-1 h-8 text-sm"
+                        className={styles.input2}
                       />
                     </div>
                     <button
                       onClick={() => removePending(index)}
-                      className="text-gray-400 hover:text-gray-600 flex-shrink-0 mt-0.5"
+                      className={styles.button15}
                     >
-                      <X className="h-4 w-4" />
+                      <X className={styles.arrowLeft2} />
                     </button>
                   </div>
                 ))}
               </div>
 
-              <div className="flex gap-3">
+              <div className={styles.div19}>
                 <Button
                   onClick={() => {
                     pendingFiles.forEach((p) => URL.revokeObjectURL(p.preview));
                     setPendingFiles([]);
                   }}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700"
+                  className={styles.button16}
                   disabled={isUploading}
                 >
                   Clear All
@@ -710,7 +711,7 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
                 <Button
                   onClick={handleUpload}
                   disabled={isUploading}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className={styles.button13}
                 >
                   {isUploading ? 'Processing...' : `Upload ${pendingFiles.length} File${fileSuffix}`}
                 </Button>
@@ -730,20 +731,20 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
 
       {/* Delete Confirmation Dialog */}
       {showDeleteConfirmation && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md mx-auto">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
+        <div className={styles.div20}>
+          <Card className={styles.card}>
+            <CardHeader className={styles.cardHeader}>
+              <CardTitle className={styles.cardTitle2}>
+                <AlertTriangle className={styles.alertTriangle2} />
                 Confirm Bulk Delete
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-gray-600">
+            <CardContent className={styles.div15}>
+              <p className={styles.p8}>
                 Are you sure you want to delete {selectedImages.size} selected image{selectedImages.size === 1 ? '' : 's'}? 
                 This action cannot be undone.
               </p>
-              <div className="flex justify-end gap-3">
+              <div className={styles.div21}>
                 <Button
                   variant="outline"
                   onClick={() => setShowDeleteConfirmation(false)}
@@ -753,17 +754,17 @@ export const PropertyGalleryDetailPage: React.FC<PropertyGalleryDetailPageProps>
                 </Button>
                 <Button
                   onClick={handleBulkDelete}
-                  className="bg-red-500 hover:bg-red-600 text-white"
+                  className={styles.button17}
                   disabled={deletingImages.size > 0}
                 >
                   {deletingImages.size > 0 ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <Loader2 className={styles.loader22} />
                       Deleting...
                     </>
                   ) : (
                     <>
-                      <Trash2 className="h-4 w-4 mr-2" />
+                      <Trash2 className={styles.arrowLeft} />
                       Delete {selectedImages.size} Image{selectedImages.size === 1 ? '' : 's'}
                     </>
                   )}

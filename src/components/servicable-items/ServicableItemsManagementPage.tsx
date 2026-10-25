@@ -8,28 +8,29 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Plus, Package, DollarSign, Hash, CheckCircle, XCircle, ChevronDown, Trash2, Settings, AlertTriangle } from 'lucide-react';
 import { CreateServicableItemModal } from './CreateServicableItemModal';
+import styles from './ServicableItemsManagementPage.module.css';
 
 const ServicableItemStatusIcon: React.FC<{ status: ServicableItemStatus }> = ({ status }) => {
   if (status === 'ACTIVE') {
-    return <CheckCircle className="h-4 w-4 text-green-600" />;
+    return <CheckCircle className={styles.checkCircle} />;
   }
-  return <XCircle className="h-4 w-4 text-red-600" />;
+  return <XCircle className={styles.xCircle} />;
 };
 
 const ServicableItemStatusBadge: React.FC<{ status: ServicableItemStatus }> = ({ status }) => {
   const getStatusColor = (status: ServicableItemStatus) => {
     switch (status) {
       case 'ACTIVE':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return styles.cls;
       case 'INACTIVE':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return styles.cls2;
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return styles.cls2;
     }
   };
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(status)}`}>
+    <span className={`${styles.span} ${getStatusColor(status)}`}>
       <ServicableItemStatusIcon status={status} />
       {status}
     </span>
@@ -71,24 +72,24 @@ const StatusDropdown: React.FC<{
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className={styles.div} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={isUpdating}
-        className="flex items-center gap-1 px-2 py-1 text-xs rounded border border-gray-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        className={styles.button}
       >
         <ServicableItemStatusBadge status={servicableItem.status} />
-        <ChevronDown className="h-3 w-3" />
+        <ChevronDown className={styles.chevronDown} />
       </button>
       
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+        <div className={styles.div2}>
           {statusOptions.map((status) => (
             <button
               key={status}
               onClick={() => handleStatusChange(status)}
-              className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-50 first:rounded-t-md last:rounded-b-md ${
-                status === servicableItem.status ? 'bg-blue-50' : ''
+              className={`${styles.button2} ${
+                status === servicableItem.status ? styles.button3 : ''
               }`}
             >
               <ServicableItemStatusBadge status={status} />
@@ -110,26 +111,26 @@ const DeleteConfirmationModal: React.FC<{
   if (!isOpen || !servicableItem) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full">
+    <div className={styles.div3}>
+      <div className={styles.div4}>
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-600">
-              <AlertTriangle className="h-5 w-5" />
+            <CardTitle className={styles.cardTitle}>
+              <AlertTriangle className={styles.alertTriangle} />
               Delete Serviceable Item
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-700 mb-4">
+            <p className={styles.p}>
               Are you sure you want to delete &ldquo;{servicableItem.name}&rdquo;? This action cannot be undone.
             </p>
-            <div className="flex gap-3">
+            <div className={styles.div5}>
               <Button
                 type="button"
                 variant="outline"
                 onClick={onCancel}
                 disabled={isDeleting}
-                className="flex-1"
+                className={styles.button4}
               >
                 Cancel
               </Button>
@@ -137,7 +138,7 @@ const DeleteConfirmationModal: React.FC<{
                 type="button"
                 onClick={onConfirm}
                 disabled={isDeleting}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                className={styles.button5}
               >
                 {isDeleting ? 'Deleting...' : 'Delete'}
               </Button>
@@ -156,42 +157,42 @@ const ServicableItemCard: React.FC<{
   isUpdating: boolean;
 }> = ({ servicableItem, onStatusChange, onDelete, isUpdating }) => {
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-start gap-3">
+    <Card className={styles.card}>
+      <CardContent className={styles.cardContent}>
+        <div className={styles.div6}>
+          <div className={styles.div7}>
             {servicableItem.iconlink ? (
-              <div className="w-12 h-12 relative rounded-lg overflow-hidden">
+              <div className={styles.div8}>
                 <Image 
                   src={servicableItem.iconlink} 
                   alt={servicableItem.name}
                   fill
-                  className="object-cover"
+                  className={styles.image}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';
-                    target.parentElement?.nextElementSibling?.classList.remove('hidden');
+                    target.parentElement?.nextElementSibling?.classList.remove(styles.hidden);
                   }}
                 />
               </div>
             ) : null}
-            <div className={`w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center ${servicableItem.iconlink ? 'hidden' : ''}`}>
-              <Package className="h-6 w-6 text-blue-600" />
+            <div className={`${styles.div9} ${servicableItem.iconlink ? styles.hidden : ''}`}>
+              <Package className={styles.package} />
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-lg text-gray-900 mb-1">
+            <div className={styles.button4}>
+              <h3 className={styles.h3}>
                 {servicableItem.name}
               </h3>
-              <p className="text-gray-600 text-sm mb-2">
+              <p className={styles.p2}>
                 {servicableItem.description}
               </p>
-              <div className="flex items-center gap-4 text-sm text-gray-500">
-                <span className="flex items-center gap-1">
-                  <DollarSign className="h-4 w-4" />
+              <div className={styles.div11}>
+                <span className={styles.span2}>
+                  <DollarSign className={styles.dollarSign} />
                   {servicableItem.price.amount} {servicableItem.price.currency}
                 </span>
-                <span className="flex items-center gap-1">
-                  <Hash className="h-4 w-4" />
+                <span className={styles.span2}>
+                  <Hash className={styles.dollarSign} />
                   {servicableItem.unit}
                 </span>
                 <span>
@@ -200,7 +201,7 @@ const ServicableItemCard: React.FC<{
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className={styles.div12}>
             <StatusDropdown 
               servicableItem={servicableItem}
               onStatusChange={onStatusChange}
@@ -208,10 +209,10 @@ const ServicableItemCard: React.FC<{
             />
             <button
               onClick={onDelete}
-              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+              className={styles.button6}
               title="Delete item"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className={styles.dollarSign} />
             </button>
           </div>
         </div>
@@ -268,12 +269,12 @@ export const ServicableItemsManagementPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-          <div className="grid gap-4">
+      <div className={styles.cardContent}>
+        <div className={styles.div13}>
+          <div className={styles.div14}></div>
+          <div className={styles.div15}>
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+              <div key={i} className={styles.div16}></div>
             ))}
           </div>
         </div>
@@ -283,13 +284,13 @@ export const ServicableItemsManagementPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="p-6">
+      <div className={styles.cardContent}>
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Error Loading Serviceable Items</h3>
-              <p className="text-gray-600 mb-4">
+          <CardContent className={styles.cardContent}>
+            <div className={styles.div17}>
+              <AlertTriangle className={styles.alertTriangle2} />
+              <h3 className={styles.h32}>Error Loading Serviceable Items</h3>
+              <p className={styles.p3}>
                 {error instanceof Error ? error.message : 'An unexpected error occurred'}
               </p>
               <Button onClick={() => refetch()}>
@@ -306,51 +307,51 @@ export const ServicableItemsManagementPage: React.FC = () => {
   const totalPages = servicableItemsPage?.totalPages || 0;
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className={styles.div18}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className={styles.div19}>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Settings className="h-7 w-7 text-blue-600" />
+          <h1 className={styles.h1}>
+            <Settings className={styles.settings} />
             Serviceable Items
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className={styles.p4}>
             Manage additional services and amenities for your villa
           </p>
         </div>
         <Button
           onClick={() => setIsCreateModalOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+          className={styles.button7}
         >
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className={styles.plus} />
           Add New Item
         </Button>
       </div>
 
       {/* Stats Card */}
       {servicableItemsPage && (
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">{servicableItemsPage.totalElements}</div>
-                <div className="text-sm text-gray-600">Total Items</div>
+        <Card className={styles.card2}>
+          <CardContent className={styles.cardContent}>
+            <div className={styles.div20}>
+              <div className={styles.div17}>
+                <div className={styles.div21}>{servicableItemsPage.totalElements}</div>
+                <div className={styles.div22}>Total Items</div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">
+              <div className={styles.div17}>
+                <div className={styles.div23}>
                   {servicableItems.filter(item => item.status === 'ACTIVE').length}
                 </div>
-                <div className="text-sm text-gray-600">Active Items</div>
+                <div className={styles.div22}>Active Items</div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-600">
+              <div className={styles.div17}>
+                <div className={styles.div24}>
                   {servicableItems.filter(item => item.status === 'INACTIVE').length}
                 </div>
-                <div className="text-sm text-gray-600">Inactive Items</div>
+                <div className={styles.div22}>Inactive Items</div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">{totalPages}</div>
-                <div className="text-sm text-gray-600">Total Pages</div>
+              <div className={styles.div17}>
+                <div className={styles.div25}>{totalPages}</div>
+                <div className={styles.div22}>Total Pages</div>
               </div>
             </div>
           </CardContent>
@@ -360,25 +361,25 @@ export const ServicableItemsManagementPage: React.FC = () => {
       {/* Serviceable Items List */}
       {servicableItems.length === 0 ? (
         <Card>
-          <CardContent className="p-12">
-            <div className="text-center">
-              <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Serviceable Items</h3>
-              <p className="text-gray-600 mb-4">
+          <CardContent className={styles.cardContent2}>
+            <div className={styles.div17}>
+              <Package className={styles.package2} />
+              <h3 className={styles.h32}>No Serviceable Items</h3>
+              <p className={styles.p3}>
                 You haven&rsquo;t created any serviceable items yet. Add your first item to get started.
               </p>
               <Button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className={styles.button7}
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className={styles.plus} />
                 Add Your First Item
               </Button>
             </div>
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
+        <div className={styles.div26}>
           {servicableItems.map((servicableItem) => (
             <ServicableItemCard
               key={servicableItem.id}
@@ -393,7 +394,7 @@ export const ServicableItemsManagementPage: React.FC = () => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-8">
+        <div className={styles.div27}>
           <Button
             variant="outline"
             onClick={() => handlePageChange(currentPage - 1)}
@@ -402,7 +403,7 @@ export const ServicableItemsManagementPage: React.FC = () => {
             Previous
           </Button>
           
-          <div className="flex items-center gap-1">
+          <div className={styles.span2}>
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               let pageNumber;
               if (totalPages <= 5) {
@@ -420,7 +421,7 @@ export const ServicableItemsManagementPage: React.FC = () => {
                   key={pageNumber}
                   variant={currentPage === pageNumber ? "primary" : "outline"}
                   onClick={() => handlePageChange(pageNumber)}
-                  className="w-10 h-10"
+                  className={styles.button8}
                 >
                   {pageNumber + 1}
                 </Button>

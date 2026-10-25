@@ -1,0 +1,114 @@
+.div {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.section {
+  display: none;
+  flex-direction: column;
+  background-color: rgb(255 255 255 / 1);
+  padding: 3rem;
+}
+@media (min-width: 768px) {
+  .section {
+    display: flex;
+    width: 50%;
+  }
+}
+@media (min-width: 1024px) {
+  .section {
+    padding: 4rem;
+  }
+}
+
+.image {
+  height: auto;
+  width: 12rem;
+}
+@media (min-width: 1024px) {
+  .image {
+    width: 14rem;
+  }
+}
+
+.div2 {
+  margin-top: 3rem;
+}
+@media (min-width: 1024px) {
+  .div2 {
+    margin-top: 4rem;
+  }
+}
+
+.h2 {
+  font-size: 1.875rem;
+  font-weight: 300;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  color: rgb(89 104 41 / 1);
+}
+@media (min-width: 1024px) {
+  .h2 {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+}
+@media (min-width: 1280px) {
+  .h2 {
+    font-size: 3rem;
+    line-height: 1;
+  }
+}
+
+.section2 {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 1.5rem;
+}
+@media (min-width: 768px) {
+  .section2 {
+    width: 50%;
+  }
+}
+
+.image2 {
+  object-fit: cover;
+}
+
+.div3 {
+  position: absolute;
+  inset: 0px;
+  background-color: rgb(0 0 0 / 0.2);
+}
+
+.div4 {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 28rem;
+  border-radius: 1rem;
+  border-width: 1px;
+  border-color: rgb(255 255 255 / 0.3);
+  background-color: rgb(255 255 255 / 0.15);
+  padding: 2rem;
+  color: rgb(255 255 255 / 1);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  backdrop-filter: blur(24px) saturate(1.5);
+}
+
+.glassInput {
+  margin-top: 0.25rem;
+  border-color: rgb(255 255 255 / 0.3);
+  background-color: rgb(255 255 255 / 0.2);
+  color: rgb(255 255 255 / 1);
+}
+.glassInput::placeholder {
+  color: rgb(255 255 255 / 0.6);
+}

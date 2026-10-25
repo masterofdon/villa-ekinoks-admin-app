@@ -1,0 +1,29 @@
+.div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.input {
+  height: 3rem;
+  width: 100%;
+  min-width: 0px;
+  border-radius: calc(var(--radius) - 2px);
+  border-width: 1px;
+  border-color: rgb(255 255 255 / 0.3);
+  background-color: rgb(255 255 255 / 0.2);
+  text-align: center;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  color: rgb(255 255 255 / 1);
+  caret-color: #fff;
+}
+.input:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 0px #fff, 0 0 0 2px rgb(255 255 255 / 0.7);
+}
+.input:disabled {
+  opacity: 0.5;
+}

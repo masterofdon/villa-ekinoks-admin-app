@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
-import { VillaPricingWithVillaBooking } from '@/types';
-import { parseYYYYMMDD, isDateInRange, getBookingPosition } from '@/lib/date-utils';
+import { getBookingPosition } from '@/lib/date-utils';
+import { arePropsEqualForMonth, CalendarIndex, isDatePast } from '@/lib/calendar-utils';
+import styles from './CalendarMonthViewComponent.module.css';
 
 interface CalendarMonthViewComponentProps {
   period: string; // MMYYYY format
-  pricing: VillaPricingWithVillaBooking;
+  index: CalendarIndex;
   selectedStartDate?: Date | null;
   selectedEndDate?: Date | null;
   onDateSelect?: (date: Date) => void;
@@ -18,9 +19,9 @@ interface CalendarMonthViewComponentProps {
   isDragging?: boolean;
 }
 
-export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProps> = ({
+const CalendarMonthView: React.FC<CalendarMonthViewComponentProps> = ({
   period,
-  pricing,
+  index,
   selectedStartDate,
   selectedEndDate,
   onDateSelect,
@@ -46,55 +47,6 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
 
   // Days of the week starting with Monday
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-  // Helper function to get booking for a specific date (for availability - excludes checkout day)
-  const getBookingForDate = (date: Date) => {
-    return pricing.bookings.find(booking => {
-      return isDateInRange(date, booking.startdate, booking.enddate);
-    });
-  };
-
-  // Helper function to get booking for banner display (includes checkout day for visual continuity)
-  const getBookingForBanner = (date: Date) => {
-    return pricing.bookings.find(booking => {
-      const startDate = parseYYYYMMDD(booking.startdate);
-      const endDate = parseYYYYMMDD(booking.enddate);
-
-      const normalizedCheck = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      const normalizedStart = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-      const normalizedEnd = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-
-      // Include both check-in and checkout dates for banner display
-      return normalizedCheck >= normalizedStart && normalizedCheck <= normalizedEnd;
-    });
-  };
-
-  // Helper function to check if a date has a booking (availability)
-  const hasBooking = (date: Date) => {
-    return !!getBookingForDate(date);
-  };
-
-  // Helper function to check if a date should show a banner
-  const hasBanner = (date: Date) => {
-    return !!getBookingForBanner(date);
-  };
-
-  // Helper function to get price for a specific date
-  const getPriceForDate = (date: Date) => {
-    const priceRange = pricing.pricing.pricingranges.find(range => {
-      const startDate = parseYYYYMMDD(range.startperiod);
-      const endDate = parseYYYYMMDD(range.endperiod);
-
-      // Normalize all dates to compare only the date part (not time)
-      const normalizedCheck = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      const normalizedStart = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-      const normalizedEnd = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-
-      return normalizedCheck >= normalizedStart && normalizedCheck <= normalizedEnd;
-    });
-
-    return priceRange?.pricepernight;
-  };
 
   // Helper function to check if a date is in the selected range
   const isDateSelected = (date: Date) => {
@@ -141,19 +93,15 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
   // Add days of the month
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, month, day);
-    const booking = getBookingForDate(date); // For availability (excludes checkout day)
-    const bannerBooking = getBookingForBanner(date); // For banner display (includes checkout day)
-    const isBooked = !!booking; // Availability status
+    const { booking, bannerBooking, price, isBooked, isClosed } = index.getDayInfo(date); // booking excludes checkout day, bannerBooking includes it
     const showBanner = !!bannerBooking; // Banner display status
-    const price = getPriceForDate(date);
-    const isClosed = !isBooked && !price; // Closed if no booking and no price (regardless of banner/checkout status)
     const isSelected = isDateSelected(date); // Check if date is in selected range
     const isSelectStart = isSelectionStart(date); // Check if date is start of selection
     const isSelectEnd = isSelectionEnd(date); // Check if date is end of selection
 
     // Check if next day is an end date for showing name
     const nextDay = day < daysInMonth ? new Date(year, month, day + 1) : null;
-    const nextDayBannerBooking = nextDay ? getBookingForBanner(nextDay) : null;
+    const nextDayBannerBooking = nextDay ? index.getDayInfo(nextDay).bannerBooking : undefined;
     const nextDayPositionInfo = nextDay && nextDayBannerBooking ? getBookingPosition(nextDay, nextDayBannerBooking.startdate, nextDayBannerBooking.enddate) : null;
     const isBeforeEndDate = nextDayPositionInfo?.isEnd && !nextDayPositionInfo?.isStart;
 
@@ -170,44 +118,42 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
       bookingPosition: positionInfo,
       isBeforeEndDate, // True if next day is end date
       nextDayBooking: nextDayBannerBooking, // Booking info for next day
-      isClosed, // True if day is closed (no booking, no banner, no price)
+      isClosed, // True if day is closed (no booking and no price)
       isSelected, // True if date is in selected range
       isSelectStart, // True if date is start of selection
-      isSelectEnd // True if date is end of selection
+      isSelectEnd, // True if date is end of selection
+      isUnselectable: isBooked || isDatePast(date), // Past and booked days can't be selected
+      isPast: isDatePast(date)
     });
   }
 
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-4 ${isDragging ? 'select-none' : ''}`}>
+    <div className={`${styles.div} ${isDragging ? styles.div2 : ''}`}>
       {/* Days of week header */}
-      <div className="grid grid-cols-7 mb-2">
+      <div className={styles.div3}>
         {daysOfWeek.map(day => (
-          <div key={day} className="p-2 text-center text-sm font-medium text-gray-500 border border-gray-200 bg-gray-100">
+          <div key={day} className={styles.div4}>
             {day}
           </div>
         ))}
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7">
+      <div className={styles.div5}>
         {calendarDays.map((dayData, index) => (
-          <div key={index} className="aspect-square border border-gray-200">
+          <div key={index} className={styles.div6}>
             {dayData ? (
               <div
-                className={`
-                  relative h-full w-full p-1 flex flex-col justify-between
-                  ${dayData.isSelected
+                className={` ${styles.div7} ${dayData.isSelected
                     ? '' // Selection will be handled by inline style
                     : dayData.isClosed
-                      ? 'bg-red-50 hover:bg-red-100' // Closed day - red background (prioritized over other states)
+                      ? styles.div9 // Closed day - red background (prioritized over other states)
                       : dayData.isBooked
-                        ? 'bg-blue-50 hover:bg-blue-100'
+                        ? styles.div10
                         : dayData.showBanner
-                          ? 'bg-gray-50 hover:bg-gray-100' // Checkout day - same as available (gray)
-                          : 'bg-gray-50 hover:bg-gray-100' // Available day - gray background
-                  }
-                  cursor-pointer transition-colors
-                `}
+                          ? styles.div11 // Checkout day - same as available (gray)
+                          : styles.div11 // Available day - gray background
+                  } ${styles.div8} ${dayData.isUnselectable ? styles.unselectable : ''} ${dayData.isPast ? styles.past : ''} `}
                 style={dayData.isSelected ? { backgroundColor: '#f0ad8d33' } : {}}
                 title={
                   dayData.booking && dayData.isClosed
@@ -224,30 +170,28 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
                 onMouseUp={() => onMouseUp?.()}
               >
                 {/* Day number */}
-                <div className={`text-sm font-medium ${dayData.isClosed ? 'text-red-900' :
-                  dayData.isBooked ? 'text-blue-900' :
-                    dayData.showBanner ? 'text-gray-900' :
-                      'text-gray-900'
+                <div className={`${styles.div12} ${dayData.isClosed ? styles.div13 :
+                  dayData.isBooked ? styles.div14 :
+                    dayData.showBanner ? styles.div15 :
+                      styles.div15
                   }`}>
                   {dayData.day}
                 </div>
 
                 {/* Booking banner */}
                 {dayData.showBanner && (
-                  <div className="absolute top-6 left-0 right-0">
+                  <div className={styles.div16}>
                     <div
-                      className={`
-                        text-white text-xs py-0.5 text-center font-medium
-                        ${dayData.bookingPosition.isStart && dayData.bookingPosition.isEnd
-                          ? 'ml-6' // Same day check-in/out - start from center, end at 30% width
+                      className={` ${styles.div17} ${dayData.bookingPosition.isStart && dayData.bookingPosition.isEnd
+                          ? styles.div18 // Same day check-in/out - start from center, end at 30% width
                           : ''
                         }
                         ${dayData.bookingPosition.isStart && !dayData.bookingPosition.isEnd
-                          ? 'ml-6' // Check-in day - banner starts from center of cell
+                          ? styles.div18 // Check-in day - banner starts from center of cell
                           : ''
                         }
                         ${dayData.bookingPosition.isEnd && !dayData.bookingPosition.isStart
-                          ? 'w-[30%] h-5' // Check-out day - banner is 30% width from left with explicit height matching py-0.5
+                          ? styles.div19 // Check-out day - banner is 30% width from left with explicit height matching py-0.5
                           : ''
                         }
                         ${dayData.bookingPosition.isMiddle
@@ -263,7 +207,7 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
                         )
                       }}
                     >
-                      <div className="truncate px-1">
+                      <div className={styles.div20}>
                         {dayData.bookingPosition.isStart
                           ? `${dayData.booking?.inquiror.personalinfo.firstname} ${dayData.booking?.inquiror.personalinfo.lastname}`
                           : dayData.isBeforeEndDate
@@ -279,52 +223,52 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
 
                 {/* Selection Handlers */}
                 {dayData.isSelectStart && (
-                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1">
+                  <div className={styles.div21}>
                     <div
-                      className="w-3 h-6 bg-blue-500 rounded-l-md cursor-ew-resize opacity-80 hover:opacity-100 transition-opacity"
+                      className={styles.div22}
                       title="Click to adjust start date"
                       onClick={(e) => {
                         e.stopPropagation();
                         onStartDateAdjust?.(dayData.date);
                       }}
                     >
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="w-0.5 h-3 bg-white rounded"></div>
+                      <div className={styles.div23}>
+                        <div className={styles.div24}></div>
                       </div>
                     </div>
                   </div>
                 )}
 
                 {dayData.isSelectEnd && (
-                  <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1">
+                  <div className={styles.div25}>
                     <div
-                      className="w-3 h-6 bg-blue-500 rounded-r-md cursor-ew-resize opacity-80 hover:opacity-100 transition-opacity"
+                      className={styles.div26}
                       title="Click to adjust end date"
                       onClick={(e) => {
                         e.stopPropagation();
                         onEndDateAdjust?.(dayData.date);
                       }}
                     >
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="w-0.5 h-3 bg-white rounded"></div>
+                      <div className={styles.div23}>
+                        <div className={styles.div24}></div>
                       </div>
                     </div>
                   </div>
                 )}
 
                 {/* Price display */}
-                <div className="mt-auto">
+                <div className={styles.div27}>
                   {dayData.isClosed ? (
-                    <div className="text-xs text-red-600 font-medium text-center">
+                    <div className={styles.div28}>
                       Closed
                     </div>
                   ) : dayData.isBooked ? (
-                    <div className="text-xs text-blue-600 font-medium text-center">
+                    <div className={styles.div29}>
                       Booked
                     </div>
                   ) : dayData.price ? (
-                    <div className="flex justify-end">
-                      <div className="text-xs text-gray-600">
+                    <div className={styles.div30}>
+                      <div className={styles.div31}>
                         {dayData.price.amount} {dayData.price.currency}
                       </div>
                     </div>
@@ -332,7 +276,7 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
                 </div>
               </div>
             ) : (
-              <div className="h-full w-full border border-gray-200 bg-white"></div>
+              <div className={styles.div32}></div>
             )}
           </div>
         ))}
@@ -340,3 +284,9 @@ export const CalendarMonthViewComponent: React.FC<CalendarMonthViewComponentProp
     </div>
   );
 };
+
+export const CalendarMonthViewComponent = React.memo(CalendarMonthView, (prev, next) => {
+  const month = parseInt(next.period.substring(0, 2)) - 1;
+  const year = parseInt(next.period.substring(2, 6));
+  return arePropsEqualForMonth(prev, next, year, month);
+});

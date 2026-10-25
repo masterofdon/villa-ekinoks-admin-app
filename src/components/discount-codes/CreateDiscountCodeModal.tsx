@@ -6,6 +6,7 @@ import { DiscountType, DiscountCodeUsageType, Create_DiscountCode_WC_MLS_XAction
 import { Card, CardHeader, CardTitle, CardContent, Input, Label } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { X, Percent, DollarSign, Calendar, Users, Clock } from 'lucide-react';
+import styles from './CreateDiscountCodeModal.module.css';
 
 interface CreateDiscountCodeModalProps {
   isOpen: boolean;
@@ -113,65 +114,65 @@ export const CreateDiscountCodeModal: React.FC<CreateDiscountCodeModalProps> = (
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <Card className="border-0 shadow-none">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-            <CardTitle className="text-xl font-semibold">Create Discount Code</CardTitle>
+    <div className={styles.div}>
+      <div className={styles.div2}>
+        <Card className={styles.card}>
+          <CardHeader className={styles.cardHeader}>
+            <CardTitle className={styles.cardTitle}>Create Discount Code</CardTitle>
             <Button 
               variant="outline" 
               size="sm" 
               onClick={onClose}
-              className="h-8 w-8 p-0"
+              className={styles.button}
             >
-              <X className="h-4 w-4" />
+              <X className={styles.x} />
             </Button>
           </CardHeader>
           
-          <CardContent className="space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <CardContent className={styles.cardContent}>
+            <form onSubmit={handleSubmit} className={styles.form}>
               {/* Discount Type */}
-              <div className="space-y-2">
-                <Label htmlFor="discounttype" className="text-sm font-medium">
+              <div className={styles.div3}>
+                <Label htmlFor="discounttype" className={styles.label}>
                   Discount Type
                 </Label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className={styles.div4}>
                   <button
                     type="button"
                     onClick={() => handleChange('type', 'PERCENTAGE')}
-                    className={`flex items-center justify-center gap-2 p-3 rounded-md border transition-colors ${
+                    className={`${styles.button2} ${
                       formData.type === 'PERCENTAGE'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? styles.button3
+                        : styles.button4
                     }`}
                   >
-                    <Percent className="h-4 w-4" />
-                    <span className="text-sm font-medium">Percentage</span>
+                    <Percent className={styles.x} />
+                    <span className={styles.label}>Percentage</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => handleChange('type', 'FIXED_AMOUNT')}
-                    className={`flex items-center justify-center gap-2 p-3 rounded-md border transition-colors ${
+                    className={`${styles.button2} ${
                       formData.type === 'FIXED_AMOUNT'
-                        ? 'border-green-500 bg-green-50 text-green-700'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? styles.button5
+                        : styles.button4
                     }`}
                   >
-                    <DollarSign className="h-4 w-4" />
-                    <span className="text-sm font-medium">Fixed Amount</span>
+                    <DollarSign className={styles.x} />
+                    <span className={styles.label}>Fixed Amount</span>
                   </button>
                 </div>
               </div>
 
               {/* Discount Value */}
-              <div className="space-y-2">
-                <Label htmlFor="value" className="text-sm font-medium">
+              <div className={styles.div3}>
+                <Label htmlFor="value" className={styles.label}>
                   Discount Value
                   {formData.type === 'PERCENTAGE' && (
-                    <span className="text-gray-500 ml-1">(0-100)</span>
+                    <span className={styles.span}>(0-100)</span>
                   )}
                 </Label>
-                <div className="relative">
+                <div className={styles.div5}>
                   <Input
                     id="value"
                     type="number"
@@ -181,104 +182,104 @@ export const CreateDiscountCodeModal: React.FC<CreateDiscountCodeModalProps> = (
                     value={formData.value}
                     onChange={(e) => handleChange('value', e.target.value)}
                     placeholder={formData.type === 'PERCENTAGE' ? 'e.g. 15' : 'e.g. 50.00'}
-                    className={errors.value ? 'border-red-500' : ''}
+                    className={errors.value ? styles.input : ''}
                   />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <span className="text-gray-500 text-sm">
+                  <div className={styles.div6}>
+                    <span className={styles.span2}>
                       {formData.type === 'PERCENTAGE' ? '%' : '$'}
                     </span>
                   </div>
                 </div>
                 {errors.value && (
-                  <p className="text-sm text-red-600">{errors.value}</p>
+                  <p className={styles.p}>{errors.value}</p>
                 )}
               </div>
 
               {/* Usage Type */}
-              <div className="space-y-2">
-                <Label htmlFor="usagetype" className="text-sm font-medium">
+              <div className={styles.div3}>
+                <Label htmlFor="usagetype" className={styles.label}>
                   Usage Type
                 </Label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className={styles.div4}>
                   <button
                     type="button"
                     onClick={() => handleChange('usagetype', 'SINGLE_USE')}
-                    className={`flex items-center justify-center gap-2 p-3 rounded-md border transition-colors ${
+                    className={`${styles.button2} ${
                       formData.usagetype === 'SINGLE_USE'
-                        ? 'border-orange-500 bg-orange-50 text-orange-700'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? styles.button6
+                        : styles.button4
                     }`}
                   >
-                    <Users className="h-4 w-4" />
-                    <span className="text-sm font-medium">Single Use</span>
+                    <Users className={styles.x} />
+                    <span className={styles.label}>Single Use</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => handleChange('usagetype', 'MULTI_USE')}
-                    className={`flex items-center justify-center gap-2 p-3 rounded-md border transition-colors ${
+                    className={`${styles.button2} ${
                       formData.usagetype === 'MULTI_USE'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? styles.button3
+                        : styles.button4
                     }`}
                   >
-                    <Users className="h-4 w-4" />
-                    <span className="text-sm font-medium">Multi Use</span>
+                    <Users className={styles.x} />
+                    <span className={styles.label}>Multi Use</span>
                   </button>
                 </div>
               </div>
 
               {/* Expiration Date */}
-              <div className="space-y-2">
-                <Label htmlFor="expirationdate" className="text-sm font-medium">
+              <div className={styles.div3}>
+                <Label htmlFor="expirationdate" className={styles.label}>
                   Expiration Date
-                  <span className="text-gray-500 ml-1 font-normal">(optional)</span>
+                  <span className={styles.span3}>(optional)</span>
                 </Label>
-                <div className="relative">
+                <div className={styles.div5}>
                   <Input
                     id="expirationdate"
                     type="date"
                     min={getMinDate()}
                     value={formData.expirationdate}
                     onChange={(e) => handleChange('expirationdate', e.target.value)}
-                    className={errors.expirationdate ? 'border-red-500' : ''}
+                    className={errors.expirationdate ? styles.input : ''}
                     placeholder="Leave empty for no expiration"
                   />
-                  <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  <Calendar className={styles.calendar} />
                 </div>
                 {errors.expirationdate && (
-                  <p className="text-sm text-red-600">{errors.expirationdate}</p>
+                  <p className={styles.p}>{errors.expirationdate}</p>
                 )}
-                <p className="text-xs text-gray-500">
+                <p className={styles.p2}>
                   Leave empty to create a discount code with no expiration date
                 </p>
               </div>
 
               {/* Submit Error */}
               {errors.submit && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                  <p className="text-sm text-red-600">{errors.submit}</p>
+                <div className={styles.div7}>
+                  <p className={styles.p}>{errors.submit}</p>
                 </div>
               )}
 
               {/* Actions */}
-              <div className="flex gap-3 pt-4">
+              <div className={styles.div8}>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={onClose}
                   disabled={createDiscountCodeMutation.isPending}
-                  className="flex-1"
+                  className={styles.button7}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={createDiscountCodeMutation.isPending}
-                  className="flex-1"
+                  className={styles.button7}
                 >
                   {createDiscountCodeMutation.isPending ? (
-                    <div className="flex items-center gap-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <div className={styles.div9}>
+                      <div className={styles.div10}></div>
                       Creating...
                     </div>
                   ) : (

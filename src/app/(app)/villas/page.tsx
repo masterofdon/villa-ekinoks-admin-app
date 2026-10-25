@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import { Home, ArrowLeft } from 'lucide-react';
+import styles from './page.module.css';
 
 export default function VillasPage() {
   const router = useRouter();
@@ -14,20 +15,20 @@ export default function VillasPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <Card className="max-w-md w-full">
-        <CardHeader className="text-center">
-          <Home className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-          <CardTitle className="text-xl font-semibold text-gray-900">
+    <div className={styles.div}>
+      <Card className={styles.card}>
+        <CardHeader className={styles.cardHeader}>
+          <Home className={styles.home} />
+          <CardTitle className={styles.cardTitle}>
             Villa Management Moved
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-center space-y-4">
-          <p className="text-gray-600">
+        <CardContent className={styles.cardContent}>
+          <p className={styles.p}>
             Villa management has been integrated into the dashboard. You can now view and manage your villa details directly from the main dashboard.
           </p>
-          <Button onClick={handleGoToDashboard} className="w-full">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+          <Button onClick={handleGoToDashboard} className={styles.button}>
+            <ArrowLeft className={styles.arrowLeft} />
             Go to Dashboard
           </Button>
         </CardContent>

@@ -10,6 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent, Input, Label } from '@/compon
 import { Button } from '@/components/ui/Button';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { htmlDateToYYYYMMDD } from '@/lib/date-utils';
+import styles from './CreateManualBookingModal.module.css';
 
 interface CreateManualBookingModalProps {
   isOpen: boolean;
@@ -206,27 +207,27 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <Card className="border-0 shadow-none">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-            <CardTitle className="text-xl font-semibold">Create Manual Booking</CardTitle>
+    <div className={styles.div}>
+      <div className={styles.div2}>
+        <Card className={styles.card}>
+          <CardHeader className={styles.cardHeader}>
+            <CardTitle className={styles.cardTitle}>Create Manual Booking</CardTitle>
             <Button
               variant="outline"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 p-0"
+              className={styles.button}
             >
-              <X className="h-4 w-4" />
+              <X className={styles.x} />
             </Button>
           </CardHeader>
 
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className={styles.form}>
               {/* Guest Information */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">Guest Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 className={styles.h3}>Guest Information</h3>
+                <div className={styles.div3}>
                   <div>
                     <Label htmlFor="inquirorname">First Name</Label>
                     <Input
@@ -235,10 +236,10 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       value={formData.inquirorname}
                       onChange={(e) => handleChange('inquirorname', e.target.value)}
                       placeholder="John"
-                      className="mt-1"
+                      className={styles.input}
                     />
                     {errors.inquirorname && (
-                      <p className="text-red-500 text-xs mt-1">{errors.inquirorname}</p>
+                      <p className={styles.p}>{errors.inquirorname}</p>
                     )}
                   </div>
 
@@ -250,14 +251,14 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       value={formData.inquirorlastname}
                       onChange={(e) => handleChange('inquirorlastname', e.target.value)}
                       placeholder="Doe"
-                      className="mt-1"
+                      className={styles.input}
                     />
                     {errors.inquirorlastname && (
-                      <p className="text-red-500 text-xs mt-1">{errors.inquirorlastname}</p>
+                      <p className={styles.p}>{errors.inquirorlastname}</p>
                     )}
                   </div>
 
-                  <div className="md:col-span-2">
+                  <div className={styles.div4}>
                     <Label htmlFor="inquiroremail">Email</Label>
                     <Input
                       id="inquiroremail"
@@ -265,10 +266,10 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       value={formData.inquiroremail}
                       onChange={(e) => handleChange('inquiroremail', e.target.value)}
                       placeholder="guest@example.com"
-                      className="mt-1"
+                      className={styles.input}
                     />
                     {errors.inquiroremail && (
-                      <p className="text-red-500 text-xs mt-1">{errors.inquiroremail}</p>
+                      <p className={styles.p}>{errors.inquiroremail}</p>
                     )}
                   </div>
 
@@ -278,7 +279,7 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       id="inquirorlocale"
                       value={formData.inquirorlocale}
                       onChange={(e) => handleChange('inquirorlocale', e.target.value)}
-                      className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={styles.select}
                     >
                       <option value="en_GB">en_GB</option>
                       <option value="en_US">en_US</option>
@@ -299,7 +300,7 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       id="inquirorcurrency"
                       value={formData.inquirorcurrency}
                       onChange={(e) => handleChange('inquirorcurrency', e.target.value)}
-                      className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={styles.select}
                     >
                       <option value="EUR">EUR</option>
                       <option value="USD">USD</option>
@@ -312,8 +313,8 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
 
               {/* Booking Dates & Guests */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">Booking Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 className={styles.h3}>Booking Details</h3>
+                <div className={styles.div3}>
                   <div>
                     <Label htmlFor="startdate">Check-in Date</Label>
                     <Input
@@ -321,10 +322,10 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       type="date"
                       value={formData.startdate}
                       onChange={(e) => handleChange('startdate', e.target.value)}
-                      className="mt-1"
+                      className={styles.input}
                     />
                     {errors.startdate && (
-                      <p className="text-red-500 text-xs mt-1">{errors.startdate}</p>
+                      <p className={styles.p}>{errors.startdate}</p>
                     )}
                   </div>
 
@@ -335,10 +336,10 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       type="date"
                       value={formData.enddate}
                       onChange={(e) => handleChange('enddate', e.target.value)}
-                      className="mt-1"
+                      className={styles.input}
                     />
                     {errors.enddate && (
-                      <p className="text-red-500 text-xs mt-1">{errors.enddate}</p>
+                      <p className={styles.p}>{errors.enddate}</p>
                     )}
                   </div>
 
@@ -350,10 +351,10 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       min={1}
                       value={formData.numberofguests}
                       onChange={(e) => handleChange('numberofguests', Number.parseInt(e.target.value, 10) || 1)}
-                      className="mt-1"
+                      className={styles.input}
                     />
                     {errors.numberofguests && (
-                      <p className="text-red-500 text-xs mt-1">{errors.numberofguests}</p>
+                      <p className={styles.p}>{errors.numberofguests}</p>
                     )}
                   </div>
 
@@ -365,10 +366,10 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       min={0}
                       value={formData.numberofchildren}
                       onChange={(e) => handleChange('numberofchildren', Number.parseInt(e.target.value, 10) || 0)}
-                      className="mt-1"
+                      className={styles.input}
                     />
                     {errors.numberofchildren && (
-                      <p className="text-red-500 text-xs mt-1">{errors.numberofchildren}</p>
+                      <p className={styles.p}>{errors.numberofchildren}</p>
                     )}
                   </div>
                 </div>
@@ -376,8 +377,8 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
 
               {/* Payment */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">Payment</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 className={styles.h3}>Payment</h3>
+                <div className={styles.div3}>
                   <div>
                     <Label htmlFor="totalamount">Total Amount</Label>
                     <Input
@@ -387,10 +388,10 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       value={formData.totalamount}
                       onChange={(e) => handleChange('totalamount', e.target.value.replace(/,/g, '.'))}
                       placeholder="0.00"
-                      className="mt-1"
+                      className={styles.input}
                     />
                     {errors.totalamount && (
-                      <p className="text-red-500 text-xs mt-1">{errors.totalamount}</p>
+                      <p className={styles.p}>{errors.totalamount}</p>
                     )}
                   </div>
 
@@ -400,7 +401,7 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       id="totalamountcurrency"
                       value={formData.totalamountcurrency}
                       onChange={(e) => handleChange('totalamountcurrency', e.target.value)}
-                      className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={styles.select}
                     >
                       <option value="EUR">EUR</option>
                       <option value="USD">USD</option>
@@ -408,7 +409,7 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                       <option value="GBP">GBP</option>
                     </select>
                     {errors.totalamountcurrency && (
-                      <p className="text-red-500 text-xs mt-1">{errors.totalamountcurrency}</p>
+                      <p className={styles.p}>{errors.totalamountcurrency}</p>
                     )}
                   </div>
                 </div>
@@ -417,29 +418,29 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
               {/* Additional Services */}
               {activeServiceItems.length > 0 && (
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold text-gray-700">Additional Services</h3>
+                  <div className={styles.div5}>
+                    <h3 className={styles.h32}>Additional Services</h3>
                     <button
                       type="button"
                       onClick={addServiceRow}
-                      className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700"
+                      className={styles.button2}
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus className={styles.x} />
                       Add Service
                     </button>
                   </div>
 
                   {additionalServices.length === 0 ? (
-                    <p className="text-sm text-gray-500">No additional services added.</p>
+                    <p className={styles.p2}>No additional services added.</p>
                   ) : (
-                    <div className="space-y-2">
+                    <div className={styles.div6}>
                       {additionalServices.map((svc, index) => (
-                        <div key={svc.id} className="flex items-start gap-2">
-                          <div className="flex-1">
+                        <div key={svc.id} className={styles.div7}>
+                          <div className={styles.div8}>
                             <select
                               value={svc.servicableitemid}
                               onChange={(e) => updateServiceRow(index, 'servicableitemid', e.target.value)}
-                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className={styles.select2}
                             >
                               <option value="">Select service...</option>
                               {activeServiceItems.map((item) => (
@@ -449,10 +450,10 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                               ))}
                             </select>
                             {errors[`service_${index}_item`] && (
-                              <p className="text-red-500 text-xs mt-1">{errors[`service_${index}_item`]}</p>
+                              <p className={styles.p}>{errors[`service_${index}_item`]}</p>
                             )}
                           </div>
-                          <div className="w-24">
+                          <div className={styles.div9}>
                             <Input
                               type="number"
                               min={1}
@@ -461,15 +462,15 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
                               placeholder="Qty"
                             />
                             {errors[`service_${index}_qty`] && (
-                              <p className="text-red-500 text-xs mt-1">{errors[`service_${index}_qty`]}</p>
+                              <p className={styles.p}>{errors[`service_${index}_qty`]}</p>
                             )}
                           </div>
                           <button
                             type="button"
                             onClick={() => removeServiceRow(index)}
-                            className="mt-2 text-red-500 hover:text-red-600"
+                            className={styles.button3}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className={styles.x} />
                           </button>
                         </div>
                       ))}
@@ -479,16 +480,16 @@ export const CreateManualBookingModal: React.FC<CreateManualBookingModalProps> =
               )}
 
               {errors.submit && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                  <p className="text-red-600 text-sm">{errors.submit}</p>
+                <div className={styles.div10}>
+                  <p className={styles.p3}>{errors.submit}</p>
                 </div>
               )}
 
-              <div className="flex gap-3 pt-2">
+              <div className={styles.div11}>
                 <Button
                   type="submit"
                   disabled={createManualBookingMutation.isPending}
-                  className="flex-1"
+                  className={styles.div8}
                 >
                   {createManualBookingMutation.isPending ? 'Creating...' : 'Create Booking'}
                 </Button>

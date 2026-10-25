@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ImageIcon } from 'lucide-react';
 import { imageCacheApi } from '@/lib/services';
+import styles from './AuthImage.module.css';
 
 interface AuthImageProps {
   url: string;
@@ -17,7 +18,7 @@ export const AuthImage: React.FC<AuthImageProps> = ({
   url,
   alt,
   className,
-  fallback = <ImageIcon className="h-12 w-12 text-gray-300" />,
+  fallback = <ImageIcon className={styles.imageIcon} />,
   onLoad,
   onError,
 }) => {
@@ -67,9 +68,9 @@ export const AuthImage: React.FC<AuthImageProps> = ({
 
   if (isLoading) {
     return (
-      <div className={`flex items-center justify-center ${className}`}>
-        <div className="animate-pulse">
-          <div className="bg-gray-200 rounded h-12 w-12" />
+      <div className={`${styles.div} ${className}`}>
+        <div className={styles.div2}>
+          <div className={styles.div3} />
         </div>
       </div>
     );

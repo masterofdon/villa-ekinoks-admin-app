@@ -1,0 +1,51 @@
+.bar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding: 0.5rem 1.5rem;
+  background: linear-gradient(135deg, #596829 0%, #8a9a52 100%);
+}
+
+.bar :global(.ant-breadcrumb),
+.bar :global(.ant-breadcrumb ol),
+.bar :global(.ant-breadcrumb li) {
+  display: flex;
+}
+
+.link,
+.current,
+.text {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.375rem;
+  color: #ffffff;
+}
+
+/* antd's compiled ".ant-breadcrumb-item a" rule outranks a plain class selector */
+.bar a.link,
+.bar a.link:hover {
+  color: #ffffff !important;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.text {
+  opacity: 0.85;
+}
+
+.current {
+  font-weight: 500;
+}
+
+.bar :global(.ant-breadcrumb-separator) {
+  color: #ffffff !important;
+}
+
+.link > svg,
+.current > svg {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 1rem;
+}

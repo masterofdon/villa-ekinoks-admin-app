@@ -10,7 +10,7 @@ A Next.js 14 admin dashboard for villa management with TypeScript, SSR, React Qu
 - **Server-Side Rendering**: All pages are server-side rendered
 - **React Query**: Efficient data fetching and caching
 - **TypeScript**: Type-safe development
-- **Tailwind CSS**: Modern, responsive UI
+- **CSS Modules**: Component-scoped, responsive UI
 - **Form Validation**: Using React Hook Form with Zod schema validation
 
 ## Pages
@@ -24,7 +24,7 @@ A Next.js 14 admin dashboard for villa management with TypeScript, SSR, React Qu
 
 - **Framework**: Next.js 14 with App Router
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS
+- **Styling**: CSS Modules (`*.module.css` next to each component; global reset and design tokens in `src/app/globals.css`)
 - **State Management**: React Query (@tanstack/react-query)
 - **HTTP Client**: Axios
 - **Form Handling**: React Hook Form
@@ -156,7 +156,7 @@ The app is configured to work with a backend API. You'll need to implement the f
 - React Query handles data fetching, caching, and synchronization
 - Forms use React Hook Form with Zod validation
 - TypeScript ensures type safety throughout the application
-- Tailwind CSS provides utility-first styling
+- Styling uses CSS Modules colocated with each component
 - The app follows Next.js 14 App Router conventions
 
 ## Contributing

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import styles from './OtpInput.module.css';
 
 interface OtpInputProps {
   value: string;
@@ -69,7 +70,7 @@ export function OtpInput({ value, onChange, length = 6, disabled }: OtpInputProp
   };
 
   return (
-    <div className="flex justify-between gap-2" role="group" aria-label="Verification code">
+    <div className={styles.div} role="group" aria-label="Verification code">
       {digits.map((digit, i) => (
         <input
           key={i}
@@ -88,7 +89,7 @@ export function OtpInput({ value, onChange, length = 6, disabled }: OtpInputProp
           onKeyDown={(e) => handleKeyDown(i, e)}
           onPaste={handlePaste}
           onFocus={(e) => e.target.select()}
-          className="h-12 w-full min-w-0 rounded-md border border-white/30 bg-white/20 text-center text-xl font-semibold text-white caret-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 disabled:opacity-50"
+          className={styles.input}
         />
       ))}
     </div>

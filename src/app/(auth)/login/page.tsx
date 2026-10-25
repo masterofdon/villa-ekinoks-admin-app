@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input, Label } from '@/components/ui';
 import { AuthSplitLayout, glassInputClasses } from '@/components/auth/AuthSplitLayout';
 import { OtpInput } from '@/components/auth/OtpInput';
+import styles from './page.module.css';
 
 const CODE_LENGTH = 6;
 
@@ -82,7 +83,7 @@ export default function LoginPage() {
   if (step === 'login') {
     return (
       <AuthSplitLayout>
-        <form onSubmit={handleLoginSubmit} className="space-y-6">
+        <form onSubmit={handleLoginSubmit} className={styles.form}>
           <div>
             <Label htmlFor="login">Email</Label>
             <Input
@@ -94,7 +95,7 @@ export default function LoginPage() {
               placeholder="Enter your email"
             />
             {errors.login && (
-              <p className="mt-1 text-sm text-red-200">{errors.login}</p>
+              <p className={styles.p}>{errors.login}</p>
             )}
           </div>
 
@@ -109,29 +110,29 @@ export default function LoginPage() {
               placeholder="Enter your password"
             />
             {errors.password && (
-              <p className="mt-1 text-sm text-red-200">{errors.password}</p>
+              <p className={styles.p}>{errors.password}</p>
             )}
           </div>
 
           <Button
             type="submit"
-            className="w-full !bg-white !text-gray-900 hover:!bg-white/90"
+            className={styles.button}
             disabled={loginMutation.isPending}
           >
             {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
           </Button>
 
-          <div className="text-center">
+          <div className={styles.div}>
             <Link
               href="/forgot-password"
-              className="text-sm font-medium text-white/90 hover:text-white hover:underline"
+              className={styles.link}
             >
               Forgot your password?
             </Link>
           </div>
 
           {errors.general && (
-            <div className="text-red-200 text-sm text-center">
+            <div className={styles.div2}>
               {errors.general}
             </div>
           )}
@@ -143,11 +144,11 @@ export default function LoginPage() {
   // Verification step
   return (
     <AuthSplitLayout>
-      <h1 className="mb-2 text-center text-2xl font-semibold">Enter Verification Code</h1>
-      <p className="mb-6 text-center text-sm text-white/80">
+      <h1 className={styles.h1}>Enter Verification Code</h1>
+      <p className={styles.p2}>
         Enter the {CODE_LENGTH}-digit code we sent you.
       </p>
-      <form onSubmit={handleVerificationSubmit} className="space-y-6">
+      <form onSubmit={handleVerificationSubmit} className={styles.form}>
         <div>
           <OtpInput
             value={code}
@@ -156,15 +157,15 @@ export default function LoginPage() {
             disabled={verifyLoginMutation.isPending}
           />
           {errors.code && (
-            <p className="mt-2 text-center text-sm text-red-200">{errors.code}</p>
+            <p className={styles.p3}>{errors.code}</p>
           )}
         </div>
 
-        <div className="flex space-x-3">
+        <div className={styles.div3}>
           <Button
             type="button"
             variant="outline"
-            className="flex-1 !border-white/40 !bg-transparent !text-white hover:!bg-white/20"
+            className={styles.button2}
             onClick={() => {
               setErrors({});
               setCode('');
@@ -175,7 +176,7 @@ export default function LoginPage() {
           </Button>
           <Button
             type="submit"
-            className="flex-1 !bg-white !text-gray-900 hover:!bg-white/90"
+            className={styles.button3}
             disabled={verifyLoginMutation.isPending}
           >
             {verifyLoginMutation.isPending ? 'Verifying...' : 'Verify'}
@@ -183,7 +184,7 @@ export default function LoginPage() {
         </div>
 
         {errors.general && (
-          <div className="text-red-200 text-sm text-center">
+          <div className={styles.div2}>
             {errors.general}
           </div>
         )}

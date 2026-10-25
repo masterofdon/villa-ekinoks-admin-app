@@ -1,0 +1,28 @@
+.imageIcon {
+  height: 3rem;
+  width: 3rem;
+  color: rgb(209 213 219 / 1);
+}
+
+.div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.div2 {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.div3 {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 0.25rem;
+  background-color: rgb(229 231 235 / 1);
+}
+
+@keyframes pulse {
+  50% {
+  opacity: .5
+  }
+}

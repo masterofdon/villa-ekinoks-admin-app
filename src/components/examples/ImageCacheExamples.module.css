@@ -1,0 +1,160 @@
+.div > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.h3 {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+}
+
+.div2 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.authImage {
+  height: 8rem;
+  width: 100%;
+  border-radius: 0.25rem;
+  object-fit: cover;
+}
+
+.div3 {
+  height: 8rem;
+  width: 8rem;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border-radius: 0.25rem;
+  background-color: rgb(229 231 235 / 1);
+}
+
+.div4 {
+  display: flex;
+  height: 8rem;
+  width: 8rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  border-width: 2px;
+  border-style: dashed;
+  border-color: rgb(209 213 219 / 1);
+  background-color: rgb(243 244 246 / 1);
+}
+
+.span {
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgb(107 114 128 / 1);
+}
+
+.button {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgb(59 130 246 / 1);
+}
+.button:hover {
+  color: rgb(29 78 216 / 1);
+}
+
+.img {
+  height: 8rem;
+  width: 8rem;
+  border-radius: 0.25rem;
+  object-fit: cover;
+}
+
+.div5 {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: rgb(37 99 235 / 1);
+}
+
+.div6 {
+  color: rgb(75 85 99 / 1);
+}
+
+.button2 {
+  border-radius: 0.25rem;
+  background-color: rgb(59 130 246 / 1);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  color: rgb(255 255 255 / 1);
+}
+.button2:hover {
+  background-color: rgb(37 99 235 / 1);
+}
+.button2:disabled {
+  opacity: 0.5;
+}
+
+.cacheClearButton {
+  margin-top: 0.5rem;
+}
+
+.div7 {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1.5rem;
+}
+@media (min-width: 640px) {
+  .div7 {
+    max-width: 640px;
+  }
+}
+@media (min-width: 768px) {
+  .div7 {
+    max-width: 768px;
+  }
+}
+@media (min-width: 1024px) {
+  .div7 {
+    max-width: 1024px;
+  }
+}
+@media (min-width: 1280px) {
+  .div7 {
+    max-width: 1280px;
+  }
+}
+@media (min-width: 1536px) {
+  .div7 {
+    max-width: 1536px;
+  }
+}
+.div7 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 2rem;
+  margin-bottom: 0;
+}
+
+.h1 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+}
+
+.div8 {
+  border-top-width: 1px;
+  padding-top: 1.5rem;
+}
+
+.h2 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+}
+
+@keyframes pulse {
+  50% {
+  opacity: .5
+  }
+}

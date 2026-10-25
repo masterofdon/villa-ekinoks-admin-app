@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Settings as SettingsIcon, User, Bell, Lock, Palette, Save } from 'lucide-react';
 import type { VillaAdminUser, Update_VillaAdminUserPersonalInfo_WC_MLS_XAction } from '@/types';
+import styles from './page.module.css';
 
 export default function SettingsPage() {
   const { data: user } = useCurrentUser();
@@ -51,106 +52,106 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className={styles.div}>
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600">
+        <h1 className={styles.h1}>Settings</h1>
+        <p className={styles.p}>
           Manage your account preferences and application settings.
         </p>
       </div>
       <Card>
-        <CardHeader className="flex flex-row items-center space-y-0 pb-4">
-          <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-            <User className="h-5 w-5 mr-2" />
+        <CardHeader className={styles.cardHeader}>
+          <CardTitle className={styles.cardTitle}>
+            <User className={styles.user} />
             Profile Information
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <CardContent className={styles.cardContent}>
+          <div className={styles.div2}>
             <div>
-              <label htmlFor="firstname" className="text-sm font-medium text-gray-600 block mb-1">First Name</label>
+              <label htmlFor="firstname" className={styles.label}>First Name</label>
               <input
                 id="firstname"
                 name="firstname"
                 value={formValues.firstname}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className={styles.input}
               />
             </div>
             <div>
-              <label htmlFor="middlename" className="text-sm font-medium text-gray-600 block mb-1">Middle Name</label>
+              <label htmlFor="middlename" className={styles.label}>Middle Name</label>
               <input
                 id="middlename"
                 name="middlename"
                 value={formValues.middlename}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className={styles.input}
               />
             </div>
             <div>
-              <label htmlFor="lastname" className="text-sm font-medium text-gray-600 block mb-1">Last Name</label>
+              <label htmlFor="lastname" className={styles.label}>Last Name</label>
               <input
                 id="lastname"
                 name="lastname"
                 value={formValues.lastname}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className={styles.input}
               />
             </div>
-            <div className="md:col-span-2">
-              <label htmlFor="email" className="text-sm font-medium text-gray-600 block mb-1">Email</label>
+            <div className={styles.div3}>
+              <label htmlFor="email" className={styles.label}>Email</label>
               <input
                 id="email"
                 name="email"
                 type="email"
                 value={formValues.email}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className={styles.input}
               />
             </div>
             <div>
-              <label htmlFor="phonenumber" className="text-sm font-medium text-gray-600 block mb-1">Phone Number</label>
+              <label htmlFor="phonenumber" className={styles.label}>Phone Number</label>
               <input
                 id="phonenumber"
                 name="phonenumber"
                 value={formValues.phonenumber}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className={styles.input}
               />
             </div>
           </div>
-          <div className="pt-4">
+          <div className={styles.div4}>
             <Button
               onClick={handleSave}
               disabled={!isDirty || updatePersonalInfo.isPending}
             >
-              <Save className="w-4 h-4 mr-2" />
+              <Save className={styles.save} />
               {updatePersonalInfo.isPending ? 'Saving...' : 'Save'}
             </Button>
           </div>
         </CardContent>
       </Card>
       <Card>
-        <CardHeader className="flex flex-row items-center space-y-0 pb-4">
-          <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-            <Bell className="h-5 w-5 mr-2" />
+        <CardHeader className={styles.cardHeader}>
+          <CardTitle className={styles.cardTitle}>
+            <Bell className={styles.user} />
             Notifications
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
+        <CardContent className={styles.cardContent}>
+          <div className={styles.div5}>
             <div>
-              <h4 className="font-medium text-gray-900">Email Notifications</h4>
-              <p className="text-sm text-gray-600">Receive booking updates via email</p>
+              <h4 className={styles.h4}>Email Notifications</h4>
+              <p className={styles.p2}>Receive booking updates via email</p>
             </div>
             <Button variant="outline" disabled>
               Configure (Coming Soon)
             </Button>
           </div>
-          <div className="flex items-center justify-between">
+          <div className={styles.div5}>
             <div>
-              <h4 className="font-medium text-gray-900">SMS Notifications</h4>
-              <p className="text-sm text-gray-600">Receive urgent alerts via SMS</p>
+              <h4 className={styles.h4}>SMS Notifications</h4>
+              <p className={styles.p2}>Receive urgent alerts via SMS</p>
             </div>
             <Button variant="outline" disabled>
               Configure (Coming Soon)
@@ -159,26 +160,26 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
       <Card>
-        <CardHeader className="flex flex-row items-center space-y-0 pb-4">
-          <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-            <Lock className="h-5 w-5 mr-2" />
+        <CardHeader className={styles.cardHeader}>
+          <CardTitle className={styles.cardTitle}>
+            <Lock className={styles.user} />
             Security
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
+        <CardContent className={styles.cardContent}>
+          <div className={styles.div5}>
             <div>
-              <h4 className="font-medium text-gray-900">Change Password</h4>
-              <p className="text-sm text-gray-600">Update your account password</p>
+              <h4 className={styles.h4}>Change Password</h4>
+              <p className={styles.p2}>Update your account password</p>
             </div>
             <Button variant="outline" disabled>
               Change (Coming Soon)
             </Button>
           </div>
-          <div className="flex items-center justify-between">
+          <div className={styles.div5}>
             <div>
-              <h4 className="font-medium text-gray-900">Two-Factor Authentication</h4>
-              <p className="text-sm text-gray-600">Add an extra layer of security</p>
+              <h4 className={styles.h4}>Two-Factor Authentication</h4>
+              <p className={styles.p2}>Add an extra layer of security</p>
             </div>
             <Button variant="outline" disabled>
               Enable (Coming Soon)
@@ -188,26 +189,26 @@ export default function SettingsPage() {
       </Card>
       {villaAdminUser?.villa && (
         <Card>
-          <CardHeader className="flex flex-row items-center space-y-0 pb-4">
-            <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-              <SettingsIcon className="h-5 w-5 mr-2" />
+          <CardHeader className={styles.cardHeader}>
+            <CardTitle className={styles.cardTitle}>
+              <SettingsIcon className={styles.user} />
               Villa Management
             </CardTitle>
           </CardHeader>
         </Card>
       )}
       <Card>
-        <CardHeader className="flex flex-row items-center space-y-0 pb-4">
-          <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
-            <Palette className="h-5 w-5 mr-2" />
+        <CardHeader className={styles.cardHeader}>
+          <CardTitle className={styles.cardTitle}>
+            <Palette className={styles.user} />
             Appearance
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
+        <CardContent className={styles.cardContent}>
+          <div className={styles.div5}>
             <div>
-              <h4 className="font-medium text-gray-900">Theme</h4>
-              <p className="text-sm text-gray-600">Customize the appearance of your dashboard</p>
+              <h4 className={styles.h4}>Theme</h4>
+              <p className={styles.p2}>Customize the appearance of your dashboard</p>
             </div>
             <Button variant="outline" disabled>
               Change Theme (Coming Soon)

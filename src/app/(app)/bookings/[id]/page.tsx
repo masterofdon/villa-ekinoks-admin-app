@@ -3,8 +3,10 @@
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { BookingDetailsPage } from '@/components/bookings/BookingDetailsPage';
+import { usePageBreadcrumbLabel } from '@/components/layout/BreadcrumbContext';
 import { useVillaBookings } from '@/hooks/api';
 import { VillaBookingStatus } from '@/types';
+import styles from './page.module.css';
 
 const IndividualBookingPage: React.FC = () => {
   const params = useParams();
@@ -19,6 +21,9 @@ const IndividualBookingPage: React.FC = () => {
   });
 
   const booking = bookingsData?.content.find(b => b.id === bookingId);
+
+  const guestInfo = booking?.inquiror?.personalinfo;
+  usePageBreadcrumbLabel(guestInfo ? [guestInfo.firstname, guestInfo.lastname].filter(Boolean).join(' ') : null);
 
   const handleBack = () => {
     router.push('/bookings');
@@ -40,10 +45,10 @@ const IndividualBookingPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading booking details...</p>
+      <div className={styles.div}>
+        <div className={styles.div2}>
+          <div className={styles.div3}></div>
+          <p className={styles.p}>Loading booking details...</p>
         </div>
       </div>
     );
@@ -51,15 +56,15 @@ const IndividualBookingPage: React.FC = () => {
 
   if (error || !booking) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Booking Not Found</h2>
-          <p className="text-gray-600 mb-4">
+      <div className={styles.div}>
+        <div className={styles.div2}>
+          <h2 className={styles.h2}>Booking Not Found</h2>
+          <p className={styles.p2}>
             The booking you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
           <button
             onClick={handleBack}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            className={styles.button}
           >
             Back to Bookings
           </button>

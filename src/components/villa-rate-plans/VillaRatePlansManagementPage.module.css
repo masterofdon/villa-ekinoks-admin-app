@@ -1,0 +1,411 @@
+.users {
+  height: 1rem;
+  width: 1rem;
+  color: rgb(37 99 235 / 1);
+}
+
+.clock {
+  height: 1rem;
+  width: 1rem;
+  color: rgb(22 163 74 / 1);
+}
+
+.percent {
+  height: 1rem;
+  width: 1rem;
+  color: rgb(147 51 234 / 1);
+}
+
+.div {
+  border-radius: var(--radius);
+  border-width: 1px;
+  background-color: rgb(255 255 255 / 1);
+  padding: 1rem;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+.div:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.div2 {
+  border-color: rgb(147 197 253 / 1);
+  box-shadow: 0 0 0 0px #fff, 0 0 0 2px rgb(59 130 246 / 1);
+}
+
+.div3 {
+  border-color: rgb(229 231 235 / 1);
+}
+
+.div4 {
+  display: flex;
+  align-items: center;
+}
+.div4 > :not([hidden]) ~ :not([hidden]) {
+  margin-right: 0;
+  margin-left: 1rem;
+}
+
+.input {
+  border-radius: 0.25rem;
+  border-color: rgb(209 213 219 / 1);
+  color: rgb(37 99 235 / 1);
+}
+
+.div5 {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  align-items: center;
+}
+.div5 > :not([hidden]) ~ :not([hidden]) {
+  margin-right: 0;
+  margin-left: 0.75rem;
+}
+
+.calculator {
+  height: 1.25rem;
+  width: 1.25rem;
+  flex-shrink: 0;
+  color: rgb(37 99 235 / 1);
+}
+
+.div6 {
+  min-width: 0px;
+  flex: 1 1 0%;
+}
+
+.h3 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: rgb(17 24 39 / 1);
+}
+
+.div7 {
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: rgb(107 114 128 / 1);
+}
+
+.calendar {
+  margin-right: 0.25rem;
+  height: 0.75rem;
+  width: 0.75rem;
+}
+
+.div8 {
+  display: none;
+  width: 16rem;
+  align-items: flex-start;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+@media (min-width: 768px) {
+  .div8 {
+    display: flex;
+  }
+}
+
+.div9 {
+  display: flex;
+  align-items: center;
+}
+.div9 > :not([hidden]) ~ :not([hidden]) {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+.div10 {
+  display: flex;
+  flex-direction: column;
+}
+
+.span {
+  font-weight: 500;
+  color: rgb(17 24 39 / 1);
+}
+
+.span2 {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgb(75 85 99 / 1);
+}
+
+.div11 {
+  display: none;
+  width: 16rem;
+  align-items: flex-start;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+@media (min-width: 1024px) {
+  .div11 {
+    display: flex;
+  }
+}
+
+.span3 {
+  font-weight: 600;
+  color: rgb(21 128 61 / 1);
+}
+
+.button {
+  border-color: rgb(254 202 202 / 1);
+  color: rgb(220 38 38 / 1);
+}
+.button:hover {
+  background-color: rgb(254 242 242 / 1);
+  color: rgb(153 27 27 / 1);
+}
+
+.trash2 {
+  height: 1rem;
+  width: 1rem;
+}
+
+.div12 {
+  margin-top: 0.75rem;
+  border-top-width: 1px;
+  border-color: rgb(243 244 246 / 1);
+  padding-top: 0.75rem;
+}
+.div12 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+@media (min-width: 768px) {
+  .div12 {
+    display: none;
+  }
+}
+
+.div13 {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.div13 > :not([hidden]) ~ :not([hidden]) {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+.span4 {
+  color: rgb(75 85 99 / 1);
+}
+
+.span5 {
+  font-weight: 600;
+  color: rgb(37 99 235 / 1);
+}
+
+.span6 {
+  font-weight: 600;
+  color: rgb(22 163 74 / 1);
+}
+
+.div14 {
+  display: flex;
+  height: 16rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.p {
+  margin-bottom: 1rem;
+  color: rgb(220 38 38 / 1);
+}
+
+.div15 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 1.5rem;
+  margin-bottom: 0;
+}
+
+.div16 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.h1 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  color: rgb(17 24 39 / 1);
+}
+
+.p2 {
+  margin-top: 0.25rem;
+  color: rgb(75 85 99 / 1);
+}
+
+.button2 {
+  background-color: hsl(var(--primary));
+}
+.button2:hover {
+  background-color: hsl(var(--primary) / 0.9);
+}
+
+.plus {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.div17 {
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: rgb(191 219 254 / 1);
+  background-color: rgb(239 246 255 / 1);
+  padding: 1rem;
+}
+
+.span7 {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: rgb(30 64 175 / 1);
+}
+
+.button3 {
+  color: rgb(29 78 216 / 1);
+}
+.button3:hover {
+  color: rgb(30 64 175 / 1);
+}
+
+.trash22 {
+  margin-right: 0.25rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.div18 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+}
+
+.div19 {
+  height: 5rem;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border-radius: var(--radius);
+  background-color: rgb(229 231 235 / 1);
+}
+
+.div20 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.div21 {
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: rgb(229 231 235 / 1);
+  background-color: rgb(249 250 251 / 1);
+  padding: 1rem;
+}
+
+.div22 {
+  flex: 1 1 0%;
+}
+
+.label {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  color: rgb(17 24 39 / 1);
+}
+
+.p3 {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgb(107 114 128 / 1);
+}
+
+.div23 {
+  display: none;
+  width: 16rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  color: rgb(55 65 81 / 1);
+}
+@media (min-width: 768px) {
+  .div23 {
+    display: block;
+  }
+}
+
+.div24 {
+  display: none;
+  width: 16rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  color: rgb(55 65 81 / 1);
+}
+@media (min-width: 1024px) {
+  .div24 {
+    display: block;
+  }
+}
+
+.div25 {
+  width: 4rem;
+  text-align: center;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  color: rgb(55 65 81 / 1);
+}
+
+.div26 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.div27 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  text-align: center;
+}
+
+.calculator2 {
+  margin-left: auto;
+  margin-right: auto;
+  height: 3rem;
+  width: 3rem;
+  color: rgb(156 163 175 / 1);
+}
+
+.h32 {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  color: rgb(17 24 39 / 1);
+}
+
+.p4 {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: rgb(107 114 128 / 1);
+}
+
+.div28 {
+  margin-top: 1.5rem;
+}
+
+@keyframes pulse {
+  50% {
+  opacity: .5
+  }
+}

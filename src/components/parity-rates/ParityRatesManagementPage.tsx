@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Plus, ArrowLeftRight, DollarSign, TrendingUp, Loader2 } from 'lucide-react';
 import { CreateParityRateModal } from './CreateParityRateModal';
 import { notification } from 'antd';
+import styles from './ParityRatesManagementPage.module.css';
 
 const ParityRatesManagementPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -66,23 +67,23 @@ const ParityRatesManagementPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className={styles.div}>
+        <div className={styles.div2}>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Parity Rates Management</h1>
-            <p className="text-gray-600">Manage currency exchange rates</p>
+            <h1 className={styles.h1}>Parity Rates Management</h1>
+            <p className={styles.p}>Manage currency exchange rates</p>
           </div>
-          <div className="flex items-center space-x-4">
-            <Loader2 className="h-6 w-6 animate-spin" />
+          <div className={styles.div3}>
+            <Loader2 className={styles.loader2} />
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className={styles.div4}>
           {[1, 2, 3].map((i) => (
-            <Card key={i} className="animate-pulse">
-              <CardContent className="p-6">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+            <Card key={i} className={styles.card}>
+              <CardContent className={styles.cardContent}>
+                <div className={styles.div5}></div>
+                <div className={styles.div6}></div>
               </CardContent>
             </Card>
           ))}
@@ -93,19 +94,19 @@ const ParityRatesManagementPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className={styles.div}>
+        <div className={styles.div2}>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Parity Rates Management</h1>
-            <p className="text-gray-600">Manage currency exchange rates</p>
+            <h1 className={styles.h1}>Parity Rates Management</h1>
+            <p className={styles.p}>Manage currency exchange rates</p>
           </div>
         </div>
         
         <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-red-500 text-lg font-medium">Error loading parity rates</div>
-            <p className="text-gray-600 mt-2">Please try again later or contact support if the problem persists.</p>
-            <Button onClick={() => refetch()} className="mt-4">
+          <CardContent className={styles.cardContent2}>
+            <div className={styles.div7}>Error loading parity rates</div>
+            <p className={styles.p2}>Please try again later or contact support if the problem persists.</p>
+            <Button onClick={() => refetch()} className={styles.button}>
               Try Again
             </Button>
           </CardContent>
@@ -115,63 +116,63 @@ const ParityRatesManagementPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className={styles.div}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className={styles.div2}>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Parity Rates Management</h1>
-          <p className="text-gray-600">Manage currency exchange rates for multi-currency support</p>
+          <h1 className={styles.h1}>Parity Rates Management</h1>
+          <p className={styles.p}>Manage currency exchange rates for multi-currency support</p>
         </div>
         <Button 
           onClick={() => setIsCreateModalOpen(true)}
-          className="flex items-center space-x-2"
+          className={styles.button2}
         >
-          <Plus className="h-4 w-4" />
+          <Plus className={styles.plus} />
           <span>Add Parity Rate</span>
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className={styles.div4}>
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+          <CardContent className={styles.cardContent}>
+            <div className={styles.div2}>
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Currency Pairs</p>
-                <p className="text-2xl font-bold text-gray-900">{currencyPairs.length}</p>
+                <p className={styles.p3}>Total Currency Pairs</p>
+                <p className={styles.p4}>{currencyPairs.length}</p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <ArrowLeftRight className="h-6 w-6 text-blue-600" />
+              <div className={styles.div8}>
+                <ArrowLeftRight className={styles.arrowLeftRight} />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+          <CardContent className={styles.cardContent}>
+            <div className={styles.div2}>
               <div>
-                <p className="text-sm font-medium text-gray-600">Unique Currencies</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className={styles.p3}>Unique Currencies</p>
+                <p className={styles.p4}>
                   {new Set(currencyPairs.flatMap(pair => [pair.fromCurrency, pair.toCurrency])).size}
                 </p>
               </div>
-              <div className="p-3 bg-green-100 rounded-lg">
-                <DollarSign className="h-6 w-6 text-green-600" />
+              <div className={styles.div9}>
+                <DollarSign className={styles.dollarSign} />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+          <CardContent className={styles.cardContent}>
+            <div className={styles.div2}>
               <div>
-                <p className="text-sm font-medium text-gray-600">Exchange Rates</p>
-                <p className="text-2xl font-bold text-gray-900">Active</p>
+                <p className={styles.p3}>Exchange Rates</p>
+                <p className={styles.p4}>Active</p>
               </div>
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <TrendingUp className="h-6 w-6 text-purple-600" />
+              <div className={styles.div10}>
+                <TrendingUp className={styles.trendingUp} />
               </div>
             </div>
           </CardContent>
@@ -181,53 +182,53 @@ const ParityRatesManagementPage: React.FC = () => {
       {/* Parity Rates Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <ArrowLeftRight className="h-5 w-5" />
+          <CardTitle className={styles.button2}>
+            <ArrowLeftRight className={styles.arrowLeftRight2} />
             <span>Currency Exchange Rates</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           {currencyPairs.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
+            <div className={styles.div11}>
+              <table className={styles.table}>
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-medium text-gray-900">From Currency</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-900">To Currency</th>
-                    <th className="text-right py-3 px-4 font-medium text-gray-900">Exchange Rate</th>
-                    <th className="text-center py-3 px-4 font-medium text-gray-900">Conversion</th>
+                  <tr className={styles.tr}>
+                    <th className={styles.th}>From Currency</th>
+                    <th className={styles.th}>To Currency</th>
+                    <th className={styles.th2}>Exchange Rate</th>
+                    <th className={styles.th3}>Conversion</th>
                   </tr>
                 </thead>
                 <tbody>
                   {currencyPairs.map((pair, index) => (
-                    <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                            <span className="text-xs font-bold text-blue-600">
+                    <tr key={index} className={styles.tr2}>
+                      <td className={styles.td}>
+                        <div className={styles.button2}>
+                          <div className={styles.div12}>
+                            <span className={styles.span}>
                               {pair.fromCurrency.slice(0, 2)}
                             </span>
                           </div>
-                          <span className="font-medium text-gray-900">{pair.fromCurrency}</span>
+                          <span className={styles.span2}>{pair.fromCurrency}</span>
                         </div>
                       </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                            <span className="text-xs font-bold text-green-600">
+                      <td className={styles.td}>
+                        <div className={styles.button2}>
+                          <div className={styles.div13}>
+                            <span className={styles.span3}>
                               {pair.toCurrency.slice(0, 2)}
                             </span>
                           </div>
-                          <span className="font-medium text-gray-900">{pair.toCurrency}</span>
+                          <span className={styles.span2}>{pair.toCurrency}</span>
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-right">
-                        <span className="text-lg font-bold text-gray-900">
+                      <td className={styles.td2}>
+                        <span className={styles.span4}>
                           {formatRate(pair.rate)}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-center">
-                        <div className="text-sm text-gray-600">
+                      <td className={styles.td3}>
+                        <div className={styles.div14}>
                           1 {pair.fromCurrency} = {formatRate(pair.rate)} {pair.toCurrency}
                         </div>
                       </td>
@@ -237,12 +238,12 @@ const ParityRatesManagementPage: React.FC = () => {
               </table>
             </div>
           ) : (
-            <div className="text-center py-8">
-              <ArrowLeftRight className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No parity rates found</h3>
-              <p className="text-gray-600 mb-4">Get started by adding your first currency exchange rate.</p>
+            <div className={styles.div15}>
+              <ArrowLeftRight className={styles.arrowLeftRight3} />
+              <h3 className={styles.h3}>No parity rates found</h3>
+              <p className={styles.p5}>Get started by adding your first currency exchange rate.</p>
               <Button onClick={() => setIsCreateModalOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className={styles.plus2} />
                 Add First Parity Rate
               </Button>
             </div>

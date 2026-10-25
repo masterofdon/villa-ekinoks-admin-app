@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthState } from '@/hooks/api';
 import { ensureValidSession } from '@/lib/auth-session';
+import styles from './AuthGuard.module.css';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -46,10 +47,10 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
   // Show consistent loading state during SSR and initial client render
   if (!isClient || isChecking || !isAuthenticated) {
     return fallback || (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <div className="text-lg text-gray-600">Loading...</div>
+      <div className={styles.div}>
+        <div className={styles.div2}>
+          <div className={styles.div3}></div>
+          <div className={styles.div4}>Loading...</div>
         </div>
       </div>
     );

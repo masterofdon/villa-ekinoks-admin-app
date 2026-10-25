@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { X, Upload, CheckCircle, AlertCircle, Loader2, Clock } from 'lucide-react';
 import { getStageMessage } from '@/lib/upload-progress-sse';
+import styles from './UploadProgressBox.module.css';
 
 interface UploadProgressBoxProps {
   progress: UploadProgress;
@@ -15,15 +16,15 @@ interface UploadProgressBoxProps {
 const JobStatusIcon: React.FC<{ status: UploadJob['status'] }> = ({ status }) => {
   switch (status) {
     case 'pending':
-      return <Clock className="w-4 h-4 text-gray-400" />;
+      return <Clock className={styles.clock} />;
     case 'uploading':
-      return <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />;
+      return <Loader2 className={styles.loader2} />;
     case 'completed':
-      return <CheckCircle className="w-4 h-4 text-green-500" />;
+      return <CheckCircle className={styles.checkCircle} />;
     case 'failed':
-      return <AlertCircle className="w-4 h-4 text-red-500" />;
+      return <AlertCircle className={styles.alertCircle} />;
     default:
-      return <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>;
+      return <div className={styles.div}></div>;
   }
 };
 
@@ -31,20 +32,20 @@ const ProgressBar: React.FC<{ progress: number; status: UploadJob['status'] }> =
   const getProgressColor = () => {
     switch (status) {
       case 'completed':
-        return 'bg-green-500';
+        return styles.cls;
       case 'failed':
-        return 'bg-red-500';
+        return styles.cls2;
       case 'uploading':
-        return 'bg-blue-500';
+        return styles.cls3;
       default:
-        return 'bg-gray-300';
+        return styles.cls4;
     }
   };
 
   return (
-    <div className="w-full bg-gray-200 rounded-full h-1.5">
+    <div className={styles.div2}>
       <div
-        className={`h-1.5 rounded-full transition-all duration-500 ease-out ${getProgressColor()}`}
+        className={`${styles.div3} ${getProgressColor()}`}
         style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
       ></div>
     </div>
@@ -103,25 +104,25 @@ export const UploadProgressBox: React.FC<UploadProgressBoxProps> = ({
   };
 
   return (
-    <div className="fixed bottom-4 right-4 w-[30%] max-w-[calc(100vw-2rem)] h-96 z-50">
-      <Card className="shadow-lg border-2 border-gray-200 h-full flex flex-col">
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Upload className="w-4 h-4 text-blue-600" />
+    <div className={styles.div4}>
+      <Card className={styles.card}>
+        <CardHeader className={styles.cardHeader}>
+          <div className={styles.div5}>
+            <CardTitle className={styles.cardTitle}>
+              <Upload className={styles.upload} />
               Upload Progress
             </CardTitle>
             <Button
               onClick={onClose}
               disabled={!progress.isAllCompleted}
-              className="h-6 w-6 p-0 bg-transparent hover:bg-gray-100 text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className={styles.button}
               title={progress.isAllCompleted ? "Close" : "Cannot close until all uploads are finished"}
             >
-              <X className="w-4 h-4" />
+              <X className={styles.x} />
             </Button>
           </div>
-          <div className="space-y-1">
-            <div className="flex justify-between items-center text-xs text-gray-600">
+          <div className={styles.div6}>
+            <div className={styles.div7}>
               <span>{getOverallProgressText()}</span>
               <span>{Math.round(getOverallProgress())}%</span>
             </div>
@@ -131,8 +132,8 @@ export const UploadProgressBox: React.FC<UploadProgressBoxProps> = ({
             />
           </div>
         </CardHeader>
-        <CardContent className="pt-0 flex-1 overflow-hidden">
-          <div className="h-full overflow-y-auto space-y-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <CardContent className={styles.cardContent}>
+          <div className={styles.div8}>
             {progress.jobs.map((job) => {
               console.log(`Rendering job ${job.id}:`, { 
                 status: job.status, 
@@ -142,24 +143,24 @@ export const UploadProgressBox: React.FC<UploadProgressBoxProps> = ({
               });
               
               return (
-                <div key={job.id} className="flex items-center gap-2 p-2 bg-gray-50 rounded text-xs">
+                <div key={job.id} className={styles.div9}>
                   <JobStatusIcon status={job.status} />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">{job.file.name}</div>
-                    <div className="flex items-center gap-2 mt-1">
+                  <div className={styles.div10}>
+                    <div className={styles.div11}>{job.file.name}</div>
+                    <div className={styles.div12}>
                       <ProgressBar progress={job.progress} status={job.status} />
-                      <span className="text-gray-500 text-xs flex-shrink-0">
+                      <span className={styles.span}>
                         {getJobStatusText(job)}
                       </span>
                     </div>
                     {/* Show detailed stage message */}
                     {job.status === 'uploading' && (
-                      <div className="text-blue-600 text-xs mt-1">
+                      <div className={styles.div13}>
                         {getJobDisplayText(job)}
                       </div>
                     )}
                     {job.error && (
-                      <div className="text-red-500 text-xs mt-1 truncate" title={job.error}>
+                      <div className={styles.div14} title={job.error}>
                         Error: {job.error}
                       </div>
                     )}

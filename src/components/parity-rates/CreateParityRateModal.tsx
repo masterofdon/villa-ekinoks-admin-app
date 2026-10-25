@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useCreateParityRate } from '@/hooks/api';
 import { Create_ParityRate_WC_MLS_XAction } from '@/types';
 import { Modal, Form, Input, Select, InputNumber } from 'antd';
+import styles from './CreateParityRateModal.module.css';
 
 const { Option } = Select;
 
@@ -80,12 +81,12 @@ export const CreateParityRateModal: React.FC<CreateParityRateModalProps> = ({
       <Form
         form={form}
         layout="vertical"
-        className="space-y-4"
+        className={styles.form}
         initialValues={{
           rate: 1.0000
         }}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className={styles.div}>
           <Form.Item
             label="From Currency"
             name="fromcurrency"
@@ -160,7 +161,7 @@ export const CreateParityRateModal: React.FC<CreateParityRateModalProps> = ({
             max={999999.9999}
             step={0.0001}
             precision={4}
-            className="w-full"
+            className={styles.inputNumber}
             formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             parser={(value: string | undefined) => {
               const parsed = parseFloat(value?.replace(/\$\s?|(,*)/g, '') || '0');
@@ -169,9 +170,9 @@ export const CreateParityRateModal: React.FC<CreateParityRateModalProps> = ({
           />
         </Form.Item>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
-          <h4 className="text-sm font-medium text-blue-900 mb-2">Exchange Rate Information</h4>
-          <div className="text-sm text-blue-700 space-y-1">
+        <div className={styles.div2}>
+          <h4 className={styles.h4}>Exchange Rate Information</h4>
+          <div className={styles.div3}>
             <p>• Exchange rate represents how much of the target currency equals 1 unit of the source currency</p>
             <p>• Example: If USD to EUR rate is 0.8500, then 1 USD = 0.8500 EUR</p>
             <p>• Rates support up to 4 decimal places for precision</p>

@@ -13,19 +13,20 @@ import { Button } from '@/components/ui/Button';
 import { Plus, Calculator, Trash2, Calendar, Users, Clock, DollarSign, Percent } from 'lucide-react';
 import { CreateVillaRatePlanModal } from './CreateVillaRatePlanModal';
 import { notification, App } from 'antd';
+import styles from './VillaRatePlansManagementPage.module.css';
 
 const ConditionTypeIcon: React.FC<{ type: VillaRatePlanConditionType }> = ({ type }) => {
   if (type === 'NUMBEROFGUESTS') {
-    return <Users className="h-4 w-4 text-blue-600" />;
+    return <Users className={styles.users} />;
   }
-  return <Clock className="h-4 w-4 text-green-600" />;
+  return <Clock className={styles.clock} />;
 };
 
 const ApplicationValueTypeIcon: React.FC<{ type: VillaRatePlanApplicationValueType }> = ({ type }) => {
   if (type === 'PERCENTAGE') {
-    return <Percent className="h-4 w-4 text-purple-600" />;
+    return <Percent className={styles.percent} />;
   }
-  return <DollarSign className="h-4 w-4 text-green-600" />;
+  return <DollarSign className={styles.clock} />;
 };
 
 const formatConditionOperator = (operator: VillaRatePlanConditionOperator): string => {
@@ -103,84 +104,84 @@ const VillaRatePlanListItem: React.FC<{
   };
 
   return (
-    <div className={`bg-white border rounded-lg p-4 hover:shadow-md transition-all duration-200 ${
-      isSelected ? 'ring-2 ring-blue-500 border-blue-300' : 'border-gray-200'
+    <div className={`${styles.div} ${
+      isSelected ? styles.div2 : styles.div3
     }`}>
-      <div className="flex items-center space-x-4">
+      <div className={styles.div4}>
         {/* Selection Checkbox */}
         <input
           type="checkbox"
           checked={isSelected}
           onChange={() => onToggleSelect(ratePlan.id)}
-          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          className={styles.input}
         />
         
         {/* Rate Plan Icon and Name */}
-        <div className="flex items-center space-x-3 min-w-0 flex-1">
-          <Calculator className="h-5 w-5 text-blue-600 flex-shrink-0" />
-          <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-gray-900 truncate">{ratePlan.name}</h3>
-            <div className="flex items-center text-sm text-gray-500 mt-1">
-              <Calendar className="h-3 w-3 mr-1" />
+        <div className={styles.div5}>
+          <Calculator className={styles.calculator} />
+          <div className={styles.div6}>
+            <h3 className={styles.h3}>{ratePlan.name}</h3>
+            <div className={styles.div7}>
+              <Calendar className={styles.calendar} />
               {formatDateRange(ratePlan.startperiod, ratePlan.endperiod)}
             </div>
           </div>
         </div>
 
         {/* Condition Details */}
-        <div className="hidden md:flex items-start text-sm w-64">
-          <div className="flex items-center space-x-2">
+        <div className={styles.div8}>
+          <div className={styles.div9}>
             <ConditionTypeIcon type={ratePlan.conditiontype} />
-            <div className="flex flex-col">
-              <span className="font-medium text-gray-900">{formatConditionType(ratePlan.conditiontype)}</span>
-              <span className="text-xs text-gray-600">{formatConditionOperator(ratePlan.conditionoperator)} {ratePlan.conditionvalue}</span>
+            <div className={styles.div10}>
+              <span className={styles.span}>{formatConditionType(ratePlan.conditiontype)}</span>
+              <span className={styles.span2}>{formatConditionOperator(ratePlan.conditionoperator)} {ratePlan.conditionvalue}</span>
             </div>
           </div>
         </div>
 
         {/* Application Details */}
-        <div className="hidden lg:flex items-start text-sm w-64">
-          <div className="flex items-center space-x-2">
+        <div className={styles.div11}>
+          <div className={styles.div9}>
             <ApplicationValueTypeIcon type={ratePlan.applicationvaluetype} />
-            <div className="flex flex-col">
-              <span className="font-semibold text-green-700">
+            <div className={styles.div10}>
+              <span className={styles.span3}>
                 {ratePlan.applicationvalue}
                 {ratePlan.applicationvaluetype === 'PERCENTAGE' ? '%' : ''}
               </span>
-              <span className="text-xs text-gray-600">{formatApplicationType(ratePlan.applicationtype)}</span>
+              <span className={styles.span2}>{formatApplicationType(ratePlan.applicationtype)}</span>
             </div>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center space-x-2">
+        <div className={styles.div9}>
           <Button
             variant="outline"
             size="sm"
             onClick={handleDelete}
             disabled={isDeleting}
-            className="text-red-600 hover:text-red-800 hover:bg-red-50 border-red-200"
+            className={styles.button}
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className={styles.trash2} />
           </Button>
         </div>
       </div>
 
       {/* Mobile Details - shown on smaller screens */}
-      <div className="md:hidden mt-3 pt-3 border-t border-gray-100 space-y-2">
-        <div className="flex items-center space-x-2 text-sm">
+      <div className={styles.div12}>
+        <div className={styles.div13}>
           <ConditionTypeIcon type={ratePlan.conditiontype} />
-          <span className="text-gray-600">When {formatConditionType(ratePlan.conditiontype)} {formatConditionOperator(ratePlan.conditionoperator)}</span>
-          <span className="font-semibold text-blue-600">{ratePlan.conditionvalue}</span>
+          <span className={styles.span4}>When {formatConditionType(ratePlan.conditiontype)} {formatConditionOperator(ratePlan.conditionoperator)}</span>
+          <span className={styles.span5}>{ratePlan.conditionvalue}</span>
         </div>
-        <div className="flex items-center space-x-2 text-sm">
+        <div className={styles.div13}>
           <ApplicationValueTypeIcon type={ratePlan.applicationvaluetype} />
-          <span className="text-gray-600">Apply</span>
-          <span className="font-semibold text-green-600">
+          <span className={styles.span4}>Apply</span>
+          <span className={styles.span6}>
             {ratePlan.applicationvalue}
             {ratePlan.applicationvaluetype === 'PERCENTAGE' ? '%' : ''}
           </span>
-          <span className="text-gray-600">{formatApplicationType(ratePlan.applicationtype)}</span>
+          <span className={styles.span4}>{formatApplicationType(ratePlan.applicationtype)}</span>
         </div>
 
       </div>
@@ -288,45 +289,45 @@ const VillaRatePlansManagementPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <p className="text-red-600 mb-4">Failed to load rate plans: {error instanceof Error ? error.message : 'Unknown error'}</p>
+      <div className={styles.div14}>
+        <p className={styles.p}>Failed to load rate plans: {error instanceof Error ? error.message : 'Unknown error'}</p>
         <Button onClick={() => refetch()}>Try Again</Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className={styles.div15}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className={styles.div16}>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Villa Rate Plans</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className={styles.h1}>Villa Rate Plans</h1>
+          <p className={styles.p2}>
             Manage pricing adjustments based on guest count or stay duration
           </p>
         </div>
         <Button 
           onClick={() => setIsCreateModalOpen(true)}
-          className="bg-primary hover:bg-primary/90"
+          className={styles.button2}
         >
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className={styles.plus} />
           Create Rate Plan
         </Button>
       </div>
 
       {/* Bulk actions */}
       {selectedItems.length > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-blue-800">
+        <div className={styles.div17}>
+          <div className={styles.div16}>
+            <span className={styles.span7}>
               {selectedItems.length} rate plan{selectedItems.length > 1 ? 's' : ''} selected
             </span>
-            <div className="flex items-center space-x-2">
+            <div className={styles.div9}>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={clearSelection}
-                className="text-blue-700 hover:text-blue-800"
+                className={styles.button3}
               >
                 Clear Selection
               </Button>
@@ -336,7 +337,7 @@ const VillaRatePlansManagementPage: React.FC = () => {
                 onClick={handleBulkDelete}
                 disabled={isBulkDeleting || selectedItems.length === 0}
               >
-                <Trash2 className="h-4 w-4 mr-1" />
+                <Trash2 className={styles.trash22} />
                 {isBulkDeleting ? 'Deleting...' : 'Delete Selected'}
               </Button>
             </div>
@@ -346,18 +347,18 @@ const VillaRatePlansManagementPage: React.FC = () => {
 
       {/* Rate Plans List */}
       {isLoading && (
-        <div className="space-y-3">
+        <div className={styles.div18}>
           {Array.from({ length: 6 }, (_, i) => (
-            <div key={`rate-plan-skeleton-${i}`} className="animate-pulse bg-gray-200 rounded-lg h-20"></div>
+            <div key={`rate-plan-skeleton-${i}`} className={styles.div19}></div>
           ))}
         </div>
       )}
       
       {!isLoading && ratePlans && ratePlans.length > 0 && (
-        <div className="space-y-4">
+        <div className={styles.div20}>
           {/* List Header */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center space-x-4">
+          <div className={styles.div21}>
+            <div className={styles.div4}>
               <input
                 id="select-all-rate-plans"
                 type="checkbox"
@@ -366,33 +367,33 @@ const VillaRatePlansManagementPage: React.FC = () => {
                   if (input) input.indeterminate = isIndeterminate;
                 }}
                 onChange={toggleSelectAll}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className={styles.input}
               />
-              <div className="flex-1">
-                <label htmlFor="select-all-rate-plans" className="text-sm font-semibold text-gray-900">
+              <div className={styles.div22}>
+                <label htmlFor="select-all-rate-plans" className={styles.label}>
                   Rate Plans ({ratePlans.length})
                 </label>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className={styles.p3}>
                   {selectedItems.length === 0 
                     ? 'Select rate plans to perform bulk actions'
                     : `${selectedItems.length} of ${ratePlans.length} selected`
                   }
                 </p>
               </div>
-              <div className="hidden md:block text-xs font-medium text-gray-700 w-64">
+              <div className={styles.div23}>
                 Condition
               </div>
-              <div className="hidden lg:block text-xs font-medium text-gray-700 w-64">
+              <div className={styles.div24}>
                 Application
               </div>
-              <div className="w-16 text-xs font-medium text-gray-700 text-center">
+              <div className={styles.div25}>
                 Actions
               </div>
             </div>
           </div>
 
           {/* Rate Plans List */}
-          <div className="space-y-2">
+          <div className={styles.div26}>
             {ratePlans
               .sort((a, b) => new Date(b.timestamps.creationdate).getTime() - new Date(a.timestamps.creationdate).getTime())
               .map((ratePlan) => (
@@ -410,18 +411,18 @@ const VillaRatePlansManagementPage: React.FC = () => {
       )}
       
       {!isLoading && (!ratePlans || ratePlans.length === 0) && (
-        <div className="text-center py-12">
-          <Calculator className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-semibold text-gray-900">No rate plans</h3>
-          <p className="mt-1 text-sm text-gray-500">
+        <div className={styles.div27}>
+          <Calculator className={styles.calculator2} />
+          <h3 className={styles.h32}>No rate plans</h3>
+          <p className={styles.p4}>
             Get started by creating your first rate plan.
           </p>
-          <div className="mt-6">
+          <div className={styles.div28}>
             <Button 
               onClick={() => setIsCreateModalOpen(true)}
-              className="bg-primary hover:bg-primary/90"
+              className={styles.button2}
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className={styles.plus} />
               Create Rate Plan
             </Button>
           </div>

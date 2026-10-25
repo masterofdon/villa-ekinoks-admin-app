@@ -6,6 +6,7 @@ import { Create_PropertyGallery_WC_MLS_XAction } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent, Input, Label } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { X, Images } from 'lucide-react';
+import styles from './CreatePropertyGalleryModal.module.css';
 
 interface CreatePropertyGalleryModalProps {
   isOpen: boolean;
@@ -67,21 +68,21 @@ export const CreatePropertyGalleryModal: React.FC<CreatePropertyGalleryModalProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md">
+    <div className={styles.div}>
+      <Card className={styles.card}>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Images className="h-5 w-5 text-blue-600" />
+          <div className={styles.div2}>
+            <CardTitle className={styles.cardTitle}>
+              <Images className={styles.images} />
               Create Property Gallery
             </CardTitle>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-              <X className="h-5 w-5" />
+            <button onClick={onClose} className={styles.button}>
+              <X className={styles.x} />
             </button>
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className={styles.form}>
             <div>
               <Label htmlFor="name">Gallery Name</Label>
               <Input
@@ -89,9 +90,9 @@ export const CreatePropertyGalleryModal: React.FC<CreatePropertyGalleryModalProp
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 placeholder="e.g. Living Room"
-                className="mt-1"
+                className={styles.input}
               />
-              {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+              {errors.name && <p className={styles.p}>{errors.name}</p>}
             </div>
 
             <div>
@@ -101,29 +102,29 @@ export const CreatePropertyGalleryModal: React.FC<CreatePropertyGalleryModalProp
                 value={formData.description}
                 onChange={(e) => handleChange('description', e.target.value)}
                 placeholder="Describe this gallery"
-                className="mt-1"
+                className={styles.input}
               />
               {errors.description && (
-                <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+                <p className={styles.p}>{errors.description}</p>
               )}
             </div>
 
             {errors.submit && (
-              <p className="text-red-500 text-sm">{errors.submit}</p>
+              <p className={styles.p2}>{errors.submit}</p>
             )}
 
-            <div className="flex gap-3 pt-2">
+            <div className={styles.div3}>
               <Button
                 type="button"
                 onClick={onClose}
-                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700"
+                className={styles.button2}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={createMutation.isPending}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                className={styles.button3}
               >
                 {createMutation.isPending ? 'Creating...' : 'Create Gallery'}
               </Button>

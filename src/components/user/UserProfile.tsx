@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useCurrentUser } from '@/hooks/api';
+import styles from './UserProfile.module.css';
 
 interface UserProfileProps {
   className?: string;
@@ -12,16 +13,16 @@ export function UserProfile({ className = '' }: UserProfileProps) {
 
   if (isLoading) {
     return (
-      <div className={`animate-pulse ${className}`}>
-        <div className="h-4 bg-gray-300 rounded w-24 mb-2"></div>
-        <div className="h-3 bg-gray-300 rounded w-32"></div>
+      <div className={`${styles.div} ${className}`}>
+        <div className={styles.div2}></div>
+        <div className={styles.div3}></div>
       </div>
     );
   }
 
   if (error || !user) {
     return (
-      <div className={`text-gray-500 ${className}`}>
+      <div className={`${styles.div4} ${className}`}>
         <span>Guest User</span>
       </div>
     );
@@ -35,10 +36,10 @@ export function UserProfile({ className = '' }: UserProfileProps) {
 
   return (
     <div className={`${className}`}>
-      <div className="font-medium text-gray-900">
+      <div className={styles.div5}>
         {fullName || 'User'}
       </div>
-      <div className="text-sm text-gray-500">
+      <div className={styles.div6}>
         {user.personalinfo.email}
       </div>
     </div>
@@ -54,7 +55,7 @@ export function UserAvatar({ className = '' }: UserProfileProps) {
     : 'U';
 
   return (
-    <div className={`inline-flex items-center justify-center rounded-full bg-blue-500 text-white font-medium ${className}`}>
+    <div className={`${styles.div7} ${className}`}>
       {initials}
     </div>
   );

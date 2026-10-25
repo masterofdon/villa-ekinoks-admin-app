@@ -1,0 +1,78 @@
+.iconButton {
+  display: flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: rgb(75 85 99 / 1);
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.iconButton:hover {
+  background-color: rgb(243 244 246 / 1);
+  color: rgb(17 24 39 / 1);
+}
+
+.settings {
+  height: 1rem;
+  width: 1rem;
+}
+
+.header {
+  display: flex;
+  height: 4rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  border-bottom-width: 1px;
+  border-color: rgb(229 231 235 / 1);
+  background-color: rgb(255 255 255 / 1);
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.messageSquare {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.button {
+  margin-right: 0.5rem;
+}
+
+.button2 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 9999px;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.25rem;
+  padding-right: 0.75rem;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.button2:hover {
+  background-color: rgb(243 244 246 / 1);
+}
+
+.span {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: rgb(17 24 39 / 1);
+}
+
+.chevronDown {
+  height: 1rem;
+  width: 1rem;
+  color: rgb(107 114 128 / 1);
+}
